@@ -2970,8 +2970,9 @@ function initDoodleCanvas() {
   if(!canvas) return;
   const area = canvas.parentElement;
   if(!area) return;
-  const w = area.offsetWidth;
-  const h = area.offsetHeight;
+  // 使用 scrollHeight 确保覆盖整个可滚动区域
+  const w = Math.max(area.scrollWidth, area.offsetWidth, 300);
+  const h = Math.max(area.scrollHeight, area.offsetHeight, 300);
   canvas.width = w;
   canvas.height = h;
   canvas.style.width = w + 'px';
@@ -2998,7 +2999,7 @@ function toggleDoodleMode() {
   if(doodleMode) {
     canvas.classList.add('active');
     btn.classList.add('active');
-    btn.textContent = '✏中';
+    btn.textContent = '✏';
     setTimeout(initDoodleCanvas, 50);
   } else {
     canvas.classList.remove('active');
@@ -3125,6 +3126,7 @@ function clearDoodle() {
 }</script>
 </body>
 </html>
+
 
 
 

@@ -1813,6 +1813,9 @@ body::before {
   pointer-events: none;
   display: none;
 }
+.qa-content {
+  position: relative;
+}
 .doodle-canvas.active {
   display: block;
   pointer-events: auto;
@@ -2031,6 +2034,7 @@ body::before {
       </div>
       
       <div class="qa-content">
+        <canvas class="doodle-canvas" id="doodleCanvas"></canvas>
         <div class="qa-question">
           <div class="qa-question-text" id="modalQuestion"></div>
           <div class="qa-meta" id="modalMeta"></div>
@@ -2039,7 +2043,6 @@ body::before {
         <div class="qa-answer-area" id="qaAnswerArea">
           <div class="qa-answer-label">📝 参考答案</div>
           <div class="qa-answer" id="modalAnswer"></div>
-          <canvas class="doodle-canvas" id="doodleCanvas"></canvas>
         </div>
         <div class="doodle-toolbar" id="doodleToolbar" onclick="event.stopPropagation()">
           <button class="doodle-toggle-btn" id="doodleToggleBtn" onclick="toggleDoodleMode()" title="涂鸦开关">✏</button>
@@ -2968,11 +2971,11 @@ let doodleMode = false;
 function initDoodleCanvas() {
   const canvas = document.getElementById('doodleCanvas');
   if(!canvas) return;
-  const area = canvas.parentElement;
-  if(!area) return;
-  // 使用 scrollHeight 确保覆盖整个可滚动区域
-  const w = Math.max(area.scrollWidth, area.offsetWidth, 300);
-  const h = Math.max(area.scrollHeight, area.offsetHeight, 300);
+  // 使用 qa-content（弹窗内容区域）的尺寸
+  const content = canvas.closest('.qa-content') || canvas.parentElement;
+  if(!content) return;
+  const w = Math.max(content.scrollWidth, content.offsetWidth, 300);
+  const h = Math.max(content.scrollHeight, content.offsetHeight, 300);
   canvas.width = w;
   canvas.height = h;
   canvas.style.width = w + 'px';
@@ -3087,9 +3090,21 @@ function doodleEnd() {
 function getDoodlePos(e) {
   const canvas = document.getElementById('doodleCanvas');
   const rect = canvas.getBoundingClientRect();
+  // 支持触摸事件和鼠标事件
+  let clientX, clientY;
+  if(e.touches && e.touches.length > 0) {
+    clientX = e.touches[0].clientX;
+    clientY = e.touches[0].clientY;
+  } else if(e.changedTouches && e.changedTouches.length > 0) {
+    clientX = e.changedTouches[0].clientX;
+    clientY = e.changedTouches[0].clientY;
+  } else {
+    clientX = e.clientX;
+    clientY = e.clientY;
+  }
   return {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top
+    x: clientX - rect.left,
+    y: clientY - rect.top
   };
 }
 
@@ -3126,6 +3141,9 @@ function clearDoodle() {
 }</script>
 </body>
 </html>
+
+
+
 
 
 

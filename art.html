@@ -1382,6 +1382,154 @@ body::before {
   color: var(--blue);
   font-weight: 700;
 }
+
+/* 背诵模式 */
+.recite-mode-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.recite-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+.recite-exit {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.recite-exit:hover { background: rgba(99,102,241,0.1); }
+.recite-progress {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+.recite-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.recite-ok { color: #10b981; }
+.recite-no { color: #ef4444; }
+.recite-card {
+  flex: 1;
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(99,102,241,0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+.recite-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 50px rgba(99,102,241,0.15);
+}
+.recite-type {
+  font-size: 14px;
+  color: #6366f1;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.recite-question {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+.recite-hint {
+  margin-top: auto;
+  text-align: center;
+  font-size: 18px;
+  color: #94a3b8;
+  padding: 40px 0;
+  border: 2px dashed #e2e8f0;
+  border-radius: 16px;
+}
+.recite-answer {
+  font-size: 16px;
+  line-height: 2;
+  color: #475569;
+  margin-bottom: 30px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.recite-answer strong {
+  color: #6366f1;
+  font-weight: 700;
+}
+.recite-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: auto;
+}
+.recite-btn {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.recite-btn:hover { transform: translateY(-1px); }
+.recite-btn:active { transform: translateY(0); }
+.recite-btn.forgot {
+  background: #fef2f2;
+  color: #ef4444;
+  border: 2px solid #fecaca;
+}
+.recite-btn.forgot:hover { box-shadow: 0 5px 20px rgba(239,68,68,0.2); }
+.recite-btn.remembered {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+.recite-btn.remembered:hover { box-shadow: 0 5px 20px rgba(16,185,129,0.3); }
+.recite-keyboard-hint {
+  text-align: center;
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 20px;
+}
+.daily-recite-toggle {
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.daily-recite-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 20px rgba(99,102,241,0.3);
+}
+.daily-header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+}
 @media (max-width: 768px) {
   .daily-type-grid {
     grid-template-columns: 1fr;
@@ -1650,7 +1798,7 @@ function renderChapter() {
       html += `<div class="question-card ${isMastered ? 'mastered' : ''}" onclick="openModal(${q.id})">
         <div class="question-header">
           <span class="question-type ${getTypeClass(q.type)}">${getTypeName(q.type)}</span>
-          <div class="question-text">${q.question}</div>
+          <div class="question-text">${q.question.replace(/^\d+\.\s*/, '')}</div>
           <div class="question-actions">
             <button class="q-btn ${isFav ? 'favorited' : ''}" onclick="event.stopPropagation();toggleFavorite(${q.id})" title="收藏">${isFav ? '★' : '☆'}</button>
             <button class="q-btn ${isMastered ? 'mastered' : ''}" onclick="event.stopPropagation();toggleMastered(${q.id})" title="已掌握">${isMastered ? '✓' : '○'}</button>
@@ -1711,7 +1859,7 @@ function renderSearch() {
     html += '<div class="no-results"><div style="font-size:40px;margin-bottom:10px">🔍</div>没有找到相关题目</div>';
   } else {
     results.forEach(q => {
-      const highlighted = q.question.replace(new RegExp(query, 'gi'), m => '<mark>' + m + '</mark>');
+      const highlighted = q.question.replace(/^\d+\.\s*/, '').replace(new RegExp(query, 'gi'), m => '<mark>' + m + '</mark>');
       html += `<div class="search-result" onclick="openModal(${q.id})">
         <div class="result-chapter">${q.chapter} · ${q.knowledge_point}</div>
         <div class="result-question">${highlighted}</div>
@@ -1765,7 +1913,7 @@ function renderQuestionList(questions) {
     html += `<div class="question-card ${isMastered ? 'mastered' : ''}" onclick="openModal(${q.id})">
       <div class="question-header">
         <span class="question-type ${getTypeClass(q.type)}">${getTypeName(q.type)}</span>
-        <div class="question-text">${q.question}<br><small style="color:var(--text-3);font-size:11px">${q.chapter} · ${q.knowledge_point}</small></div>
+        <div class="question-text">${q.question.replace(/^\d+\.\s*/, '')}<br><small style="color:var(--text-3);font-size:11px">${q.chapter} · ${q.knowledge_point}</small></div>
         <div class="question-actions">
           <button class="q-btn ${isFav ? 'favorited' : ''}" onclick="event.stopPropagation();toggleFavorite(${q.id})">${isFav ? '★' : '☆'}</button>
           <button class="q-btn ${isMastered ? 'mastered' : ''}" onclick="event.stopPropagation();toggleMastered(${q.id})">${isMastered ? '✓' : '○'}</button>
@@ -1793,7 +1941,7 @@ function renderRandom() {
       <span class="random-type">${getTypeName(q.type)}</span>
       <span class="random-count">${q.chapter}</span>
     </div>
-    <div class="random-question">${q.question}</div>
+    <div class="random-question">${q.question.replace(/^\d+\.\s*/, '')}</div>
     <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:16px">${q.knowledge_point}</div>
     <div class="random-actions">
       <button class="random-btn" onclick="nextRandom()">🔄 换一题</button>
@@ -1855,10 +2003,64 @@ function viewDailyQuestions(type) {
     state.dailyQuestions = questions;
     state.dailyType = type;
     state.dailyShowAnswers = {};
+  state.reciteMode = false;
+  state.reciteIndex = 0;
+  state.reciteRemembered = [];
+  state.reciteForgot = [];
     render();
   } else {
     drawDailyQuestions(type);
   }
+}
+
+function toggleReciteMode() {
+  state.reciteMode = !state.reciteMode;
+  if (state.reciteMode) {
+    state.reciteIndex = 0;
+    state.reciteRemembered = [];
+    state.reciteForgot = [];
+    state.dailyShowAnswers = {};
+  }
+  render();
+}
+
+function markRecite(type) {
+  const q = state.dailyQuestions[state.reciteIndex];
+  if (type === 'remembered') {
+    if (!state.reciteRemembered.includes(q.id)) state.reciteRemembered.push(q.id);
+  } else {
+    if (!state.reciteForgot.includes(q.id)) state.reciteForgot.push(q.id);
+    // 没记住的自动加入收藏
+    toggleFavorite(q.id, true);
+  }
+  // 下一题
+  if (state.reciteIndex < state.dailyQuestions.length - 1) {
+    state.reciteIndex++;
+    state.dailyShowAnswers = {};
+  } else {
+    // 背完了，显示结果
+    showReciteResult();
+    return;
+  }
+  render();
+}
+
+function showReciteResult() {
+  const total = state.dailyQuestions.length;
+  const remembered = state.reciteRemembered.length;
+  const forgot = state.reciteForgot.length;
+  state.reciteResult = { total, remembered, forgot };
+  render();
+}
+
+function getChapterName(chapter) {
+  const chapterMap = {
+    1: '第一章 艺术观念', 2: '第二章 艺术的功能', 3: '第三章 艺术创作',
+    4: '第四章 艺术作品', 5: '第五章 艺术接受', 6: '第六章 艺术类型',
+    7: '第七章 艺术的发展', 8: '第八章 艺术的风格、流派与思潮',
+    9: '第九章 艺术批评', 10: '第十章 艺术的当代嬗变'
+  };
+  return chapterMap[chapter] || ('第' + chapter + '章');
 }
 
 function drawDailyQuestions(type) {
@@ -1890,6 +2092,10 @@ function drawDailyQuestions(type) {
   state.dailyQuestions = selected;
   state.dailyType = type;
   state.dailyShowAnswers = {};
+  state.reciteMode = false;
+  state.reciteIndex = 0;
+  state.reciteRemembered = [];
+  state.reciteForgot = [];
   render();
 }
 
@@ -1931,7 +2137,7 @@ function renderDaily() {
         <span class="daily-question-num">${idx + 1}</span>
         <div class="daily-question-info">
           <div class="daily-question-type">${getTypeName(q.type)} · ${q.chapter}</div>
-          <div class="daily-question-text">${q.question}</div>
+          <div class="daily-question-text">${q.question.replace(/^\d+\.\s*/, '')}</div>
         </div>
         <span class="daily-question-toggle">${show ? '收起答案 ▲' : '显示答案 ▼'}</span>
       </div>
@@ -1939,10 +2145,47 @@ function renderDaily() {
     </div>`;
   }).join('');
   
+  const reciteBtn = `<button class="daily-recite-toggle" onclick="toggleReciteMode()">${state.reciteMode ? '退出背诵模式' : '🎯 背诵模式'}</button>`;
+  
+  if (state.reciteMode) {
+    const q = state.dailyQuestions[state.reciteIndex];
+    const showAnswer = state.dailyShowAnswers[q.id];
+    const progress = `${state.reciteIndex + 1} / ${state.dailyQuestions.length}`;
+    const rememberedCount = state.reciteRemembered.length;
+    const forgotCount = state.reciteForgot.length;
+    
+    return `<div class="recite-mode-container">
+      <div class="recite-header">
+        <button class="recite-exit" onclick="toggleReciteMode()">← 退出</button>
+        <div class="recite-progress">${progress}</div>
+        <div class="recite-stats">
+          <span class="recite-ok">✓ ${rememberedCount}</span>
+          <span class="recite-no">✗ ${forgotCount}</span>
+        </div>
+      </div>
+      <div class="recite-card" onclick="toggleDailyAnswer(${q.id})">
+        <div class="recite-type">${state.dailyType} · ${getChapterName(q.chapter)}</div>
+        <div class="recite-question">${q.question.replace(/^\d+\.\s*/, '')}</div>
+        ${showAnswer 
+          ? `<div class="recite-answer">${formatAnswer(q.answer)}</div>
+             <div class="recite-actions" onclick="event.stopPropagation()">
+               <button class="recite-btn forgot" onclick="markRecite('forgot')">没记住</button>
+               <button class="recite-btn remembered" onclick="markRecite('remembered')">记住了</button>
+             </div>`
+          : `<div class="recite-hint">👆 点击显示答案</div>`
+        }
+      </div>
+      <div class="recite-keyboard-hint">空格键显示答案 · ← → 切换题目</div>
+    </div>`;
+  }
+  
   return `<div class="page-header">
     <div class="page-title">🎯 ${state.dailyType} · 每日抽背</div>
     <div class="page-desc">今日抽取的 ${state.dailyQuestions.length} 道题目，点击题目查看答案</div>
-    <button class="daily-back-btn" onclick="state.dailyQuestions=null;render()">← 重新选择题型</button>
+    <div class="daily-header-actions">
+      ${reciteBtn}
+      <button class="daily-back-btn" onclick="state.dailyQuestions=null;render()">← 重新选择题型</button>
+    </div>
   </div>
   <div class="daily-questions-list">${questionsHtml}</div>`;
 }
@@ -2037,7 +2280,7 @@ function openModal(id) {
   currentModalId = id;
   document.getElementById('modalType').textContent = getTypeName(q.type);
   document.getElementById('modalType').className = 'modal-type ' + getTypeClass(q.type);
-  document.getElementById('modalQuestion').textContent = q.question;
+  document.getElementById('modalQuestion').textContent = q.question.replace(/^\d+\.\s*/, '');
   document.getElementById('modalMeta').innerHTML = '<span>📖 ' + q.chapter + '</span><span>📌 ' + q.knowledge_point + '</span>';
   document.getElementById('modalAnswer').innerHTML = formatAnswer(q.answer);
   // 更新按钮状态
@@ -2116,10 +2359,51 @@ document.addEventListener('keydown', function(e) {
 
 // Init
 document.documentElement.setAttribute('data-theme', state.theme);
+// 键盘快捷键
+document.addEventListener('keydown', function(e) {
+  if (state.page !== 'daily' || !state.reciteMode || !state.dailyQuestions) return;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    const q = state.dailyQuestions[state.reciteIndex];
+    toggleDailyAnswer(q.id);
+  } else if (e.code === 'ArrowRight') {
+    e.preventDefault();
+    if (state.reciteIndex < state.dailyQuestions.length - 1) {
+      state.reciteIndex++;
+      state.dailyShowAnswers = {};
+      render();
+    }
+  } else if (e.code === 'ArrowLeft') {
+    e.preventDefault();
+    if (state.reciteIndex > 0) {
+      state.reciteIndex--;
+      state.dailyShowAnswers = {};
+      render();
+    }
+  } else if (e.code === 'Digit1') {
+    e.preventDefault();
+    markRecite('forgot');
+  } else if (e.code === 'Digit2') {
+    e.preventDefault();
+    markRecite('remembered');
+  }
+});
+
 render();
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
 
 
 

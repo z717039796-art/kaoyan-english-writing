@@ -1535,7 +1535,460 @@ body::before {
     grid-template-columns: 1fr;
   }
 }
-</style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
+
+/* ===== 闪卡模式 ===== */
+.chapter-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+.flashcard-toggle-btn {
+  padding: 10px 22px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.flashcard-toggle-btn:hover {
+  border-color: #6366f1;
+  color: #6366f1;
+}
+.flashcard-toggle-btn.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+}
+
+.flashcard-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+.flashcard-progress {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+}
+.flashcard-wrapper {
+  perspective: 1500px;
+  cursor: pointer;
+  margin-bottom: 28px;
+}
+.flashcard {
+  position: relative;
+  width: 100%;
+  min-height: 380px;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flashcard.flipped {
+  transform: rotateY(180deg);
+}
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 380px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 24px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+.flashcard-front {
+  background: white;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.flashcard-back {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border: 2px solid #6366f1;
+  box-shadow: 0 10px 40px rgba(99,102,241,0.15);
+  transform: rotateY(180deg);
+  overflow-y: auto;
+}
+.flashcard-type {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+.flashcard-question {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.4;
+  margin-bottom: 32px;
+}
+.flashcard-hint {
+  font-size: 13px;
+  color: #cbd5e1;
+  font-weight: 500;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.flashcard-answer {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #334155;
+}
+.flashcard-answer p {
+  margin-bottom: 12px;
+}
+.flashcard-answer strong {
+  color: #6366f1;
+  font-weight: 700;
+}
+.flashcard-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.flashcard-btn {
+  padding: 12px 22px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.flashcard-btn:hover:not(:disabled) {
+  border-color: #6366f1;
+  color: #6366f1;
+  transform: translateY(-1px);
+}
+.flashcard-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.flashcard-btn.primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border-color: transparent;
+}
+.flashcard-btn.primary:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(99,102,241,0.3);
+  color: white;
+}
+.flashcard-btn.fav.active {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #d97706;
+}
+.flashcard-btn.master.active {
+  background: #dcfce7;
+  border-color: #22c55e;
+  color: #16a34a;
+}
+.flashcard-keyboard {
+  text-align: center;
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-top: 20px;
+}
+/* ===== 弹窗闪卡 ===== */
+.flashcard-wrapper {
+  perspective: 1500px;
+  cursor: pointer;
+  margin: 20px 0;
+  position: relative;
+}
+.flashcard-modal {
+  position: relative;
+  width: 100%;
+  min-height: 340px;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flashcard-modal.flipped {
+  transform: rotateY(180deg);
+}
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 340px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 20px;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+}
+.flashcard-front {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border: 2px solid #e2e8f0;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.flashcard-back {
+  background: white;
+  border: 2px solid #6366f1;
+  box-shadow: 0 8px 30px rgba(99,102,241,0.12);
+  transform: rotateY(180deg);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+.flashcard-front .flashcard-type {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.flashcard-front .flashcard-question {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.flashcard-front .flashcard-meta {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 24px;
+}
+.flashcard-front .flashcard-hint {
+  font-size: 12px;
+  color: #cbd5e1;
+  font-weight: 500;
+  animation: pulse 2s ease-in-out infinite;
+}
+.flashcard-back .flashcard-answer-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6366f1;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+.flashcard-back .flashcard-answer {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #334155;
+  padding-bottom: 90px;
+}
+.flashcard-back .flashcard-answer p {
+  margin-bottom: 10px;
+}
+.flashcard-back .flashcard-answer strong {
+  color: #6366f1;
+  font-weight: 700;
+}
+/* ===== 涂鸦功能 ===== */
+.doodle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 18px;
+  cursor: crosshair;
+  z-index: 10;
+  pointer-events: none;
+  display: none;
+}
+.doodle-canvas.active {
+  display: block;
+  pointer-events: auto;
+  touch-action: none;
+}
+.doodle-toggle-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #64748b;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.doodle-toggle-btn:hover {
+  background: #e2e8f0;
+}
+.doodle-toggle-btn.active {
+  background: #6366f1;
+  color: white;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.4);
+}
+.flashcard-back.answer-hidden .flashcard-answer-label,
+.flashcard-back.answer-hidden .flashcard-answer {
+  filter: blur(8px);
+  user-select: none;
+  pointer-events: none;
+}
+.flashcard-back.answer-hidden::after {
+  content: '🙈 答案已隐藏，点击"隐藏"按钮显示';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  color: #94a3b8;
+  font-weight: 600;
+  z-index: 5;
+}
+.doodle-toolbar {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 4px;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(10px);
+  border-radius: 999px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  z-index: 20;
+}
+.doodle-toolbar::-webkit-scrollbar {
+  display: none;
+}
+.doodle-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #64748b;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.doodle-btn:hover {
+  background: #e2e8f0;
+  transform: scale(1.1);
+}
+.doodle-btn.active {
+  background: #6366f1;
+  color: white;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.4);
+}
+.doodle-divider {
+  width: 16px;
+  height: 1px;
+  background: #e2e8f0;
+  margin: 2px 0;
+  flex-shrink: 0;
+}
+/* ===== 直接题目+答案弹窗 ===== */
+.qa-content {
+  padding: 20px 24px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.qa-question {
+  text-align: center;
+  padding: 16px 0;
+}
+.qa-question-text {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+.qa-meta {
+  font-size: 13px;
+  color: #94a3b8;
+}
+.qa-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 8px 0;
+}
+.qa-answer-area {
+  position: relative;
+  padding-top: 8px;
+}
+.qa-answer-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6366f1;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+.qa-answer {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #334155;
+  padding-bottom: 20px;
+  padding-right: 50px;
+}
+.qa-answer p {
+  margin-bottom: 10px;
+}
+.qa-answer strong {
+  color: #6366f1;
+  font-weight: 700;
+}
+/* 隐藏答案效果 */
+.qa-answer-area.answer-hidden .qa-answer-label,
+.qa-answer-area.answer-hidden .qa-answer {
+  filter: blur(8px);
+  user-select: none;
+  pointer-events: none;
+}
+.qa-answer-area.answer-hidden::after {
+  content: '🙈 答案已隐藏，点击"隐藏"按钮显示';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  color: #94a3b8;
+  font-weight: 600;
+  z-index: 5;
+}
+/* ===== 底部导航按钮 ===== */
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 12px 20px 16px;
+}
+.modal-nav-btn {
+  font-weight: 700;
+  font-size: 13px;
+}</style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div id="app">
@@ -1576,18 +2029,43 @@ body::before {
         <div class="modal-nav-count" id="modalNavCount"></div>
         <button class="modal-close" onclick="closeModal()">✕</button>
       </div>
-      <!-- 悬浮导航按钮 -->
-      <button class="modal-float-btn modal-float-prev" onclick="prevQuestion()" title="上一题 (←)">‹</button>
-      <button class="modal-float-btn modal-float-next" onclick="nextQuestion()" title="下一题 (→)">›</button>
-      <div class="modal-question" id="modalQuestion"></div>
-      <div class="modal-meta" id="modalMeta"></div>
+      
+      <div class="qa-content">
+        <div class="qa-question">
+          <div class="qa-question-text" id="modalQuestion"></div>
+          <div class="qa-meta" id="modalMeta"></div>
+        </div>
+        <div class="qa-divider"></div>
+        <div class="qa-answer-area" id="qaAnswerArea">
+          <div class="qa-answer-label">📝 参考答案</div>
+          <div class="qa-answer" id="modalAnswer"></div>
+          <canvas class="doodle-canvas" id="doodleCanvas"></canvas>
+        </div>
+        <div class="doodle-toolbar" id="doodleToolbar" onclick="event.stopPropagation()">
+          <button class="doodle-toggle-btn" id="doodleToggleBtn" onclick="toggleDoodleMode()" title="涂鸦开关">✏</button>
+          <button class="doodle-toggle-btn" id="hideAnswerBtn" onclick="toggleHideAnswer()" title="隐藏答案">🙈</button>
+          <div class="doodle-divider"></div>
+          <button class="doodle-btn active" data-color="#6366f1" onclick="setDoodleColor(this,'#6366f1')" title="紫色" style="color:#6366f1">●</button>
+          <button class="doodle-btn" data-color="#ef4444" onclick="setDoodleColor(this,'#ef4444')" title="红色" style="color:#ef4444">●</button>
+          <button class="doodle-btn" data-color="#f59e0b" onclick="setDoodleColor(this,'#f59e0b')" title="黄色" style="color:#f59e0b">●</button>
+          <button class="doodle-btn" data-color="#10b981" onclick="setDoodleColor(this,'#10b981')" title="绿色" style="color:#10b981">●</button>
+          <div class="doodle-divider"></div>
+          <button class="doodle-btn" onclick="setDoodleSize(2)" title="细">━</button>
+          <button class="doodle-btn" onclick="setDoodleSize(4)" title="中">━</button>
+          <button class="doodle-btn" onclick="setDoodleSize(7)" title="粗">━</button>
+          <div class="doodle-divider"></div>
+          <button class="doodle-btn" onclick="toggleDoodleEraser()" id="eraserBtn" title="橡皮擦">⌫</button>
+          <button class="doodle-btn" onclick="clearDoodle()" title="清除">✕</button>
+        </div>
+      </div>
       <div class="modal-actions">
+        <button class="modal-btn modal-nav-btn" onclick="prevQuestion()" title="上一题 (←)">‹ 上一题</button>
         <button class="modal-btn" id="modalFavBtn" onclick="toggleModalFavorite()">☆ 收藏</button>
         <button class="modal-btn" id="modalMasterBtn" onclick="toggleModalMaster()">○ 标记掌握</button>
+        <button class="modal-btn modal-nav-btn" onclick="nextQuestion()" title="下一题 (→)">下一题 ›</button>
       </div>
-      <div class="modal-divider"></div>
-      <div class="modal-answer-label">📝 参考答案</div>
-      <div class="modal-answer" id="modalAnswer"></div>
+    </div>
+  </div>
     </div>
   </div>
 </div>
@@ -1597,6 +2075,9 @@ const QUESTIONS = [{"id": 1, "chapter": "第一章艺术观念", "knowledge_poin
 const CHAPTERS = [{"name": "第一章艺术观念", "count": 30, "kp_count": 6}, {"name": "第二章艺术的功能", "count": 11, "kp_count": 2}, {"name": "第三章艺术创作", "count": 16, "kp_count": 3}, {"name": "第四章艺术作品", "count": 18, "kp_count": 3}, {"name": "第五章艺术接受", "count": 27, "kp_count": 2}, {"name": "第六章艺术类型", "count": 27, "kp_count": 3}, {"name": "第七章艺术的发展", "count": 23, "kp_count": 2}, {"name": "第八章艺术的风格、流派与思潮", "count": 14, "kp_count": 3}, {"name": "第九章艺术批评", "count": 8, "kp_count": 3}, {"name": "第十章艺本的当代嬗变", "count": 16, "kp_count": 4}];
 
 let state = {
+  flashcardMode: false,
+  flashcardIndex: 0,
+  flashcardFlipped: false,
   page: 'home',
   currentChapter: null,
   searchQuery: '',
@@ -1767,50 +2248,49 @@ function renderChapter() {
   const masteredInCh = questions.filter(q => state.mastered.includes(q.id)).length;
   const pct = questions.length > 0 ? Math.round(masteredInCh / questions.length * 100) : 0;
   
-  // Group by knowledge point
+  let html = '<div class="chapter-selector">' +
+      CHAPTERS.map((c, i) => '<div class="chapter-selector-item ' + (i === state.currentChapter ? 'active' : '') + '" onclick="navigate(\'chapter\', ' + i + ')">' + (i+1) + '. ' + c.name.replace(/^第[一二三四五六七八九十]+章/, '') + '</div>').join('') +
+    '</div>' +
+    '<div class="page-header">' +
+    '<div class="page-title">' + ch.name + '</div>' +
+    '<div class="page-desc">共 ' + questions.length + ' 题 · 已掌握 ' + masteredInCh + ' 题 · 完成度 ' + pct + '%</div>' +
+    '</div>';
+  
+  // 普通列表模式
   const kpMap = {};
   questions.forEach(q => {
     if(!kpMap[q.knowledge_point]) kpMap[q.knowledge_point] = [];
     kpMap[q.knowledge_point].push(q);
   });
   
-  let html = `<div class="chapter-selector">
-      ${CHAPTERS.map((ch, i) => `<div class="chapter-selector-item ${i === state.currentChapter ? 'active' : ''}" onclick="navigate('chapter', ${i})">${i+1}. ${ch.name.replace(/^第[一二三四五六七八九十]+章/, '')}</div>`).join('')}
-    </div>
-    <div class="page-header">
-    <div class="page-title">${ch.name}</div>
-    <div class="page-desc">共 ${questions.length} 题 · 已掌握 ${masteredInCh} 题 · 完成度 ${pct}%</div>
-  </div>`;
-  
   for(const [kp, kpQuestions] of Object.entries(kpMap)) {
     const collapsed = state.collapsedKPs[kp];
-    html += `<div class="knowledge-block" data-kp="${kp}">
-      <div class="knowledge-header" onclick="toggleKP(this)">
-        <div class="knowledge-icon">📖</div>
-        <div class="knowledge-title">${kp}</div>
-        <div class="knowledge-count">${kpQuestions.length}题</div>
-        <div class="knowledge-toggle ${collapsed ? '' : 'open'}">▶</div>
-      </div>
-      <div class="knowledge-questions ${collapsed ? 'collapsed' : ''}">`;
+    html += '<div class="knowledge-block" data-kp="' + kp + '">' +
+      '<div class="knowledge-header" onclick="toggleKP(this)">' +
+        '<div class="knowledge-icon">📖</div>' +
+        '<div class="knowledge-title">' + kp + '</div>' +
+        '<div class="knowledge-count">' + kpQuestions.length + '题</div>' +
+        '<div class="knowledge-toggle ' + (collapsed ? '' : 'open') + '">▶</div>' +
+      '</div>' +
+      '<div class="knowledge-questions ' + (collapsed ? 'collapsed' : '') + '">';
     kpQuestions.forEach(q => {
       const isFav = state.favorites.includes(q.id);
       const isMastered = state.mastered.includes(q.id);
-      html += `<div class="question-card ${isMastered ? 'mastered' : ''}" onclick="openModal(${q.id})">
-        <div class="question-header">
-          <span class="question-type ${getTypeClass(q.type)}">${getTypeName(q.type)}</span>
-          <div class="question-text">${q.question.replace(/^\d+\.\s*/, '')}</div>
-          <div class="question-actions">
-            <button class="q-btn ${isFav ? 'favorited' : ''}" onclick="event.stopPropagation();toggleFavorite(${q.id})" title="收藏">${isFav ? '★' : '☆'}</button>
-            <button class="q-btn ${isMastered ? 'mastered' : ''}" onclick="event.stopPropagation();toggleMastered(${q.id})" title="已掌握">${isMastered ? '✓' : '○'}</button>
-          </div>
-        </div>
-      </div>`;
+      html += '<div class="question-card ' + (isMastered ? 'mastered' : '') + '" onclick="openModal(' + q.id + ')">' +
+        '<div class="question-header">' +
+          '<span class="question-type ' + getTypeClass(q.type) + '">' + getTypeName(q.type) + '</span>' +
+          '<div class="question-text">' + q.question.replace(/^\d+\.\s*/, '') + '</div>' +
+          '<div class="question-actions">' +
+            '<button class="q-btn ' + (isFav ? 'favorited' : '') + '" onclick="event.stopPropagation();toggleFavorite(' + q.id + ')" title="收藏">' + (isFav ? '★' : '☆') + '</button>' +
+            '<button class="q-btn ' + (isMastered ? 'mastered' : '') + '" onclick="event.stopPropagation();toggleMastered(' + q.id + ')" title="已掌握">' + (isMastered ? '✓' : '○') + '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
     });
     html += '</div></div>';
   }
   return html;
 }
-
 function resetDaily() {
   const keys = Object.keys(localStorage).filter(k => k.startsWith('art_') || k.startsWith('daily_drawn_') || k.startsWith('daily_questions_'));
   keys.forEach(k => localStorage.removeItem(k));
@@ -2271,6 +2751,51 @@ function render() {
 }
 
 
+
+// ===== 闪卡模式 =====
+function toggleFlashcardMode() {
+  state.flashcardMode = !state.flashcardMode;
+  state.flashcardIndex = 0;
+  state.flashcardFlipped = false;
+  render();
+}
+function flipFlashcard() {
+  state.flashcardFlipped = !state.flashcardFlipped;
+  render();
+}
+function prevFlashcard() {
+  if(state.flashcardIndex > 0) {
+    state.flashcardIndex--;
+    state.flashcardFlipped = false;
+    render();
+  }
+}
+function nextFlashcard() {
+  const ch = CHAPTERS[state.currentChapter];
+  let questions = QUESTIONS.filter(q => q.chapter === ch.name);
+  if(state.filter !== 'all') {
+    questions = questions.filter(q => getTypeName(q.type) === state.filter);
+  }
+  if(state.flashcardIndex < questions.length - 1) {
+    state.flashcardIndex++;
+    state.flashcardFlipped = false;
+    render();
+  }
+}
+// 闪卡键盘快捷键
+document.addEventListener('keydown', function(e) {
+  if(!state.flashcardMode || state.page !== 'chapter') return;
+  if(e.code === 'Space') {
+    e.preventDefault();
+    flipFlashcard();
+  } else if(e.code === 'ArrowLeft') {
+    e.preventDefault();
+    prevFlashcard();
+  } else if(e.code === 'ArrowRight') {
+    e.preventDefault();
+    nextFlashcard();
+  }
+});
 // ===== 模态窗口 =====
 let currentModalId = null;
 
@@ -2279,6 +2804,8 @@ function openModal(id) {
   if(!q) return;
   currentModalId = id;
   document.getElementById('modalType').textContent = getTypeName(q.type);
+  const modalTypeFront = document.getElementById('modalTypeFront');
+  if(modalTypeFront) modalTypeFront.textContent = getTypeName(q.type);
   document.getElementById('modalType').className = 'modal-type ' + getTypeClass(q.type);
   document.getElementById('modalQuestion').textContent = q.question.replace(/^\d+\.\s*/, '');
   document.getElementById('modalMeta').innerHTML = '<span>📖 ' + q.chapter + '</span><span>📌 ' + q.knowledge_point + '</span>';
@@ -2295,9 +2822,22 @@ function openModal(id) {
   // 更新导航计数
   const idx = QUESTIONS.findIndex(x => x.id === id);
   document.getElementById('modalNavCount').textContent = (idx + 1) + ' / ' + QUESTIONS.length;
-  // 更新悬浮按钮禁用状态
-  document.querySelector('.modal-float-prev').disabled = (idx <= 0);
-  document.querySelector('.modal-float-next').disabled = (idx >= QUESTIONS.length - 1);
+  // 更新底部导航按钮禁用状态
+  const navBtns = document.querySelectorAll('.modal-nav-btn');
+  if(navBtns.length >= 2) {
+    navBtns[0].disabled = (idx <= 0);
+    navBtns[1].disabled = (idx >= QUESTIONS.length - 1);
+  }
+  // 重置涂鸦和隐藏状态
+  doodleMode = false;
+  const canvas = document.getElementById('doodleCanvas');
+  if(canvas) canvas.classList.remove('active');
+  const doodleBtn = document.getElementById('doodleToggleBtn');
+  if(doodleBtn) { doodleBtn.classList.remove('active'); doodleBtn.textContent = '✏'; }
+  const area = document.getElementById('qaAnswerArea');
+  if(area) area.classList.remove('answer-hidden');
+  const hideBtn = document.getElementById('hideAnswerBtn');
+  if(hideBtn) { hideBtn.classList.remove('active'); hideBtn.textContent = '🙈'; }
   document.getElementById('modalOverlay').classList.add('show');
   document.body.style.overflow = 'hidden';
 }
@@ -2390,9 +2930,249 @@ document.addEventListener('keydown', function(e) {
 });
 
 render();
-</script>
+
+function flipModalCard() {
+  const card = document.getElementById('flashcardModal');
+  const toolbar = document.getElementById('doodleToolbar');
+  if(card) {
+    card.classList.toggle('flipped');
+    const isFlipped = card.classList.contains('flipped');
+
+    // 翻转时重置涂鸦和隐藏状态
+    doodleMode = false;
+    const canvas = document.getElementById('doodleCanvas');
+    if(canvas) canvas.classList.remove('active');
+    const doodleBtn = document.getElementById('doodleToggleBtn');
+    if(doodleBtn) { doodleBtn.classList.remove('active'); doodleBtn.textContent = '✏'; }
+    const back = document.querySelector('.flashcard-back');
+    if(back) back.classList.remove('answer-hidden');
+    const hideBtn = document.getElementById('hideAnswerBtn');
+    if(hideBtn) { hideBtn.classList.remove('active'); hideBtn.textContent = '🙈'; }
+  }
+}
+
+// ===== 涂鸦功能 =====
+let doodleCtx = null;
+let doodleDrawing = false;
+let doodleColor = '#6366f1';
+let doodleSize = 3;
+let doodleIsEraser = false;
+let doodleLastX = 0;
+let doodleLastY = 0;
+let doodleMidX = 0;
+let doodleMidY = 0;
+let doodlePoints = [];
+
+let doodleMode = false;
+
+function initDoodleCanvas() {
+  const canvas = document.getElementById('doodleCanvas');
+  if(!canvas) return;
+  const area = canvas.parentElement;
+  if(!area) return;
+  const w = area.offsetWidth;
+  const h = area.offsetHeight;
+  canvas.width = w;
+  canvas.height = h;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  doodleCtx = canvas.getContext('2d');
+  doodleCtx.lineCap = 'round';
+  doodleCtx.lineJoin = 'round';
+  
+  // 触摸事件（iPad/Apple Pencil）
+  canvas.addEventListener('touchstart', doodleStart, {passive: false});
+  canvas.addEventListener('touchmove', doodleMove, {passive: false});
+  canvas.addEventListener('touchend', doodleEnd);
+  // 鼠标事件（桌面测试）
+  canvas.addEventListener('mousedown', doodleStart);
+  canvas.addEventListener('mousemove', doodleMove);
+  canvas.addEventListener('mouseup', doodleEnd);
+  canvas.addEventListener('mouseleave', doodleEnd);
+}
+
+function toggleDoodleMode() {
+  doodleMode = !doodleMode;
+  const canvas = document.getElementById('doodleCanvas');
+  const btn = document.getElementById('doodleToggleBtn');
+  if(doodleMode) {
+    canvas.classList.add('active');
+    btn.classList.add('active');
+    btn.textContent = '✏中';
+    setTimeout(initDoodleCanvas, 50);
+  } else {
+    canvas.classList.remove('active');
+    btn.classList.remove('active');
+    btn.textContent = '✏';
+  }
+}
+
+function toggleHideAnswer() {
+  const area = document.getElementById('qaAnswerArea');
+  const btn = document.getElementById('hideAnswerBtn');
+  if(area.classList.contains('answer-hidden')) {
+    area.classList.remove('answer-hidden');
+    btn.classList.remove('active');
+    btn.textContent = '🙈';
+  } else {
+    area.classList.add('answer-hidden');
+    btn.classList.add('active');
+    btn.textContent = '👁';
+  }
+}
+
+function doodleStart(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  doodleDrawing = true;
+  const pos = getDoodlePos(e);
+  doodleLastX = pos.x;
+  doodleLastY = pos.y;
+  doodleMidX = pos.x;
+  doodleMidY = pos.y;
+  doodlePoints = [{x: pos.x, y: pos.y}];
+  // 画一个点（钢笔起笔）
+  doodleCtx.beginPath();
+  doodleCtx.arc(pos.x, pos.y, doodleSize/2, 0, Math.PI*2);
+  doodleCtx.fillStyle = doodleIsEraser ? 'rgba(255,255,255,1)' : doodleColor;
+  doodleCtx.fill();
+  doodleCtx.beginPath();
+  doodleCtx.moveTo(pos.x, pos.y);
+}
+
+function doodleMove(e) {
+  if(!doodleDrawing) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const pos = getDoodlePos(e);
+  
+  // 钢笔级平滑：二次贝塞尔曲线
+  const midX = (doodleLastX + pos.x) / 2;
+  const midY = (doodleLastY + pos.y) / 2;
+  
+  doodleCtx.beginPath();
+  doodleCtx.moveTo(doodleMidX, doodleMidY);
+  doodleCtx.quadraticCurveTo(doodleLastX, doodleLastY, midX, midY);
+  doodleCtx.strokeStyle = doodleIsEraser ? 'rgba(255,255,255,1)' : doodleColor;
+  doodleCtx.lineWidth = doodleIsEraser ? doodleSize * 4 : doodleSize;
+  doodleCtx.lineCap = 'round';
+  doodleCtx.lineJoin = 'round';
+  doodleCtx.stroke();
+  
+  doodleMidX = midX;
+  doodleMidY = midY;
+  doodleLastX = pos.x;
+  doodleLastY = pos.y;
+}
+
+function doodleEnd() {
+  if(doodleDrawing) {
+    // 完成最后一段曲线到终点
+    doodleCtx.beginPath();
+    doodleCtx.moveTo(doodleMidX, doodleMidY);
+    doodleCtx.quadraticCurveTo(doodleLastX, doodleLastY, doodleLastX, doodleLastY);
+    doodleCtx.strokeStyle = doodleIsEraser ? 'rgba(255,255,255,1)' : doodleColor;
+    doodleCtx.lineWidth = doodleIsEraser ? doodleSize * 4 : doodleSize;
+    doodleCtx.stroke();
+    // 收笔点
+    doodleCtx.beginPath();
+    doodleCtx.arc(doodleLastX, doodleLastY, doodleSize/2, 0, Math.PI*2);
+    doodleCtx.fillStyle = doodleIsEraser ? 'rgba(255,255,255,1)' : doodleColor;
+    doodleCtx.fill();
+  }
+  doodleDrawing = false;
+}
+
+function getDoodlePos(e) {
+  const canvas = document.getElementById('doodleCanvas');
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+}
+
+function setDoodleColor(btn, color) {
+  doodleColor = color;
+  doodleIsEraser = false;
+  document.querySelectorAll('.doodle-btn[data-color]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('eraserBtn').classList.remove('active');
+  // 确保画笔颜色立即生效
+  if(doodleCtx) doodleCtx.strokeStyle = color;
+}
+
+function setDoodleSize(size) {
+  doodleSize = size;
+}
+
+function toggleDoodleEraser() {
+  doodleIsEraser = !doodleIsEraser;
+  const btn = document.getElementById('eraserBtn');
+  if(doodleIsEraser) {
+    btn.classList.add('active');
+    document.querySelectorAll('.doodle-btn[data-color]').forEach(b => b.classList.remove('active'));
+  } else {
+    btn.classList.remove('active');
+  }
+}
+
+function clearDoodle() {
+  const canvas = document.getElementById('doodleCanvas');
+  if(doodleCtx && canvas) {
+    doodleCtx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

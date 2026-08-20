@@ -1242,6 +1242,27 @@ body::before {
   margin-bottom: 20px;
   line-height: 1.6;
 }
+.daily-type-btn-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.daily-type-btn-group .daily-type-btn {
+  flex: 1;
+  margin: 0;
+  font-size: 13px;
+  padding: 8px 12px;
+}
+.daily-type-btn-group .daily-type-btn.view {
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: white;
+}
+.daily-type-btn-group .daily-type-btn.redraw {
+  background: rgba(99,102,241,0.1);
+  color: #6366f1;
+  border: 1px solid rgba(99,102,241,0.3);
+}
+
 .daily-type-btn {
   display: inline-block;
   padding: 10px 24px;
@@ -1643,8 +1664,10 @@ function renderChapter() {
 }
 
 function resetDaily() {
-  const keys = Object.keys(localStorage).filter(k => k.startsWith('art_') || k.startsWith('daily_drawn_'));
+  const keys = Object.keys(localStorage).filter(k => k.startsWith('art_') || k.startsWith('daily_drawn_') || k.startsWith('daily_questions_'));
   keys.forEach(k => localStorage.removeItem(k));
+  state.dailyQuestions = null;
+  state.dailyType = null;
   render();
 }
 
@@ -1806,9 +1829,36 @@ function getDailyDrawn() {
   return data ? JSON.parse(data) : {};
 }
 
+function getDailyQuestionsKey(type) {
+  return 'daily_questions_' + getTodayKey() + '_' + type;
+}
+
+function saveDailyQuestions(type, questions) {
+  const key = getDailyQuestionsKey(type);
+  localStorage.setItem(key, JSON.stringify(questions));
+}
+
+function getDailyQuestions(type) {
+  const key = getDailyQuestionsKey(type);
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : null;
+}
+
 function saveDailyDrawn(drawn) {
   const key = 'daily_drawn_' + getTodayKey();
   localStorage.setItem(key, JSON.stringify(drawn));
+}
+
+function viewDailyQuestions(type) {
+  const questions = getDailyQuestions(type);
+  if (questions) {
+    state.dailyQuestions = questions;
+    state.dailyType = type;
+    state.dailyShowAnswers = {};
+    render();
+  } else {
+    drawDailyQuestions(type);
+  }
 }
 
 function drawDailyQuestions(type) {
@@ -1834,6 +1884,9 @@ function drawDailyQuestions(type) {
   selected.forEach(q => drawn[type].push(q.id));
   saveDailyDrawn(drawn);
   
+  // 保存抽中的题目到本地
+  saveDailyQuestions(type, selected);
+  
   state.dailyQuestions = selected;
   state.dailyType = type;
   state.dailyShowAnswers = {};
@@ -1850,11 +1903,15 @@ function renderDaily() {
       const count = QUESTIONS.filter(q => getTypeName(q.type) === type).length;
       const drawnCount = (drawn[type] || []).length;
       const remaining = count - drawnCount;
-      return `<div class="daily-type-card" onclick="drawDailyQuestions('${type}')">
+      const hasToday = getDailyQuestions(type) !== null;
+      const btnHtml = hasToday 
+        ? `<div class="daily-type-btn-group"><button class="daily-type-btn view" onclick="event.stopPropagation();viewDailyQuestions('${type}')">查看今日抽背</button><button class="daily-type-btn redraw" onclick="event.stopPropagation();drawDailyQuestions('${type}')">重新抽取</button></div>`
+        : `<div class="daily-type-btn">抽取 5 题 →</div>`;
+      return `<div class="daily-type-card" onclick="${hasToday ? 'viewDailyQuestions(\'' + type + '\')' : 'drawDailyQuestions(\'' + type + '\')'}">
         <div class="daily-type-icon">${type === '名词解释' ? '📝' : type === '简答题' ? '✍️' : '📖'}</div>
         <div class="daily-type-name">${type}</div>
         <div class="daily-type-info">共 ${count} 题 · 今日已抽 ${drawnCount} 题 · 剩余 ${remaining > 0 ? remaining : '已抽完，点击重置'}</div>
-        <div class="daily-type-btn">抽取 5 题 →</div>
+        ${btnHtml}
       </div>`;
     }).join('');
     
@@ -1897,8 +1954,10 @@ function toggleDailyAnswer(id) {
 }
 
 function resetDaily() {
-  const keys = Object.keys(localStorage).filter(k => k.startsWith('art_') || k.startsWith('daily_drawn_'));
+  const keys = Object.keys(localStorage).filter(k => k.startsWith('art_') || k.startsWith('daily_drawn_') || k.startsWith('daily_questions_'));
   keys.forEach(k => localStorage.removeItem(k));
+  state.dailyQuestions = null;
+  state.dailyType = null;
   render();
 }
 
@@ -2061,6 +2120,9 @@ render();
 </script>
 </body>
 </html>
+
+
+
 
 
 

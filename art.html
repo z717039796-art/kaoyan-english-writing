@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -905,13 +905,13 @@ body::before {
   .topnav .search { width:180px; }
   .filter-bar, .chapter-selector, .content { padding-left:20px; padding-right:20px; }
 }
-@media (max-width: 1400px) {
+@media (max-width: 1600px) {
   .topnav { padding: 0 14px; gap: 8px; flex-wrap: nowrap; height: 64px; }
   .brand-name { font-size: 11px; }
   .tabs { gap: 0px; flex: 1; min-width: 0; }
-  .tab { padding: 6px 10px; font-size: 12px; white-space: nowrap; }
-  .switch-btn { padding: 5px 10px; font-size: 11px; }
-  .search { width: 140px; }
+  .tab { padding: 6px 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+  .switch-btn { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
+  .search { display: none !important; }
   .search input { font-size: 12px; }
 }@media (max-width: 1000px) {
   .topnav { padding:0 16px; gap:10px; flex-wrap:wrap; height:auto; min-height:64px; padding-top:10px; padding-bottom:10px; }
@@ -919,7 +919,7 @@ body::before {
   .topnav .tabs { order:3; width:100%; justify-content:flex-start; overflow-x:auto; padding-bottom:4px; }
   .topnav .tab { padding:7px 14px; font-size:12px; }
   .topnav-right { order:2; margin-left:auto; }
-  .topnav .search { width:140px; }
+  .topnav .search { width:140px; display:none; }
   .page-container { padding-top:110px; }
   .home-hero h1 { font-size:32px; }
   .overview-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
@@ -3168,6 +3168,8 @@ function clearDoodle() {
 }</script>
 </body>
 </html>
+
+
 
 
 

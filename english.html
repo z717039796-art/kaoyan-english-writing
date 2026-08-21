@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -114,7 +114,7 @@ body::after {
   cursor: pointer; transition: all 0.25s cubic-bezier(0.25,0.1,0.25,1);
   border: 1px solid transparent;
   letter-spacing: 0.01em;
-}
+ white-space: nowrap; flex-shrink: 0; }
 .topnav .tab:hover {
   color: var(--text-1);
   background: rgba(37,99,235,0.06);
@@ -512,16 +512,17 @@ body::after {
 }
 
 /* 响应式 */
-@media (max-width: 1400px) {
-  .topnav { padding: 0 20px; gap: 16px; }
-  .brand-name { font-size: 13px; }
-  .tabs { gap: 2px; }
-  .tab { padding: 8px 14px; font-size: 13px; }
-  .switch-btn { padding: 6px 12px; font-size: 12px; }
+@media (max-width: 1600px) {
+  .topnav { padding: 0 14px; gap: 8px; flex-wrap: nowrap; }
+  .brand-name { font-size: 12px; }
+  .tabs { gap: 0px; flex: 1; min-width: 0; }
+  .tab { padding: 6px 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+  .switch-btn { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
+  .search { display: none !important; }
 }@media (max-width: 1000px) {
   .topnav { padding: 0 16px; gap: 12px; }
   .topnav .brand-name { display: none; }
-  .topnav .search { width: 140px; }
+  .topnav .search { width: 140px; display: none; }
   .topnav .tab { padding: 8px 14px; font-size: 12px; }
   .hero { padding: 40px 24px; }
   .hero h1 { font-size: 52px; }
@@ -1553,6 +1554,8 @@ else initEngButtons();
 </script>
 </body>
 </html>
+
+
 
 
 

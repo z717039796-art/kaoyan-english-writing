@@ -270,16 +270,18 @@ body {
 }
 
 @media (max-width: 600px) {
-  .topnav { padding: 0 8px; gap: 4px; flex-wrap: nowrap; height: 56px; }
+  .topnav { padding: 8px 10px; gap: 6px; flex-wrap: wrap; height: auto; min-height: 56px; }
+  .brand { order: 1; flex-shrink: 0; }
   .brand-name { display: none; }
   .brand-icon { width: 32px; height: 32px; font-size: 14px; }
-  .tabs { gap: 0px; flex: 1; min-width: 0; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-  .tabs::-webkit-scrollbar { display: none; }
+  .topnav-right { order: 2; margin-left: auto; flex-shrink: 0; }
+  .tabs { order: 3; width: 100%; gap: 2px; justify-content: flex-start; flex-wrap: wrap; }
+  
   .tab { padding: 5px 10px; font-size: 11px; white-space: nowrap; flex-shrink: 0; }
   .switch-btn { padding: 4px 8px; font-size: 10px; flex-shrink: 0; }
   .sync-btn { padding: 4px 8px; font-size: 10px; flex-shrink: 0; }
   .search { display: none !important; }
-  .container { padding: 16px 12px 32px; padding-top: 72px; }
+  .container { padding: 16px 12px 32px; padding-top: 100px; }
 }</style>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
 </head>
@@ -909,6 +911,8 @@ setInterval(loadProgress,15000);
 </script>
 </body>
 </html>
+
+
 
 
 

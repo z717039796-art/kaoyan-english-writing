@@ -755,34 +755,43 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
   .feature-grid { grid-template-columns: 1fr; }
 }  
   /* 小屏幕导航优化 */
-  @media (max-width: 1000px) {
-    .topnav { padding: 6px 12px !important; gap: 8px !important; }
+  @media (max-width: 1100px) {
+    .topnav { padding: 8px 20px !important; gap: 12px !important; }
     .brand { flex: 0 0 auto !important; margin-right: 0 !important; order: 1 !important; }
-    .topnav .search { display: flex !important; width: 120px !important; order: 2 !important; margin-left: auto !important; margin-right: auto !important; }
+    .brand-icon { width: 44px !important; height: 44px !important; font-size: 20px !important; }
+    .topnav .search { display: flex !important; width: 280px !important; order: 2 !important; margin-left: auto !important; margin-right: auto !important; }
     .search input { width: 100% !important; font-size: 11px !important; padding: 5px 8px !important; }
     .topnav-right { flex: 0 0 auto !important; margin-left: auto !important; gap: 4px !important; order: 3 !important; }
     .switch-btn { order: 3 !important; }
     .switch-btn, .sync-btn { 
       padding: 0 !important; 
       font-size: 0 !important; 
-      width: 30px; 
-      height: 30px; 
-      min-width: 30px;
+      width: 44px; 
+      height: 44px; 
+      min-width: 44px;
       display: inline-flex !important; 
       align-items: center; 
       justify-content: center; 
       border-radius: 50% !important; 
       flex-shrink: 0;
     }
-    .switch-btn::before, .sync-btn::before { font-size: 13px; }
+    .switch-btn::before, .sync-btn::before { font-size: 18px; }
     .switch-btn[href="index.html"]::before { content: "🏠"; }
     .switch-btn[href="english.html"]::before { content: "📝"; }
     .switch-btn[href="art.html"]::before { content: "🎨"; }
     .switch-btn[href="dashboard.html"]::before { content: "📊"; }
     .sync-btn::before { content: "🔄"; }
     .tabs { gap: 0 !important; justify-content: space-between !important; width: 100% !important; order: 4 !important; }
-    .tab { padding: 4px 4px !important; font-size: 10px !important; white-space: nowrap !important; flex: 1 !important; text-align: center; }
-  }</style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
+    .tab { padding: 8px 12px !important; font-size: 15px !important; white-space: nowrap !important; flex: 1 !important; text-align: center; }
+  }
+  /* 手机尺寸 */
+  @media (max-width: 768px) {
+    .topnav { padding: 6px 12px !important; gap: 8px !important; }
+    .brand-icon { width: 32px !important; height: 32px !important; font-size: 15px !important; }
+    .topnav .search { width: 120px !important; }
+    .switch-btn, .sync-btn { width: 30px !important; height: 30px !important; min-width: 30px !important; }
+    .tab { padding: 4px 4px !important; font-size: 10px !important; }
+  }}</style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <nav class="topnav">
@@ -1597,6 +1606,7 @@ else initEngButtons();
 </script>
 </body>
 </html>
+
 
 
 

@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>复习看板 · 考研知识库</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #EEF1F8;
+  --text-1: #1A1A2E;
+  --text-2: #6B6B8A;
+  --text-3: #9B9BB5;
+  --blue: #2563EB;
+  --purple: #7C3AED;
+  --green: #059669;
+  --card-bg: rgba(255,255,255,0.55);
+  --card-border: rgba(255,255,255,0.8);
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: linear-gradient(135deg, #EEF1F8 0%, #E8ECF7 50%, #F0EEF9 100%);
+  min-height: 100vh;
+  color: var(--text-1);
+  padding-top: 64px;
+}
+.bg-glow { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
+.glow-1 { position:absolute; top:-20%; left:-10%; width:600px; height:600px; background:radial-gradient(circle,rgba(37,99,235,0.12) 0%,transparent 70%); border-radius:50%; }
+.glow-2 { position:absolute; bottom:-20%; right:-10%; width:700px; height:700px; background:radial-gradient(circle,rgba(124,58,237,0.10) 0%,transparent 70%); border-radius:50%; }
+
+/* ===== 顶部导航栏（与 english/art 一致） ===== */
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 64px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-bottom: 1px solid rgba(255,255,255,0.9);
+  box-shadow: 0 1px 20px rgba(37,99,235,0.06);
+  display: flex; align-items: center;
+  padding: 0 36px; gap: 32px;
+}
+.topnav .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; text-decoration: none; color: inherit; }
+.brand-icon {
+  width: 36px; height: 36px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 800; color: #fff;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.35), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+.brand-name { font-size: 15px; font-weight: 700; color: var(--text-1); white-space: nowrap; }
+.tabs { display: flex; gap: 4px; flex: 1; justify-content: center; }
+.tab {
+  padding: 10px 22px; border-radius: 10px; font-size: 14px; font-weight: 600;
+  color: var(--text-2); cursor: pointer; transition: all 0.25s; white-space: nowrap;
+}
+.tab:hover { color: var(--text-1); background: rgba(37,99,235,0.06); }
+.tab.active { color: #fff; background: linear-gradient(135deg, var(--blue), var(--purple)); box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
+.topnav-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.switch-btn {
+  padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  text-decoration: none; transition: all 0.25s; white-space: nowrap;
+}
+.switch-btn.home-btn { background: rgba(37,99,235,0.08); color: var(--blue); }
+.switch-btn.home-btn:hover { background: rgba(37,99,235,0.15); }
+.sync-btn {
+  padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  background: rgba(5,150,105,0.1); border: 1px solid rgba(5,150,105,0.2);
+  color: var(--green); cursor: pointer; transition: all 0.25s; white-space: nowrap;
+}
+.sync-btn:hover { background: rgba(5,150,105,0.18); }
+.sync-btn.syncing { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+
+.container { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 40px 32px 60px; }
+
+/* ===== 模块页面 ===== */
+.page { display: none; animation: fadeIn 0.3s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.page-title { font-size: 22px; font-weight: 800; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+.page-title .subtitle { font-size: 13px; font-weight: 400; color: var(--text-3); }
+
+.overview { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+.overview-card {
+  padding: 28px 24px; background: var(--card-bg); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); border: 1px solid var(--card-border);
+  border-radius: 24px; box-shadow: 0 4px 20px rgba(37,99,235,0.06);
+}
+.overview-label { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; color: var(--text-3); text-transform: uppercase; margin-bottom: 10px; }
+.overview-value { font-size: 42px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 6px; }
+.overview-desc { font-size: 13px; color: var(--text-2); }
+
+.card {
+  padding: 28px; background: var(--card-bg); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); border: 1px solid var(--card-border);
+  border-radius: 24px; box-shadow: 0 4px 20px rgba(37,99,235,0.06);
+}
+
+/* 今日任务 */
+.today-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.today-date { font-size: 14px; color: var(--text-2); display: flex; align-items: center; gap: 12px; }
+.today-date .day-tag { padding: 4px 12px; background: rgba(37,99,235,0.1); color: var(--blue); border-radius: 999px; font-weight: 700; font-size: 12px; }
+.today-progress { font-size: 13px; font-weight: 600; color: var(--green); }
+.task-group { margin-bottom: 18px; }
+.task-group:last-child { margin-bottom: 0; }
+.task-group-title { font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.task-group-title.review { color: var(--purple); }
+.task-group-title.new { color: var(--green); }
+.task-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: rgba(37,99,235,0.04); border-radius: 14px; margin-bottom: 8px; font-size: 14px; color: #3D3D5C; line-height: 1.6; cursor: pointer; transition: all 0.2s; user-select: none; }
+.task-item:hover { background: rgba(37,99,235,0.08); }
+.task-item:last-child { margin-bottom: 0; }
+.task-item.done { background: rgba(5,150,105,0.06); }
+.task-item.done .task-text { text-decoration: line-through; color: var(--text-3); }
+.task-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #CBD5E1; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: white; }
+.task-item.done .task-check { background: var(--green); border-color: var(--green); }
+.task-check::after { content: '✓'; color: white; font-size: 12px; font-weight: 900; opacity: 0; transition: opacity 0.2s; }
+.task-item.done .task-check::after { opacity: 1; }
+.task-time { flex-shrink: 0; font-weight: 700; color: var(--blue); font-size: 13px; min-width: 80px; }
+.task-item.review { background: rgba(124,58,237,0.04); }
+.task-item.review:hover { background: rgba(124,58,237,0.08); }
+.task-item.review .task-time { color: var(--purple); }
+.task-text { flex: 1; }
+.tip-box { margin-top: 14px; padding: 12px 16px; background: rgba(124,58,237,0.06); border-radius: 14px; font-size: 13px; color: var(--purple); line-height: 1.6; }
+
+/* 掌握进度 */
+.progress-card { margin-bottom: 16px; border-top: 3px solid var(--blue); }
+.progress-card:last-child { margin-bottom: 0; }
+.progress-card.art { border-top-color: var(--purple); }
+.progress-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.progress-name { font-size: 16px; font-weight: 700; color: var(--text-1); }
+.progress-percent { font-size: 28px; font-weight: 900; background: linear-gradient(135deg, var(--blue), #4F46E5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.progress-card.art .progress-percent { background: linear-gradient(135deg, var(--purple), #DB2777); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.progress-bar { height: 10px; background: rgba(37,99,235,0.08); border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
+.progress-fill { height: 100%; border-radius: 999px; transition: width 0.6s ease; width: 0%; background: linear-gradient(90deg, var(--blue), #4F46E5); }
+.progress-card.art .progress-fill { background: linear-gradient(90deg, var(--purple), #DB2777); }
+.progress-stats { display: flex; gap: 24px; }
+.progress-stat { display: flex; flex-direction: column; }
+.progress-stat-num { font-size: 20px; font-weight: 800; color: var(--text-1); }
+.progress-stat-label { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.progress-sync-note { font-size: 11px; color: var(--text-3); margin-top: 12px; display: flex; align-items: center; gap: 6px; }
+.progress-sync-note .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+/* 时间分配 */
+.time-item { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.time-item:last-child { margin-bottom: 0; }
+.time-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.time-name { flex: 1; font-size: 14px; color: #3D3D5C; font-weight: 600; }
+.time-hours { font-size: 14px; font-weight: 700; color: var(--text-1); min-width: 50px; text-align: right; }
+.time-percent { font-size: 13px; color: var(--text-3); min-width: 40px; text-align: right; }
+.time-bar-wrap { width: 100%; height: 6px; background: rgba(37,99,235,0.06); border-radius: 999px; margin-top: 6px; overflow: hidden; }
+.time-bar-fill { height: 100%; border-radius: 999px; transition: width 0.6s ease; }
+
+/* 复习阶段 */
+.phase-item { display: flex; gap: 16px; margin-bottom: 24px; position: relative; }
+.phase-item:last-child { margin-bottom: 0; }
+.phase-item::before { content: ''; position: absolute; left: 7px; top: 24px; bottom: -24px; width: 2px; background: rgba(37,99,235,0.1); }
+.phase-item:last-child::before { display: none; }
+.phase-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; border: 3px solid white; box-shadow: 0 0 0 2px rgba(37,99,235,0.2); z-index: 1; }
+.phase-dot.active { background: linear-gradient(135deg, var(--blue), var(--purple)); box-shadow: 0 0 0 2px rgba(37,99,235,0.3), 0 0 12px rgba(37,99,235,0.4); }
+.phase-dot.done { background: var(--green); box-shadow: 0 0 0 2px rgba(5,150,105,0.2); }
+.phase-dot.pending { background: #CBD5E1; }
+.phase-content { flex: 1; }
+.phase-name { font-size: 15px; font-weight: 700; color: var(--text-1); margin-bottom: 4px; }
+.phase-date { font-size: 12px; color: var(--text-3); margin-bottom: 6px; }
+.phase-desc { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.phase-status { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; margin-top: 6px; }
+.phase-status.active { background: rgba(37,99,235,0.1); color: var(--blue); }
+.phase-status.done { background: rgba(5,150,105,0.1); color: var(--green); }
+.phase-status.pending { background: rgba(156,163,175,0.1); color: var(--text-3); }
+
+/* 复习计划日历 */
+.plan-months { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.plan-month-btn {
+  padding: 8px 20px; border-radius: 10px; font-size: 14px; font-weight: 600;
+  background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-2);
+  cursor: pointer; transition: all 0.2s; backdrop-filter: blur(24px);
+}
+.plan-month-btn:hover { background: rgba(37,99,235,0.08); color: var(--text-1); }
+.plan-month-btn.active {
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  color: white; border-color: transparent;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+}
+.plan-calendar { display: flex; flex-direction: column; gap: 12px; }
+.plan-day {
+  padding: 20px 24px; background: var(--card-bg); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); border: 1px solid var(--card-border);
+  border-radius: 20px; box-shadow: 0 4px 20px rgba(37,99,235,0.06);
+  transition: all 0.2s;
+}
+.plan-day:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37,99,235,0.1); }
+.plan-day.today { border: 2px solid var(--blue); box-shadow: 0 4px 20px rgba(37,99,235,0.15); }
+.plan-day-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.plan-day-badge {
+  padding: 4px 12px; background: linear-gradient(135deg, var(--blue), var(--purple));
+  color: white; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.plan-day-date { font-size: 15px; font-weight: 700; color: var(--text-1); }
+.plan-day-weekday { font-size: 13px; color: var(--text-3); }
+.plan-day.today .plan-day-date { color: var(--blue); }
+.plan-section { margin-bottom: 10px; }
+.plan-section:last-child { margin-bottom: 0; }
+.plan-section-label { font-size: 12px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.plan-section-label.new { color: var(--green); }
+.plan-section-label.review { color: var(--purple); }
+.plan-item {
+  padding: 8px 14px; background: rgba(37,99,235,0.04); border-radius: 10px;
+  font-size: 13px; color: #3D3D5C; line-height: 1.6; margin-bottom: 4px;
+}
+.plan-item:last-child { margin-bottom: 0; }
+.plan-item.new { background: rgba(5,150,105,0.06); }
+.plan-item.review { background: rgba(124,58,237,0.06); }
+.plan-item .interval { display: inline-block; padding: 1px 8px; background: rgba(124,58,237,0.15); color: var(--purple); border-radius: 6px; font-size: 11px; font-weight: 700; margin-right: 8px; }
+
+/* 本周统计 */
+.week-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.week-stat-card {
+  padding: 20px 16px; background: var(--card-bg); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); border: 1px solid var(--card-border);
+  border-radius: 18px; text-align: center; box-shadow: 0 4px 16px rgba(37,99,235,0.05);
+}
+.week-stat-num { font-size: 28px; font-weight: 900; background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 6px; }
+.week-stat-label { font-size: 12px; color: var(--text-3); }
+
+/* 快速入口 */
+.quick-links { display: flex; flex-direction: column; gap: 10px; }
+.quick-link {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  background: rgba(37,99,235,0.04); border-radius: 12px; text-decoration: none;
+  transition: all 0.2s; border: 1px solid transparent;
+}
+.quick-link:hover { background: rgba(37,99,235,0.08); transform: translateX(4px); border-color: rgba(37,99,235,0.1); }
+.ql-icon {
+  width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--qc) 12%, transparent); font-size: 16px; flex-shrink: 0;
+}
+.ql-text { font-size: 14px; font-weight: 600; color: var(--text-1); }
+
+/* 今日复习提醒 */
+.review-reminder-item {
+  padding: 10px 14px; background: rgba(124,58,237,0.06); border-radius: 10px;
+  font-size: 13px; color: #3D3D5C; line-height: 1.5; display: flex; align-items: flex-start; gap: 8px;
+}
+.review-reminder-item .rr-tag {
+  flex-shrink: 0; padding: 1px 8px; background: rgba(124,58,237,0.15);
+  color: var(--purple); border-radius: 6px; font-size: 11px; font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .topnav { padding: 0 16px; gap: 12px; }
+  .brand-name { display: none; }
+  .tab { padding: 8px 14px; font-size: 13px; }
+  .overview { grid-template-columns: 1fr; }
+  .container { padding: 24px 16px 40px; }
+}
+</style>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="bg-glow"><div class="glow-1"></div><div class="glow-2"></div></div>
+
+<!-- 顶部导航栏 -->
+<nav class="topnav">
+  <a href="index.html" class="brand">
+    <div class="brand-icon">看</div>
+    <span class="brand-name">复习看板</span>
+  </a>
+  <div class="tabs" id="navTabs">
+    <div class="tab active" data-page="overview" onclick="switchPage('overview')">概览</div>
+    <div class="tab" data-page="tasks" onclick="switchPage('tasks')">今日任务</div>
+    <div class="tab" data-page="progress" onclick="switchPage('progress')">掌握进度</div>
+    <div class="tab" data-page="time" onclick="switchPage('time')">时间分配</div>
+    <div class="tab" data-page="phase" onclick="switchPage('phase')">复习阶段</div>
+    <div class="tab" data-page="plan" onclick="switchPage('plan')">复习计划</div>
+  </div>
+  <div class="topnav-right">
+    <button class="sync-btn" id="syncBtn" onclick="syncData()">🔄 同步</button>
+    <a href="english.html" class="switch-btn home-btn">英语 →</a>
+    <a href="art.html" class="switch-btn home-btn" style="background:rgba(124,58,237,0.08);color:#7C3AED;">艺术 →</a>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- 概览页 -->
+  <div class="page active" id="page-overview">
+    <div class="page-title">总览 <span class="subtitle">考研倒计时 · 当前阶段 · 今日进度</span></div>
+    <div class="overview">
+      <div class="overview-card">
+        <div class="overview-label">COUNTDOWN</div>
+        <div class="overview-value" id="countdownDays">--</div>
+        <div class="overview-desc">距离 2027 考研初试</div>
+      </div>
+      <div class="overview-card">
+        <div class="overview-label">TODAY</div>
+        <div class="overview-value" id="todayDate" style="font-size:32px;line-height:1.3">--</div>
+        <div class="overview-desc" id="todayWeekday">--</div>
+      </div>
+      <div class="overview-card">
+        <div class="overview-label">CURRENT PHASE</div>
+        <div class="overview-value" id="currentPhase" style="font-size:22px;line-height:1.3">--</div>
+        <div class="overview-desc" id="phaseProgress">--</div>
+      </div>
+    </div>
+    <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:20px;">
+      <div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:14px;color:var(--text-1)">今日任务进度</div>
+        <div style="font-size:36px;font-weight:900;color:var(--green)" id="overviewTaskProgress">0/0</div>
+        <div style="font-size:13px;color:var(--text-3);margin-top:4px">点击「今日任务」tab 查看详情</div>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:14px;color:var(--text-1)">总体掌握率</div>
+        <div style="font-size:36px;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" id="overviewMastery">0%</div>
+        <div style="font-size:13px;color:var(--text-3);margin-top:4px">艺术概论 + 英语作文综合</div>
+      </div>
+    </div>
+
+    <!-- 本周统计 -->
+    <div class="section-title" style="font-size:16px;margin-bottom:14px">本周学习统计</div>
+    <div class="week-stats">
+      <div class="week-stat-card">
+        <div class="week-stat-num" id="weekTasks">0</div>
+        <div class="week-stat-label">本周完成任务</div>
+      </div>
+      <div class="week-stat-card">
+        <div class="week-stat-num" id="streakDays">0</div>
+        <div class="week-stat-label">连续打卡天数</div>
+      </div>
+      <div class="week-stat-card">
+        <div class="week-stat-num" id="weekMastered">0</div>
+        <div class="week-stat-label">本周掌握题目</div>
+      </div>
+      <div class="week-stat-card">
+        <div class="week-stat-num" id="totalDays">0</div>
+        <div class="week-stat-label">累计学习天数</div>
+      </div>
+    </div>
+
+    <!-- 快速入口 + 今日复习提醒 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+      <div class="card">
+        <div style="font-size:15px;font-weight:700;margin-bottom:16px;color:var(--text-1)">快速入口</div>
+        <div class="quick-links">
+          <a href="art.html" class="quick-link" style="--qc:#7C3AED">
+            <span class="ql-icon">🎲</span><span class="ql-text">艺术概论·每日抽背</span>
+          </a>
+          <a href="art.html#chapter" class="quick-link" style="--qc:#2563EB">
+            <span class="ql-icon">📖</span><span class="ql-text">艺术概论·章节复习</span>
+          </a>
+          <a href="english.html" class="quick-link" style="--qc:#059669">
+            <span class="ql-icon">✍️</span><span class="ql-text">英语作文·模板句式</span>
+          </a>
+          <a href="english.html#essays" class="quick-link" style="--qc:#D97706">
+            <span class="ql-icon">📝</span><span class="ql-text">英语作文·完整范文</span>
+          </a>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:15px;font-weight:700;margin-bottom:16px;color:var(--text-1)">今日复习提醒</div>
+        <div id="todayReviewList" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:13px;color:var(--text-3);text-align:center;padding:20px 0">9月4日起显示艾宾浩斯复习内容</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 今日任务页 -->
+  <div class="page" id="page-tasks">
+    <div class="page-title">今日任务 <span class="subtitle">点击任务可标记完成，每日自动重置</span></div>
+    <div class="card">
+      <div class="today-header">
+        <div class="today-date">
+          <span class="day-tag" id="todayTag">--</span>
+          <span id="todayFullDate">--</span>
+        </div>
+        <div class="today-progress" id="todayProgress">0/0 完成</div>
+      </div>
+      <div id="taskList"></div>
+    </div>
+  </div>
+
+  <!-- 掌握进度页 -->
+  <div class="page" id="page-progress">
+    <div class="page-title">掌握进度 <span class="subtitle">从英语作文和艺术概论自动同步</span></div>
+    <div class="card progress-card english">
+      <div class="progress-header">
+        <div class="progress-name">英语作文</div>
+        <div class="progress-percent" id="engPercent">0%</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="engBar"></div></div>
+      <div class="progress-stats">
+        <div class="progress-stat"><span class="progress-stat-num" id="engTotal">100+</span><span class="progress-stat-label">句式总数</span></div>
+        <div class="progress-stat"><span class="progress-stat-num" id="engMastered">0</span><span class="progress-stat-label">已掌握</span></div>
+        <div class="progress-stat"><span class="progress-stat-num" id="engFav">0</span><span class="progress-stat-label">收藏</span></div>
+      </div>
+      <div class="progress-sync-note"><span class="dot"></span>数据来源：english.html 本地存储</div>
+    </div>
+    <div class="card progress-card art">
+      <div class="progress-header">
+        <div class="progress-name">艺术概论</div>
+        <div class="progress-percent" id="artPercent">0%</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="artBar"></div></div>
+      <div class="progress-stats">
+        <div class="progress-stat"><span class="progress-stat-num">190</span><span class="progress-stat-label">题目总数</span></div>
+        <div class="progress-stat"><span class="progress-stat-num" id="artMastered">0</span><span class="progress-stat-label">已掌握</span></div>
+        <div class="progress-stat"><span class="progress-stat-num" id="artFav">0</span><span class="progress-stat-label">收藏</span></div>
+      </div>
+      <div class="progress-sync-note"><span class="dot"></span>数据来源：art.html 本地存储（标记掌握后自动更新）</div>
+    </div>
+  </div>
+
+  <!-- 时间分配页 -->
+  <div class="page" id="page-time">
+    <div class="page-title">每日时间分配 <span class="subtitle">总计 10 小时</span></div>
+    <div class="card" id="timeCard"></div>
+  </div>
+
+  <!-- 复习阶段页 -->
+  <div class="page" id="page-phase">
+    <div class="page-title">复习阶段 <span class="subtitle">三阶段规划时间线</span></div>
+    <div class="card" id="phaseCard"></div>
+  </div>
+
+  <!-- 复习计划页 -->
+  <div class="page" id="page-plan">
+    <div class="page-title">复习计划 <span class="subtitle">艾宾浩斯专项复习日历 · 8月-12月完整计划</span></div>
+    <div class="plan-months" id="planMonths"></div>
+    <div class="plan-calendar" id="planCalendar"></div>
+  </div>
+</div>
+
+<script>
+const timeAllocation = [
+  { name:'英语 (48→60+)', hours:3.0, percent:30, color:'#2563EB' },
+  { name:'专业课一·艺术概论 (111→120+)', hours:3.0, percent:30, color:'#7C3AED' },
+  { name:'专业课二·和声曲式 (133保持)', hours:1.5, percent:15, color:'#059669' },
+  { name:'政治 (56→60+, 苏一)', hours:1.0, percent:10, color:'#D97706' },
+  { name:'复盘+背诵机动', hours:1.5, percent:15, color:'#64748B' },
+];
+const phases = [
+  { name:'基础强化期', date:'7.1 - 8.31', desc:'艺术概论精读过书+框架笔记，英语词汇+阅读真题，和声曲式保持手感', start:'2026-07-01', end:'2026-08-31' },
+  { name:'专题提升期', date:'9.1 - 10.31', desc:'艺术概论专题突破+真题练习，政治强化刷题，英语作文模板定稿', start:'2026-09-01', end:'2026-10-31' },
+  { name:'冲刺模考期', date:'11.1 - 12.20', desc:'全科全真模考+押题背诵，查漏补缺，心态调整', start:'2026-11-01', end:'2026-12-20' },
+];
+const baseTasks = [
+  { time:'8:00-9:00', content:'英语词汇(红宝书/恋练有词)+长难句拆解' },
+  { time:'9:00-12:00', content:'艺术学概论精读(马工程版)，按章节计划过书+整理框架笔记' },
+  { time:'14:00-15:30', content:'和声曲式刷题(四部和声写作+曲式分析)，保持手感为主' },
+  { time:'15:30-17:30', content:'英语阅读真题(2010-2018)精做，每天1-2篇+逐句翻译' },
+  { time:'19:00-20:00', content:'政治(苏一)，跟课学习+刷题' },
+  { time:'20:00-21:30', content:'当日复盘+艾宾浩斯复习(艺术学概论背诵)' },
+];
+const ebbinghaus = {
+  // ===== 8月背诵计划 (Day1-Day18) =====
+  '2026-08-14':{day:'Day1',month:'8月',new:'艺术概论·第四章艺术作品(媒介类别与作用/形式特征)',reviews:[]},
+  '2026-08-15':{day:'Day2',month:'8月',new:'艺术概论·第四章(题材与主题/形象与情境/艺术意蕴)',reviews:[]},
+  '2026-08-16':{day:'Day3',month:'8月',new:'艺术概论·第四章内容与形式辩证统一★论述题',reviews:['艺术概论·第四章艺术作品(媒介类别与作用/形式特征)']},
+  '2026-08-17':{day:'Day4',month:'8月',new:'英语作文·动态图模板收尾+常用过渡句型',reviews:['艺术概论·第四章(题材与主题/形象与情境/艺术意蕴)']},
+  '2026-08-18':{day:'Day5',month:'8月',new:'艺术概论·第五章艺术接受(主体主观条件/期待视野)',reviews:['艺术概论·第四章内容与形式辩证统一★论述题','艺术概论·第四章艺术作品(媒介类别与作用/形式特征)']},
+  '2026-08-19':{day:'Day6',month:'8月',new:'艺术概论·第五章接受四特征(体验/过程/异同/再创造)',reviews:['英语作文·动态图模板收尾+常用过渡句型','艺术概论·第四章(题材与主题/形象与情境/艺术意蕴)']},
+  '2026-08-20':{day:'Day7',month:'8月',new:'艺术概论·第五章接受美学与再创造性★论述题',reviews:['艺术概论·第五章艺术接受(主体主观条件/期待视野)','艺术概论·第四章内容与形式辩证统一★论述题']},
+  '2026-08-21':{day:'Day8',month:'8月',new:'英语作文·静态图模板背诵',reviews:['艺术概论·第五章接受四特征(体验/过程/异同/再创造)','英语作文·动态图模板收尾+常用过渡句型','艺术概论·第四章艺术作品(媒介类别与作用/形式特征)']},
+  '2026-08-22':{day:'Day9',month:'8月',new:'艺术概论·第六章艺术类型(分类原则/7大类型概述)',reviews:['艺术概论·第五章接受美学与再创造性★论述题','艺术概论·第五章艺术接受(主体主观条件/期待视野)','艺术概论·第四章(题材与主题/形象与情境/艺术意蕴)']},
+  '2026-08-23':{day:'Day10',month:'8月',new:'艺术概论·第六章音乐艺术★★本专业重点精读',reviews:['英语作文·静态图模板背诵','艺术概论·第五章接受四特征(体验/过程/异同/再创造)','艺术概论·第四章内容与形式辩证统一★论述题']},
+  '2026-08-24':{day:'Day11',month:'8月',new:'艺术概论·第六章其他艺术类型+各门艺术关系',reviews:['艺术概论·第六章艺术类型(分类原则/7大类型概述)','艺术概论·第五章接受美学与再创造性★论述题','英语作文·动态图模板收尾+常用过渡句型']},
+  '2026-08-25':{day:'Day12',month:'8月',new:'英语作文·书信类小作文模板(建议信/邀请信/感谢信)',reviews:['艺术概论·第六章音乐艺术★★本专业重点精读','英语作文·静态图模板背诵','艺术概论·第五章艺术接受(主体主观条件/期待视野)']},
+  '2026-08-26':{day:'Day13',month:'8月',new:'艺术概论·第七章艺术发展(起源五学说/多元决定)',reviews:['艺术概论·第六章其他艺术类型+各门艺术关系','艺术概论·第六章艺术类型(分类原则/7大类型概述)','艺术概论·第五章接受四特征(体验/过程/异同/再创造)']},
+  '2026-08-27':{day:'Day14',month:'8月',new:'艺术概论·第七章发展规律+继承与创新★论述题',reviews:['英语作文·书信类小作文模板(建议信/邀请信/感谢信)','艺术概论·第六章音乐艺术★★本专业重点精读','艺术概论·第五章接受美学与再创造性★论述题']},
+  '2026-08-28':{day:'Day15',month:'8月',new:'英语作文·作文高级句型+替换词背诵',reviews:['艺术概论·第七章艺术发展(起源五学说/多元决定)','艺术概论·第六章其他艺术类型+各门艺术关系','英语作文·静态图模板背诵']},
+  '2026-08-29':{day:'Day16',month:'8月',new:'艺术概论·第八章风格/流派/思潮(界定+类别)',reviews:['艺术概论·第七章发展规律+继承与创新★论述题','英语作文·书信类小作文模板(建议信/邀请信/感谢信)','艺术概论·第六章艺术类型(分类原则/7大类型概述)','艺术概论·第四章艺术作品(媒介类别与作用/形式特征)']},
+  '2026-08-30':{day:'Day17',month:'8月',new:'艺术概论·第八章三者关系★+第九章艺术批评',reviews:['英语作文·作文高级句型+替换词背诵','艺术概论·第七章艺术发展(起源五学说/多元决定)','艺术概论·第六章音乐艺术★★本专业重点精读','艺术概论·第四章(题材与主题/形象与情境/艺术意蕴)']},
+  '2026-08-31':{day:'Day18',month:'8月',new:'艺术概论·第十章当代嬗变(数字技术与音乐★)+全书框架复盘',reviews:['艺术概论·第八章风格/流派/思潮(界定+类别)','艺术概论·第七章发展规律+继承与创新★论述题','艺术概论·第六章其他艺术类型+各门艺术关系','艺术概论·第四章内容与形式辩证统一★论述题']},
+  // ===== 9月背诵计划 (Day19-Day30) =====
+  '2026-09-01':{day:'Day19',month:'9月',new:'艺术概论·第一章精读复盘(艺术观念演变/艺术生产)',reviews:['艺术概论·第八章三者关系★+第九章艺术批评','英语作文·作文高级句型+替换词背诵','英语作文·书信类小作文模板(建议信/邀请信/感谢信)','英语作文·动态图模板收尾+常用过渡句型']},
+  '2026-09-02':{day:'Day20',month:'9月',new:'艺术概论·第二章精读复盘(四大功能/中西功能论)',reviews:['艺术概论·第十章当代嬗变(数字技术与音乐★)+全书框架复盘','艺术概论·第八章风格/流派/思潮(界定+类别)','艺术概论·第七章艺术发展(起源五学说/多元决定)','艺术概论·第五章艺术接受(主体主观条件/期待视野)']},
+  '2026-09-03':{day:'Day21',month:'9月',new:'英语作文·仿写练习1(动态图真题)',reviews:['艺术概论·第一章精读复盘(艺术观念演变/艺术生产)','艺术概论·第八章三者关系★+第九章艺术批评','艺术概论·第七章发展规律+继承与创新★论述题','艺术概论·第五章接受四特征(体验/过程/异同/再创造)']},
+  '2026-09-04':{day:'Day22',month:'9月',new:'艺术概论·第三章精读复盘★★(创作动因→构思→物化)',reviews:['艺术概论·第二章精读复盘(四大功能/中西功能论)','艺术概论·第十章当代嬗变(数字技术与音乐★)+全书框架复盘','英语作文·作文高级句型+替换词背诵','艺术概论·第五章接受美学与再创造性★论述题']},
+  '2026-09-05':{day:'Day23',month:'9月',new:'艺术概论·第四章精读复盘(内容形式/艺术意蕴)',reviews:['英语作文·仿写练习1(动态图真题)','艺术概论·第一章精读复盘(艺术观念演变/艺术生产)','艺术概论·第八章风格/流派/思潮(界定+类别)','英语作文·静态图模板背诵']},
+  '2026-09-06':{day:'Day24',month:'9月',new:'英语作文·仿写练习2(静态图真题)',reviews:['艺术概论·第三章精读复盘★★(创作动因→构思→物化)','艺术概论·第二章精读复盘(四大功能/中西功能论)','艺术概论·第八章三者关系★+第九章艺术批评','艺术概论·第六章艺术类型(分类原则/7大类型概述)']},
+  '2026-09-07':{day:'Day25',month:'9月',new:'艺术概论·第五章精读复盘(期待视野/再创造性)',reviews:['艺术概论·第四章精读复盘(内容形式/艺术意蕴)','英语作文·仿写练习1(动态图真题)','艺术概论·第十章当代嬗变(数字技术与音乐★)+全书框架复盘','艺术概论·第六章音乐艺术★★本专业重点精读']},
+  '2026-09-08':{day:'Day26',month:'9月',new:'艺术概论·第六章精读复盘★(音乐艺术审美特征)',reviews:['英语作文·仿写练习2(静态图真题)','艺术概论·第三章精读复盘★★(创作动因→构思→物化)','艺术概论·第一章精读复盘(艺术观念演变/艺术生产)','艺术概论·第六章其他艺术类型+各门艺术关系']},
+  '2026-09-09':{day:'Day27',month:'9月',new:'英语作文·仿写练习3(书信类小作文)',reviews:['艺术概论·第五章精读复盘(期待视野/再创造性)','艺术概论·第四章精读复盘(内容形式/艺术意蕴)','艺术概论·第二章精读复盘(四大功能/中西功能论)','英语作文·书信类小作文模板(建议信/邀请信/感谢信)']},
+  '2026-09-10':{day:'Day28',month:'9月',new:'艺术概论·第七章精读复盘(五学说/继承创新)',reviews:['艺术概论·第六章精读复盘★(音乐艺术审美特征)','英语作文·仿写练习2(静态图真题)','英语作文·仿写练习1(动态图真题)','艺术概论·第七章艺术发展(起源五学说/多元决定)']},
+  '2026-09-11':{day:'Day29',month:'9月',new:'艺术概论·第八章精读复盘(风格流派思潮关系)',reviews:['英语作文·仿写练习3(书信类小作文)','艺术概论·第五章精读复盘(期待视野/再创造性)','艺术概论·第三章精读复盘★★(创作动因→构思→物化)','艺术概论·第七章发展规律+继承与创新★论述题']},
+  '2026-09-12':{day:'Day30',month:'9月',new:'英语作文·大作文模板初稿定稿',reviews:['艺术概论·第七章精读复盘(五学说/继承创新)','艺术概论·第六章精读复盘★(音乐艺术审美特征)','艺术概论·第四章精读复盘(内容形式/艺术意蕴)','英语作文·作文高级句型+替换词背诵']},
+  // ===== 10月背诵计划 (Day49-Day79) =====
+  '2026-10-01':{day:'Day49',month:'10月',new:'艺术概论·目标院校真题1(名词解释部分)',reviews:['艺术概论·论述题3(音乐艺术的审美特征★本专业)','英语作文·仿写练习4(混合类图表)','英语作文·模板快速默写(大+小作文)','艺术概论·名词解释3(期待视野/再创造性)','艺术概论·第一章精读复盘(艺术观念演变)']},
+  '2026-10-02':{day:'Day50',month:'10月',new:'艺术概论·目标院校真题2(简答题部分)',reviews:['9月月度复盘+薄弱点标记','艺术概论·论述题2(内容与形式辩证统一关系)','艺术概论·简答题4(艺术发展中的继承与创新)','艺术概论·名词解释4(艺术风格/艺术流派)','艺术概论·第二章精读复盘(四大功能/中西功能论)']},
+  '2026-10-03':{day:'Day51',month:'10月',new:'英语作文·模板最终定稿(大作文+小作文)',reviews:['艺术概论·目标院校真题1(名词解释部分)','艺术概论·论述题3(音乐艺术的审美特征★本专业)','艺术概论·论述题1(艺术创作过程论★★结构)','英语作文·小作文模板默写+对照检查','英语作文·仿写练习1(动态图真题)']},
+  '2026-10-04':{day:'Day52',month:'10月',new:'艺术概论·目标院校真题3(论述题部分)',reviews:['艺术概论·目标院校真题2(简答题部分)','9月月度复盘+薄弱点标记','英语作文·仿写练习4(混合类图表)','艺术概论·名词解释5(艺术批评/艺术媒介)','艺术概论·第三章精读复盘★★(创作动因→构思→物化)']},
+  '2026-10-05':{day:'Day53',month:'10月',new:'艺术概论·真题错题整理+考点定位',reviews:['英语作文·模板最终定稿(大作文+小作文)','艺术概论·目标院校真题1(名词解释部分)','艺术概论·论述题2(内容与形式辩证统一关系)','艺术概论·简答题1(艺术的审美教育功能)','艺术概论·第四章精读复盘(内容形式/艺术意蕴)']},
+  '2026-10-06':{day:'Day54',month:'10月',new:'英语作文·大作文默写+自我批改',reviews:['艺术概论·目标院校真题3(论述题部分)','艺术概论·目标院校真题2(简答题部分)','艺术概论·论述题3(音乐艺术的审美特征★本专业)','英语作文·高频替换词+万能句型背诵','英语作文·仿写练习2(静态图真题)']},
+  '2026-10-07':{day:'Day55',month:'10月',new:'艺术概论·高频考点串讲(上：绪论-第五章)',reviews:['艺术概论·真题错题整理+考点定位','英语作文·模板最终定稿(大作文+小作文)','9月月度复盘+薄弱点标记','艺术概论·简答题2(艺术创作主体四要素)','艺术概论·第五章精读复盘(期待视野/再创造性)']},
+  '2026-10-08':{day:'Day56',month:'10月',new:'艺术概论·高频考点串讲(下：第六章-第十章)',reviews:['英语作文·大作文默写+自我批改','艺术概论·目标院校真题3(论述题部分)','艺术概论·目标院校真题1(名词解释部分)','艺术概论·简答题3(艺术接受四特征)','艺术概论·第六章精读复盘★(音乐艺术审美特征)']},
+  '2026-10-09':{day:'Day57',month:'10月',new:'英语作文·小作文默写+自我批改',reviews:['艺术概论·高频考点串讲(上：绪论-第五章)','艺术概论·真题错题整理+考点定位','艺术概论·目标院校真题2(简答题部分)','英语作文·模板快速默写(大+小作文)','英语作文·仿写练习3(书信类小作文)']},
+  '2026-10-10':{day:'Day58',month:'10月',new:'艺术概论·论述题素材积累(音乐教育案例)',reviews:['艺术概论·高频考点串讲(下：第六章-第十章)','英语作文·大作文默写+自我批改','英语作文·模板最终定稿(大作文+小作文)','艺术概论·简答题4(艺术发展中的继承与创新)','艺术概论·第七章精读复盘(五学说/继承创新)']},
+  '2026-10-11':{day:'Day59',month:'10月',new:'艺术概论·论述题素材积累(当代艺术案例)',reviews:['英语作文·小作文默写+自我批改','艺术概论·高频考点串讲(上：绪论-第五章)','艺术概论·目标院校真题3(论述题部分)','艺术概论·论述题1(艺术创作过程论★★结构)','艺术概论·第八章精读复盘(风格流派思潮关系)']},
+  '2026-10-12':{day:'Day60',month:'10月',new:'英语作文·仿写练习5(最新真题)',reviews:['艺术概论·论述题素材积累(音乐教育案例)','艺术概论·高频考点串讲(下：第六章-第十章)','艺术概论·真题错题整理+考点定位','英语作文·仿写练习4(混合类图表)','英语作文·大作文模板初稿定稿']},
+  '2026-10-13':{day:'Day61',month:'10月',new:'艺术概论·名词解释全集背诵(上)',reviews:['艺术概论·论述题素材积累(当代艺术案例)','英语作文·小作文默写+自我批改','英语作文·大作文默写+自我批改','艺术概论·论述题2(内容与形式辩证统一关系)','艺术概论·名词解释1(艺术掌握方式/艺术生产)']},
+  '2026-10-14':{day:'Day62',month:'10月',new:'艺术概论·名词解释全集背诵(下)',reviews:['英语作文·仿写练习5(最新真题)','艺术概论·论述题素材积累(音乐教育案例)','艺术概论·高频考点串讲(上：绪论-第五章)','艺术概论·论述题3(音乐艺术的审美特征★本专业)','艺术概论·名词解释2(创作动因/艺术构思)']},
+  '2026-10-15':{day:'Day63',month:'10月',new:'英语作文·高频替换词第二轮背诵',reviews:['艺术概论·名词解释全集背诵(上)','艺术概论·论述题素材积累(当代艺术案例)','艺术概论·高频考点串讲(下：第六章-第十章)','9月月度复盘+薄弱点标记','英语作文·大作文模板默写+对照检查']},
+  '2026-10-16':{day:'Day64',month:'10月',new:'艺术概论·简答题全集背诵(上)',reviews:['艺术概论·名词解释全集背诵(下)','英语作文·仿写练习5(最新真题)','英语作文·小作文默写+自我批改','艺术概论·目标院校真题1(名词解释部分)','艺术概论·名词解释3(期待视野/再创造性)']},
+  '2026-10-17':{day:'Day65',month:'10月',new:'艺术概论·简答题全集背诵(下)',reviews:['英语作文·高频替换词第二轮背诵','艺术概论·名词解释全集背诵(上)','艺术概论·论述题素材积累(音乐教育案例)','艺术概论·目标院校真题2(简答题部分)','艺术概论·名词解释4(艺术风格/艺术流派)']},
+  '2026-10-18':{day:'Day66',month:'10月',new:'英语作文·模板快速过一遍(计时默写)',reviews:['艺术概论·简答题全集背诵(上)','艺术概论·名词解释全集背诵(下)','艺术概论·论述题素材积累(当代艺术案例)','英语作文·模板最终定稿(大作文+小作文)','英语作文·小作文模板默写+对照检查']},
+  '2026-10-19':{day:'Day67',month:'10月',new:'艺术概论·论述题模板背诵(上：创作/作品)',reviews:['艺术概论·简答题全集背诵(下)','英语作文·高频替换词第二轮背诵','英语作文·仿写练习5(最新真题)','艺术概论·目标院校真题3(论述题部分)','艺术概论·名词解释5(艺术批评/艺术媒介)']},
+  '2026-10-20':{day:'Day68',month:'10月',new:'艺术概论·论述题模板背诵(下：接受/发展/当代)',reviews:['英语作文·模板快速过一遍(计时默写)','艺术概论·简答题全集背诵(上)','艺术概论·名词解释全集背诵(上)','艺术概论·真题错题整理+考点定位','艺术概论·简答题1(艺术的审美教育功能)']},
+  '2026-10-21':{day:'Day69',month:'10月',new:'英语作文·考场时间分配+书写练习',reviews:['艺术概论·论述题模板背诵(上：创作/作品)','艺术概论·简答题全集背诵(下)','艺术概论·名词解释全集背诵(下)','英语作文·大作文默写+自我批改','英语作文·高频替换词+万能句型背诵']},
+  '2026-10-22':{day:'Day70',month:'10月',new:'艺术概论·全真模拟卷1(3小时计时)',reviews:['艺术概论·论述题模板背诵(下：接受/发展/当代)','英语作文·模板快速过一遍(计时默写)','英语作文·高频替换词第二轮背诵','艺术概论·高频考点串讲(上：绪论-第五章)','艺术概论·简答题2(艺术创作主体四要素)']},
+  '2026-10-23':{day:'Day71',month:'10月',new:'艺术概论·模拟卷1批改+错题复盘',reviews:['英语作文·考场时间分配+书写练习','艺术概论·论述题模板背诵(上：创作/作品)','艺术概论·简答题全集背诵(上)','艺术概论·高频考点串讲(下：第六章-第十章)','艺术概论·简答题3(艺术接受四特征)']},
+  '2026-10-24':{day:'Day72',month:'10月',new:'英语作文·最后仿写练习+模板优化',reviews:['艺术概论·全真模拟卷1(3小时计时)','艺术概论·论述题模板背诵(下：接受/发展/当代)','艺术概论·简答题全集背诵(下)','英语作文·小作文默写+自我批改','英语作文·模板快速默写(大+小作文)']},
+  '2026-10-25':{day:'Day73',month:'10月',new:'艺术概论·全书框架默写(第二轮)',reviews:['艺术概论·模拟卷1批改+错题复盘','英语作文·考场时间分配+书写练习','英语作文·模板快速过一遍(计时默写)','艺术概论·论述题素材积累(音乐教育案例)','艺术概论·简答题4(艺术发展中的继承与创新)']},
+  '2026-10-26':{day:'Day74',month:'10月',new:'艺术概论·重点章节回炉(第三章+第六章★)',reviews:['英语作文·最后仿写练习+模板优化','艺术概论·全真模拟卷1(3小时计时)','艺术概论·论述题模板背诵(上：创作/作品)','艺术概论·论述题素材积累(当代艺术案例)','艺术概论·论述题1(艺术创作过程论★★结构)']},
+  '2026-10-27':{day:'Day75',month:'10月',new:'英语作文·模板终极版确认+素材整理',reviews:['艺术概论·全书框架默写(第二轮)','艺术概论·模拟卷1批改+错题复盘','艺术概论·论述题模板背诵(下：接受/发展/当代)','英语作文·仿写练习5(最新真题)','英语作文·仿写练习4(混合类图表)']},
+  '2026-10-28':{day:'Day76',month:'10月',new:'艺术概论·全真模拟卷2(3小时计时)',reviews:['艺术概论·重点章节回炉(第三章+第六章★)','英语作文·最后仿写练习+模板优化','英语作文·考场时间分配+书写练习','艺术概论·名词解释全集背诵(上)','艺术概论·论述题2(内容与形式辩证统一关系)']},
+  '2026-10-29':{day:'Day77',month:'10月',new:'艺术概论·模拟卷2批改+薄弱点强化',reviews:['英语作文·模板终极版确认+素材整理','艺术概论·全书框架默写(第二轮)','艺术概论·全真模拟卷1(3小时计时)','艺术概论·名词解释全集背诵(下)','艺术概论·论述题3(音乐艺术的审美特征★本专业)']},
+  '2026-10-30':{day:'Day78',month:'10月',new:'英语作文·作文热点话题素材积累',reviews:['艺术概论·全真模拟卷2(3小时计时)','艺术概论·重点章节回炉(第三章+第六章★)','艺术概论·模拟卷1批改+错题复盘','英语作文·高频替换词第二轮背诵','9月月度复盘+薄弱点标记']},
+  '2026-10-31':{day:'Day79',month:'10月',new:'10月月度复盘+冲刺计划制定',reviews:['艺术概论·模拟卷2批改+薄弱点强化','英语作文·模板终极版确认+素材整理','英语作文·最后仿写练习+模板优化','艺术概论·简答题全集背诵(上)','艺术概论·目标院校真题1(名词解释部分)']},
+  // ===== 11月背诵计划 (Day80-Day109) =====
+  '2026-11-01':{day:'Day80',month:'11月',new:'艺术概论·押题背诵(上：高频考点)',reviews:['英语作文·作文热点话题素材积累','艺术概论·全真模拟卷2(3小时计时)','艺术概论·全书框架默写(第二轮)','艺术概论·简答题全集背诵(下)','艺术概论·目标院校真题2(简答题部分)']},
+  '2026-11-02':{day:'Day81',month:'11月',new:'艺术概论·押题背诵(下：预测考点)',reviews:['10月月度复盘+冲刺计划制定','艺术概论·模拟卷2批改+薄弱点强化','艺术概论·重点章节回炉(第三章+第六章★)','英语作文·模板快速过一遍(计时默写)','英语作文·模板最终定稿(大作文+小作文)']},
+  '2026-11-03':{day:'Day82',month:'11月',new:'英语作文·大作文模板默写(计时)',reviews:['艺术概论·押题背诵(上：高频考点)','英语作文·作文热点话题素材积累','英语作文·模板终极版确认+素材整理','艺术概论·论述题模板背诵(上：创作/作品)','艺术概论·目标院校真题3(论述题部分)']},
+  '2026-11-04':{day:'Day83',month:'11月',new:'艺术概论·核心考点速记(上：名词解释)',reviews:['艺术概论·押题背诵(下：预测考点)','10月月度复盘+冲刺计划制定','艺术概论·全真模拟卷2(3小时计时)','艺术概论·论述题模板背诵(下：接受/发展/当代)','艺术概论·真题错题整理+考点定位']},
+  '2026-11-05':{day:'Day84',month:'11月',new:'艺术概论·核心考点速记(下：简答+论述)',reviews:['英语作文·大作文模板默写(计时)','艺术概论·押题背诵(上：高频考点)','艺术概论·模拟卷2批改+薄弱点强化','英语作文·考场时间分配+书写练习','英语作文·大作文默写+自我批改']},
+  '2026-11-06':{day:'Day85',month:'11月',new:'英语作文·小作文模板默写(计时)',reviews:['艺术概论·核心考点速记(上：名词解释)','艺术概论·押题背诵(下：预测考点)','英语作文·作文热点话题素材积累','艺术概论·全真模拟卷1(3小时计时)','艺术概论·高频考点串讲(上：绪论-第五章)']},
+  '2026-11-07':{day:'Day86',month:'11月',new:'艺术概论·全真模拟卷3(3小时计时)',reviews:['艺术概论·核心考点速记(下：简答+论述)','英语作文·大作文模板默写(计时)','10月月度复盘+冲刺计划制定','艺术概论·模拟卷1批改+错题复盘','艺术概论·高频考点串讲(下：第六章-第十章)']},
+  '2026-11-08':{day:'Day87',month:'11月',new:'艺术概论·模拟卷3批改+答题速度优化',reviews:['英语作文·小作文模板默写(计时)','艺术概论·核心考点速记(上：名词解释)','艺术概论·押题背诵(上：高频考点)','英语作文·最后仿写练习+模板优化','英语作文·小作文默写+自我批改']},
+  '2026-11-09':{day:'Day88',month:'11月',new:'英语作文·万能句型+过渡词复盘',reviews:['艺术概论·全真模拟卷3(3小时计时)','艺术概论·核心考点速记(下：简答+论述)','艺术概论·押题背诵(下：预测考点)','艺术概论·全书框架默写(第二轮)','艺术概论·论述题素材积累(音乐教育案例)']},
+  '2026-11-10':{day:'Day89',month:'11月',new:'艺术概论·查漏补缺(薄弱章节专项)',reviews:['艺术概论·模拟卷3批改+答题速度优化','英语作文·小作文模板默写(计时)','英语作文·大作文模板默写(计时)','艺术概论·重点章节回炉(第三章+第六章★)','艺术概论·论述题素材积累(当代艺术案例)']},
+  '2026-11-11':{day:'Day90',month:'11月',new:'艺术概论·论述题热点预测(数字技术/美育)',reviews:['英语作文·万能句型+过渡词复盘','艺术概论·全真模拟卷3(3小时计时)','艺术概论·核心考点速记(上：名词解释)','英语作文·模板终极版确认+素材整理','英语作文·仿写练习5(最新真题)']},
+  '2026-11-12':{day:'Day91',month:'11月',new:'英语作文·高频词汇+替换词复盘',reviews:['艺术概论·查漏补缺(薄弱章节专项)','艺术概论·模拟卷3批改+答题速度优化','艺术概论·核心考点速记(下：简答+论述)','艺术概论·全真模拟卷2(3小时计时)','艺术概论·名词解释全集背诵(上)']},
+  '2026-11-13':{day:'Day92',month:'11月',new:'艺术概论·押题卷1(3小时计时)',reviews:['艺术概论·论述题热点预测(数字技术/美育)','英语作文·万能句型+过渡词复盘','英语作文·小作文模板默写(计时)','艺术概论·模拟卷2批改+薄弱点强化','艺术概论·名词解释全集背诵(下)']},
+  '2026-11-14':{day:'Day93',month:'11月',new:'艺术概论·押题卷1批改+重点背诵',reviews:['英语作文·高频词汇+替换词复盘','艺术概论·查漏补缺(薄弱章节专项)','艺术概论·全真模拟卷3(3小时计时)','英语作文·作文热点话题素材积累','英语作文·高频替换词第二轮背诵']},
+  '2026-11-15':{day:'Day94',month:'11月',new:'英语作文·仿写保持手感(1篇大+1篇小)',reviews:['艺术概论·押题卷1(3小时计时)','艺术概论·论述题热点预测(数字技术/美育)','艺术概论·模拟卷3批改+答题速度优化','10月月度复盘+冲刺计划制定','艺术概论·简答题全集背诵(上)']},
+  '2026-11-16':{day:'Day95',month:'11月',new:'艺术概论·名词解释快速过一遍(1.5h)',reviews:['艺术概论·押题卷1批改+重点背诵','英语作文·高频词汇+替换词复盘','英语作文·万能句型+过渡词复盘','艺术概论·押题背诵(上：高频考点)','艺术概论·简答题全集背诵(下)']},
+  '2026-11-17':{day:'Day96',month:'11月',new:'艺术概论·简答题快速过一遍(1.5h)',reviews:['英语作文·仿写保持手感(1篇大+1篇小)','艺术概论·押题卷1(3小时计时)','艺术概论·查漏补缺(薄弱章节专项)','艺术概论·押题背诵(下：预测考点)','英语作文·模板快速过一遍(计时默写)']},
+  '2026-11-18':{day:'Day97',month:'11月',new:'英语作文·大作文模板默写+检查',reviews:['艺术概论·名词解释快速过一遍(1.5h)','艺术概论·押题卷1批改+重点背诵','艺术概论·论述题热点预测(数字技术/美育)','英语作文·大作文模板默写(计时)','艺术概论·论述题模板背诵(上：创作/作品)']},
+  '2026-11-19':{day:'Day98',month:'11月',new:'艺术概论·论述题快速过一遍(2h)',reviews:['艺术概论·简答题快速过一遍(1.5h)','英语作文·仿写保持手感(1篇大+1篇小)','英语作文·高频词汇+替换词复盘','艺术概论·核心考点速记(上：名词解释)','艺术概论·论述题模板背诵(下：接受/发展/当代)']},
+  '2026-11-20':{day:'Day99',month:'11月',new:'艺术概论·押题卷2(3小时计时)',reviews:['英语作文·大作文模板默写+检查','艺术概论·名词解释快速过一遍(1.5h)','艺术概论·押题卷1(3小时计时)','艺术概论·核心考点速记(下：简答+论述)','英语作文·考场时间分配+书写练习']},
+  '2026-11-21':{day:'Day100',month:'11月',new:'英语作文·小作文模板默写+检查',reviews:['艺术概论·论述题快速过一遍(2h)','艺术概论·简答题快速过一遍(1.5h)','艺术概论·押题卷1批改+重点背诵','英语作文·小作文模板默写(计时)','艺术概论·全真模拟卷1(3小时计时)']},
+  '2026-11-22':{day:'Day101',month:'11月',new:'艺术概论·押题卷2批改+重点背诵',reviews:['艺术概论·押题卷2(3小时计时)','英语作文·大作文模板默写+检查','英语作文·仿写保持手感(1篇大+1篇小)','艺术概论·全真模拟卷3(3小时计时)','艺术概论·模拟卷1批改+错题复盘']},
+  '2026-11-23':{day:'Day102',month:'11月',new:'艺术概论·全书思维导图默写(闭卷)',reviews:['英语作文·小作文模板默写+检查','艺术概论·论述题快速过一遍(2h)','艺术概论·名词解释快速过一遍(1.5h)','艺术概论·模拟卷3批改+答题速度优化','英语作文·最后仿写练习+模板优化']},
+  '2026-11-24':{day:'Day103',month:'11月',new:'英语作文·小作文各类模板回顾',reviews:['艺术概论·押题卷2批改+重点背诵','艺术概论·押题卷2(3小时计时)','艺术概论·简答题快速过一遍(1.5h)','英语作文·万能句型+过渡词复盘','艺术概论·全书框架默写(第二轮)']},
+  '2026-11-25':{day:'Day104',month:'11月',new:'艺术概论·高频考点最后串讲',reviews:['艺术概论·全书思维导图默写(闭卷)','英语作文·小作文模板默写+检查','英语作文·大作文模板默写+检查','艺术概论·查漏补缺(薄弱章节专项)','艺术概论·重点章节回炉(第三章+第六章★)']},
+  '2026-11-26':{day:'Day105',month:'11月',new:'艺术概论·易错点+易混淆概念整理',reviews:['英语作文·小作文各类模板回顾','艺术概论·押题卷2批改+重点背诵','艺术概论·论述题快速过一遍(2h)','艺术概论·论述题热点预测(数字技术/美育)','英语作文·模板终极版确认+素材整理']},
+  '2026-11-27':{day:'Day106',month:'11月',new:'英语作文·考场注意事项+书写规范',reviews:['艺术概论·高频考点最后串讲','艺术概论·全书思维导图默写(闭卷)','艺术概论·押题卷2(3小时计时)','英语作文·高频词汇+替换词复盘','艺术概论·全真模拟卷2(3小时计时)']},
+  '2026-11-28':{day:'Day107',month:'11月',new:'艺术概论·押题卷3(3小时计时)',reviews:['艺术概论·易错点+易混淆概念整理','英语作文·小作文各类模板回顾','英语作文·小作文模板默写+检查','艺术概论·押题卷1(3小时计时)','艺术概论·模拟卷2批改+薄弱点强化']},
+  '2026-11-29':{day:'Day108',month:'11月',new:'艺术概论·押题卷3批改+重点背诵',reviews:['英语作文·考场注意事项+书写规范','艺术概论·高频考点最后串讲','艺术概论·押题卷2批改+重点背诵','艺术概论·押题卷1批改+重点背诵','英语作文·作文热点话题素材积累']},
+  '2026-11-30':{day:'Day109',month:'11月',new:'11月月度复盘+考前状态调整',reviews:['艺术概论·押题卷3(3小时计时)','艺术概论·易错点+易混淆概念整理','艺术概论·全书思维导图默写(闭卷)','英语作文·仿写保持手感(1篇大+1篇小)','10月月度复盘+冲刺计划制定']},
+  // ===== 12月背诵计划 (Day110-Day129) =====
+  '2026-12-01':{day:'Day110',month:'12月',new:'艺术概论·核心考点最后背诵(上)',reviews:['艺术概论·押题卷3批改+重点背诵','英语作文·考场注意事项+书写规范','英语作文·小作文各类模板回顾','艺术概论·名词解释快速过一遍(1.5h)','艺术概论·押题背诵(上：高频考点)']},
+  '2026-12-02':{day:'Day111',month:'12月',new:'艺术概论·核心考点最后背诵(下)',reviews:['11月月度复盘+考前状态调整','艺术概论·押题卷3(3小时计时)','艺术概论·高频考点最后串讲','艺术概论·简答题快速过一遍(1.5h)','艺术概论·押题背诵(下：预测考点)']},
+  '2026-12-03':{day:'Day112',month:'12月',new:'英语作文·大作文模板最终默写',reviews:['艺术概论·核心考点最后背诵(上)','艺术概论·押题卷3批改+重点背诵','艺术概论·易错点+易混淆概念整理','英语作文·大作文模板默写+检查','英语作文·大作文模板默写(计时)']},
+  '2026-12-04':{day:'Day113',month:'12月',new:'艺术概论·押题卷4(3小时计时)',reviews:['艺术概论·核心考点最后背诵(下)','11月月度复盘+考前状态调整','英语作文·考场注意事项+书写规范','艺术概论·论述题快速过一遍(2h)','艺术概论·核心考点速记(上：名词解释)']},
+  '2026-12-05':{day:'Day114',month:'12月',new:'艺术概论·押题卷4批改+重点背诵',reviews:['英语作文·大作文模板最终默写','艺术概论·核心考点最后背诵(上)','艺术概论·押题卷3(3小时计时)','艺术概论·押题卷2(3小时计时)','艺术概论·核心考点速记(下：简答+论述)']},
+  '2026-12-06':{day:'Day115',month:'12月',new:'英语作文·小作文模板最终默写',reviews:['艺术概论·押题卷4(3小时计时)','艺术概论·核心考点最后背诵(下)','艺术概论·押题卷3批改+重点背诵','英语作文·小作文模板默写+检查','英语作文·小作文模板默写(计时)']},
+  '2026-12-07':{day:'Day116',month:'12月',new:'艺术概论·名词解释最后过一遍',reviews:['艺术概论·押题卷4批改+重点背诵','英语作文·大作文模板最终默写','11月月度复盘+考前状态调整','艺术概论·押题卷2批改+重点背诵','艺术概论·全真模拟卷3(3小时计时)']},
+  '2026-12-08':{day:'Day117',month:'12月',new:'艺术概论·简答题最后过一遍',reviews:['英语作文·小作文模板最终默写','艺术概论·押题卷4(3小时计时)','艺术概论·核心考点最后背诵(上)','艺术概论·全书思维导图默写(闭卷)','艺术概论·模拟卷3批改+答题速度优化']},
+  '2026-12-09':{day:'Day118',month:'12月',new:'英语作文·万能句型最后过一遍',reviews:['艺术概论·名词解释最后过一遍','艺术概论·押题卷4批改+重点背诵','艺术概论·核心考点最后背诵(下)','英语作文·小作文各类模板回顾','英语作文·万能句型+过渡词复盘']},
+  '2026-12-10':{day:'Day119',month:'12月',new:'艺术概论·论述题最后过一遍',reviews:['艺术概论·简答题最后过一遍','英语作文·小作文模板最终默写','英语作文·大作文模板最终默写','艺术概论·高频考点最后串讲','艺术概论·查漏补缺(薄弱章节专项)']},
+  '2026-12-11':{day:'Day120',month:'12月',new:'艺术概论·全书框架最后默写(闭卷)',reviews:['英语作文·万能句型最后过一遍','艺术概论·名词解释最后过一遍','艺术概论·押题卷4(3小时计时)','艺术概论·易错点+易混淆概念整理','艺术概论·论述题热点预测(数字技术/美育)']},
+  '2026-12-12':{day:'Day121',month:'12月',new:'英语作文·模板最后确认+注意事项',reviews:['艺术概论·论述题最后过一遍','艺术概论·简答题最后过一遍','艺术概论·押题卷4批改+重点背诵','英语作文·考场注意事项+书写规范','英语作文·高频词汇+替换词复盘']},
+  '2026-12-13':{day:'Day122',month:'12月',new:'艺术概论·押题重点背诵(上)',reviews:['艺术概论·全书框架最后默写(闭卷)','英语作文·万能句型最后过一遍','英语作文·小作文模板最终默写','艺术概论·押题卷3(3小时计时)','艺术概论·押题卷1(3小时计时)']},
+  '2026-12-14':{day:'Day123',month:'12月',new:'艺术概论·押题重点背诵(下)',reviews:['英语作文·模板最后确认+注意事项','艺术概论·论述题最后过一遍','艺术概论·名词解释最后过一遍','艺术概论·押题卷3批改+重点背诵','艺术概论·押题卷1批改+重点背诵']},
+  '2026-12-15':{day:'Day124',month:'12月',new:'英语作文·作文素材最后回顾',reviews:['艺术概论·押题重点背诵(上)','艺术概论·全书框架最后默写(闭卷)','艺术概论·简答题最后过一遍','11月月度复盘+考前状态调整','英语作文·仿写保持手感(1篇大+1篇小)']},
+  '2026-12-16':{day:'Day125',month:'12月',new:'艺术概论·查漏补缺最后一遍',reviews:['艺术概论·押题重点背诵(下)','英语作文·模板最后确认+注意事项','英语作文·万能句型最后过一遍','艺术概论·核心考点最后背诵(上)','艺术概论·名词解释快速过一遍(1.5h)']},
+  '2026-12-17':{day:'Day126',month:'12月',new:'艺术概论·心态调整+错题本回顾',reviews:['英语作文·作文素材最后回顾','艺术概论·押题重点背诵(上)','艺术概论·论述题最后过一遍','艺术概论·核心考点最后背诵(下)','艺术概论·简答题快速过一遍(1.5h)']},
+  '2026-12-18':{day:'Day127',month:'12月',new:'英语作文·最后默写+考场策略',reviews:['艺术概论·查漏补缺最后一遍','艺术概论·押题重点背诵(下)','艺术概论·全书框架最后默写(闭卷)','英语作文·大作文模板最终默写','英语作文·大作文模板默写+检查']},
+  '2026-12-19':{day:'Day128',month:'12月',new:'★考研第一天：上午政治 下午英语二',reviews:['艺术概论·心态调整+错题本回顾','英语作文·作文素材最后回顾','英语作文·模板最后确认+注意事项','艺术概论·押题卷4(3小时计时)','艺术概论·论述题快速过一遍(2h)']},
+  '2026-12-20':{day:'Day129',month:'12月',new:'★考研第二天：上午专业课一 下午专业课二',reviews:['英语作文·最后默写+考场策略','艺术概论·查漏补缺最后一遍','艺术概论·押题重点背诵(上)','艺术概论·押题卷4批改+重点背诵','艺术概论·押题卷2(3小时计时)']},
+};
+
+const examDate = new Date('2026-12-20T08:30:00');
+let todayTasks = [];
+
+function formatDate(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function getWeekday(d){ const w=['周日','周一','周二','周三','周四','周五','周六']; return w[d.getDay()]; }
+
+function switchPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelector('.tab[data-page="'+page+'"]').classList.add('active');
+}
+
+function updateCountdown(){
+  const now=new Date(); const diff=examDate-now;
+  document.getElementById('countdownDays').textContent=Math.max(0,Math.ceil(diff/(1000*60*60*24)));
+}
+
+function getTodayTasks(){
+  const now=new Date(); const dateStr=formatDate(now);
+  const tasks=[];
+  // 基础每日任务（始终显示）
+  baseTasks.forEach((t,i)=>tasks.push({id:'base'+i,type:'base',time:t.time,text:t.content}));
+  // 艾宾浩斯新学+复习（如果有）
+  if(ebbinghaus[dateStr]){
+    const plan=ebbinghaus[dateStr];
+    tasks.push({id:'new',type:'new',time:'新学',text:plan.new,day:plan.day});
+    const intervals=['D+2','D+4','D+7','D+15','D+30'];
+    plan.reviews.forEach((r,i)=>tasks.push({id:'review'+i,type:'review',time:intervals[i]||'复习',text:r}));
+  }
+  return tasks;
+}
+
+function loadTaskStatus(){
+  const dateStr=formatDate(new Date());
+  try { return JSON.parse(localStorage.getItem('dashboard_tasks_'+dateStr)||'{}'); } catch(e){ return {}; }
+}
+function saveTaskStatus(status){
+  const dateStr=formatDate(new Date());
+  localStorage.setItem('dashboard_tasks_'+dateStr, JSON.stringify(status));
+}
+
+function toggleTask(id){
+  const status=loadTaskStatus();
+  status[id]=!status[id];
+  saveTaskStatus(status);
+  renderTasks();
+  updateOverview();
+}
+
+function renderTasks(){
+  todayTasks=getTodayTasks();
+  const status=loadTaskStatus();
+  const list=document.getElementById('taskList');
+  let html='';
+  const now=new Date();
+  document.getElementById('todayTag').textContent=getWeekday(now);
+  document.getElementById('todayFullDate').textContent=(now.getMonth()+1)+'月'+now.getDate()+'日 · 每日学习计划';
+
+  let hasNew=false, hasReview=false, hasBase=false;
+  todayTasks.forEach(t=>{ if(t.type==='new')hasNew=true; if(t.type==='review')hasReview=true; if(t.type==='base')hasBase=true; });
+
+  if(hasNew){
+    html+='<div class="task-group"><div class="task-group-title new">📖 新学内容</div>';
+    todayTasks.filter(t=>t.type==='new').forEach(t=>{
+      const done=status[t.id]?'done':'';
+      html+='<div class="task-item '+done+'" onclick="toggleTask(\''+t.id+'\')"><div class="task-check"></div><span class="task-text">'+t.text+'</span></div>';
+    });
+    html+='</div>';
+  }
+  if(hasReview){
+    html+='<div class="task-group"><div class="task-group-title review">🔄 艾宾浩斯复习</div>';
+    todayTasks.filter(t=>t.type==='review').forEach(t=>{
+      const done=status[t.id]?'done':'';
+      html+='<div class="task-item review '+done+'" onclick="toggleTask(\''+t.id+'\')"><div class="task-check"></div><span class="task-time">'+t.time+'</span><span class="task-text">'+t.text+'</span></div>';
+    });
+    html+='</div>';
+  }
+  if(hasBase){
+    html+='<div class="task-group"><div class="task-group-title">📅 基础强化期 · 每日固定任务</div>';
+    todayTasks.filter(t=>t.type==='base').forEach(t=>{
+      const done=status[t.id]?'done':'';
+      html+='<div class="task-item '+done+'" onclick="toggleTask(\''+t.id+'\')"><div class="task-check"></div><span class="task-time">'+t.time+'</span><span class="task-text">'+t.text+'</span></div>';
+    });
+    html+='</div>';
+    html+='<div class="tip-box">💡 艾宾浩斯专项复习计划（8月14日起），每日自动显示新学+复习内容</div>';
+  }
+  list.innerHTML=html;
+
+  const doneCount=todayTasks.filter(t=>status[t.id]).length;
+  document.getElementById('todayProgress').textContent=doneCount+'/'+todayTasks.length+' 完成';
+}
+
+function syncData(){
+  const btn=document.getElementById('syncBtn');
+  btn.classList.add('syncing');
+  btn.textContent='同步中...';
+  loadProgress();
+  setTimeout(()=>{
+    btn.classList.remove('syncing');
+    btn.textContent='✓ 已同步';
+    setTimeout(()=>{ btn.textContent='🔄 同步'; },2000);
+  },500);
+}
+
+function loadProgress(){
+  let artM=0, artF=0, engM=0, engF=0;
+  try {
+    const mastered=JSON.parse(localStorage.getItem('art_mastered')||'[]');
+    const favorites=JSON.parse(localStorage.getItem('art_favorites')||'[]');
+    artM=mastered.length; artF=favorites.length;
+    const percent=Math.round((artM/190)*100);
+    document.getElementById('artMastered').textContent=artM;
+    document.getElementById('artFav').textContent=artF;
+    document.getElementById('artPercent').textContent=percent+'%';
+    document.getElementById('artBar').style.width=percent+'%';
+  } catch(e){}
+  try {
+    const engMastered=JSON.parse(localStorage.getItem('english_mastered')||'[]');
+    const engFav=JSON.parse(localStorage.getItem('english_favorites')||'[]');
+    engM=engMastered.length; engF=engFav.length;
+    const percent=Math.min(100,Math.round((engM/100)*100));
+    document.getElementById('engMastered').textContent=engM;
+    document.getElementById('engFav').textContent=engF;
+    document.getElementById('engPercent').textContent=percent+'%';
+    document.getElementById('engBar').style.width=percent+'%';
+  } catch(e){}
+  // 更新概览页
+  const totalMastery=Math.round(((artM/190)+(engM/100))/2*100);
+  document.getElementById('overviewMastery').textContent=totalMastery+'%';
+}
+
+function updateOverview(){
+  const status=loadTaskStatus();
+  const doneCount=todayTasks.filter(t=>status[t.id]).length;
+  document.getElementById('overviewTaskProgress').textContent=doneCount+'/'+todayTasks.length;
+}
+
+function renderTimeAllocation(){
+  const card=document.getElementById('timeCard');
+  let html='';
+  timeAllocation.forEach(t=>{
+    html+='<div class="time-item">';
+    html+='<div class="time-dot" style="background:'+t.color+'"></div>';
+    html+='<div style="flex:1">';
+    html+='<div style="display:flex;align-items:center;gap:10px">';
+    html+='<span class="time-name">'+t.name+'</span><span class="time-hours">'+t.hours+'h</span><span class="time-percent">'+t.percent+'%</span>';
+    html+='</div>';
+    html+='<div class="time-bar-wrap"><div class="time-bar-fill" style="width:'+t.percent+'%;background:'+t.color+'"></div></div>';
+    html+='</div></div>';
+  });
+  card.innerHTML=html;
+}
+
+function renderPhases(){
+  const now=new Date();
+  const card=document.getElementById('phaseCard');
+  let html='';
+  phases.forEach(p=>{
+    const start=new Date(p.start), end=new Date(p.end);
+    let status='pending', statusText='未开始';
+    if(now>=start&&now<=end){status='active';statusText='进行中';}
+    else if(now>end){status='done';statusText='已完成';}
+    html+='<div class="phase-item"><div class="phase-dot '+status+'"></div><div class="phase-content">';
+    html+='<div class="phase-name">'+p.name+'</div><div class="phase-date">'+p.date+'</div>';
+    html+='<div class="phase-desc">'+p.desc+'</div>';
+    html+='<span class="phase-status '+status+'">'+statusText+'</span></div></div>';
+  });
+  card.innerHTML=html;
+  const current=phases.find(p=>now>=new Date(p.start)&&now<=new Date(p.end));
+  if(current){
+    document.getElementById('currentPhase').textContent=current.name;
+    const total=new Date(current.end)-new Date(current.start);
+    const passed=now-new Date(current.start);
+    document.getElementById('phaseProgress').textContent='已进行 '+Math.round((passed/total)*100)+'%';
+  }
+  document.getElementById('todayDate').textContent=(now.getMonth()+1)+'月'+now.getDate()+'日';
+  document.getElementById('todayWeekday').textContent=getWeekday(now);
+}
+
+let currentPlanMonth = null;
+
+function renderPlanMonths(){
+  const months = ['8月','9月','10月','11月','12月'];
+  const now = new Date();
+  const currentMonth = (now.getMonth()+1) + '月';
+  if(!currentPlanMonth) currentPlanMonth = months.includes(currentMonth) ? currentMonth : '8月';
+  const container = document.getElementById('planMonths');
+  container.innerHTML = months.map(m=>
+    '<div class="plan-month-btn '+(m===currentPlanMonth?'active':'')+'" onclick="selectPlanMonth(\''+m+'\')">'+m+'</div>'
+  ).join('');
+}
+
+function selectPlanMonth(month){
+  currentPlanMonth = month;
+  renderPlanMonths();
+  renderPlanCalendar();
+}
+
+function renderPlanCalendar(){
+  const calendar=document.getElementById('planCalendar');
+  const todayStr=formatDate(new Date());
+  let html='';
+  const dates=Object.keys(ebbinghaus).filter(d=>ebbinghaus[d].month===currentPlanMonth).sort();
+  if(dates.length===0){
+    html='<div style="text-align:center;padding:40px;color:var(--text-3)">'+currentPlanMonth+'暂无计划数据</div>';
+  }
+  dates.forEach(dateStr=>{
+    const plan=ebbinghaus[dateStr];
+    const d=new Date(dateStr);
+    const isToday=dateStr===todayStr;
+    html+='<div class="plan-day '+(isToday?'today':'')+'">';
+    html+='<div class="plan-day-header">';
+    html+='<span class="plan-day-badge">'+plan.day+'</span>';
+    html+='<span class="plan-day-date">'+(d.getMonth()+1)+'月'+d.getDate()+'日</span>';
+    html+='<span class="plan-day-weekday">'+getWeekday(d)+'</span>';
+    if(isToday) html+='<span style="margin-left:auto;padding:2px 10px;background:rgba(37,99,235,0.1);color:var(--blue);border-radius:999px;font-size:11px;font-weight:700">今天</span>';
+    html+='</div>';
+    html+='<div class="plan-section"><div class="plan-section-label new">📖 新学</div>';
+    html+='<div class="plan-item new">'+plan.new+'</div></div>';
+    if(plan.reviews && plan.reviews.length>0){
+      html+='<div class="plan-section"><div class="plan-section-label review">🔄 复习</div>';
+      const intervals=['D+2','D+4','D+7','D+15','D+30'];
+      plan.reviews.forEach((r,i)=>{
+        html+='<div class="plan-item review"><span class="interval">'+(intervals[i]||'复习')+'</span>'+r+'</div>';
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  calendar.innerHTML=html;
+}
+
+function calcWeekStats(){
+  const now=new Date();
+  const todayStr=formatDate(now);
+  // 本周一
+  const dayOfWeek=now.getDay()||7;
+  const monday=new Date(now); monday.setDate(now.getDate()-dayOfWeek+1); monday.setHours(0,0,0,0);
+  // 本周完成任务数
+  let weekTasks=0;
+  for(let i=0;i<7;i++){
+    const d=new Date(monday); d.setDate(monday.getDate()+i);
+    const ds=formatDate(d);
+    if(ds>todayStr) break;
+    try {
+      const status=JSON.parse(localStorage.getItem('dashboard_tasks_'+ds)||'{}');
+      weekTasks+=Object.values(status).filter(v=>v).length;
+    } catch(e){}
+  }
+  document.getElementById('weekTasks').textContent=weekTasks;
+  // 连续打卡天数（有完成任务的天数）
+  let streak=0;
+  for(let i=0;i<365;i++){
+    const d=new Date(now); d.setDate(now.getDate()-i);
+    const ds=formatDate(d);
+    try {
+      const status=JSON.parse(localStorage.getItem('dashboard_tasks_'+ds)||'{}');
+      const done=Object.values(status).filter(v=>v).length;
+      if(done>0) streak++;
+      else break;
+    } catch(e){ break; }
+  }
+  document.getElementById('streakDays').textContent=streak;
+  // 累计学习天数
+  let totalDays=0;
+  for(let i=0;i<365;i++){
+    const d=new Date(now); d.setDate(now.getDate()-i);
+    const ds=formatDate(d);
+    try {
+      const status=JSON.parse(localStorage.getItem('dashboard_tasks_'+ds)||'{}');
+      if(Object.keys(status).length>0) totalDays++;
+    } catch(e){}
+  }
+  document.getElementById('totalDays').textContent=totalDays;
+  // 本周掌握题目（art_mastered 里的，简化为总掌握数，因为没有时间戳）
+  try {
+    const mastered=JSON.parse(localStorage.getItem('art_mastered')||'[]');
+    document.getElementById('weekMastered').textContent=mastered.length;
+  } catch(e){ document.getElementById('weekMastered').textContent=0; }
+}
+
+function renderTodayReview(){
+  const todayStr=formatDate(new Date());
+  const list=document.getElementById('todayReviewList');
+  if(ebbinghaus[todayStr] && ebbinghaus[todayStr].reviews && ebbinghaus[todayStr].reviews.length>0){
+    const plan=ebbinghaus[todayStr];
+    let html='';
+    const intervals=['D+2','D+4','D+7','D+15','D+30'];
+    plan.reviews.forEach((r,i)=>{
+      html+='<div class="review-reminder-item"><span class="rr-tag">'+(intervals[i]||'复习')+'</span><span>'+r+'</span></div>';
+    });
+    list.innerHTML=html;
+  } else {
+    list.innerHTML='<div style="font-size:13px;color:var(--text-3);text-align:center;padding:16px 0">今日暂无复习内容<br><span style="font-size:12px">点击「复习计划」tab查看完整日历</span></div>';
+  }
+}
+
+updateCountdown();
+setInterval(updateCountdown,60000);
+renderTasks();
+renderTimeAllocation();
+renderPhases();
+renderPlanMonths();
+renderPlanCalendar();
+calcWeekStats();
+renderTodayReview();
+loadProgress();
+updateOverview();
+setInterval(loadProgress,15000);
+</script>
+</body>
+</html>

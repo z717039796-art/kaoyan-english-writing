@@ -2003,7 +2003,7 @@ body::before {
 }  
   /* 小屏幕导航优化 */
   @media (max-width: 1200px) {
-    .topnav { padding: 8px 20px !important; gap: 12px !important; }
+    .topnav { padding: 8px 20px !important; gap: 12px !important; flex-wrap: wrap !important; height: auto !important; min-height: 64px !important; }
     .brand { flex: 0 0 auto !important; margin-right: 0 !important; order: 1 !important; }
     .brand-icon { width: 44px !important; height: 44px !important; font-size: 20px !important; }
     .topnav .search { display: flex !important; width: 280px !important; order: 2 !important; margin-left: auto !important; margin-right: auto !important; }

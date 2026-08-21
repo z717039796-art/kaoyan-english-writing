@@ -906,11 +906,13 @@ body::before {
   .filter-bar, .chapter-selector, .content { padding-left:20px; padding-right:20px; }
 }
 @media (max-width: 1400px) {
-  .topnav { padding: 0 20px; gap: 16px; }
-  .brand-name { font-size: 13px; }
-  .tabs { gap: 2px; }
-  .tab { padding: 8px 14px; font-size: 13px; }
-  .switch-btn { padding: 6px 12px; font-size: 12px; }
+  .topnav { padding: 0 14px; gap: 8px; flex-wrap: nowrap; height: 64px; }
+  .brand-name { font-size: 11px; }
+  .tabs { gap: 0px; flex: 1; min-width: 0; }
+  .tab { padding: 6px 10px; font-size: 12px; white-space: nowrap; }
+  .switch-btn { padding: 5px 10px; font-size: 11px; }
+  .search { width: 140px; }
+  .search input { font-size: 12px; }
 }@media (max-width: 1000px) {
   .topnav { padding:0 16px; gap:10px; flex-wrap:wrap; height:auto; min-height:64px; padding-top:10px; padding-bottom:10px; }
   .topnav .brand { order:1; }
@@ -3166,6 +3168,7 @@ function clearDoodle() {
 }</script>
 </body>
 </html>
+
 
 
 

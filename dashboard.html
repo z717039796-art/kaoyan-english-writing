@@ -251,8 +251,9 @@ body {
 @media (max-width: 1400px) {
   .topnav { padding: 0 16px; gap: 10px; }
   .brand-name { font-size: 12px; }
-  .tabs { gap: 0px; }
-  .tab { padding: 7px 12px; font-size: 12px; }
+  .tabs { gap: 0px; flex: 1; min-width: 0; }
+  .tab { padding: 7px 12px; font-size: 12px; white-space: nowrap; }
+  .topnav-right { gap: 4px; flex-shrink: 0; }
   .switch-btn { padding: 5px 10px; font-size: 11px; }
   .sync-btn { padding: 5px 10px; font-size: 11px; }
 }
@@ -260,6 +261,7 @@ body {
   .topnav { padding: 0 12px; gap: 6px; }
   .brand-name { display: none; }
   .tab { padding: 6px 8px; font-size: 11px; }
+  .topnav-right { gap: 3px; }
   .switch-btn { padding: 5px 8px; font-size: 10px; }
   .sync-btn { padding: 5px 8px; font-size: 10px; }
   .overview { grid-template-columns: 1fr; }

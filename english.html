@@ -518,11 +518,16 @@ body::after {
   .tabs { gap: 2px; }
   .tab { padding: 8px 14px; font-size: 13px; }
   .switch-btn { padding: 6px 12px; font-size: 12px; }
+  .search { display: none !important; }
 }@media (max-width: 1000px) {
-  .topnav { padding: 0 16px; gap: 12px; }
-  .topnav .brand-name { display: none; }
-  .topnav .search { width: 140px; }
-  .topnav .tab { padding: 8px 14px; font-size: 12px; }
+  .topnav { flex-wrap: wrap; height: auto; min-height: 64px; padding: 8px 16px; gap: 8px; align-items: center; }
+  .brand { order: 1; flex: 0 0 auto; }
+  .brand-name { display: none; }
+  .switch-btn { order: 2; flex: 0 0 auto; padding: 6px 12px; font-size: 12px; }
+  .switch-btn.home-btn { margin-left: auto; }
+  .tabs { order: 3; flex: 0 0 100%; width: 100%; display: flex; gap: 4px; }
+  .tab { padding: 6px 12px; font-size: 13px; white-space: nowrap; flex: 0 0 auto; }
+  .search { display: none !important; }
   .hero { padding: 40px 24px; }
   .hero h1 { font-size: 52px; }
   .feature-grid { grid-template-columns: repeat(2, 1fr); }
@@ -738,7 +743,46 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
 }
 .switch-btn:hover { background: linear-gradient(135deg, rgba(37,99,235,0.18), rgba(124,58,237,0.18)); transform: translateY(-1px); }
 .essay-chart img { max-width: 100% !important; width: 100%; height: auto; display: block; border-radius: 12px; }
-</style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
+@media (max-width: 600px) {
+  .topnav { padding: 6px 10px; gap: 6px; min-height: 56px; }
+  .brand-icon { width: 28px; height: 28px; font-size: 12px; }
+  .switch-btn { padding: 4px 8px; font-size: 11px; }
+  .tabs { gap: 2px; }
+  .tab { padding: 5px 8px; font-size: 11px; }
+  .container { padding-top: 100px; }
+  .hero { padding: 30px 16px; }
+  .hero h1 { font-size: 36px; }
+  .feature-grid { grid-template-columns: 1fr; }
+}  
+  /* 小屏幕导航优化 */
+  @media (max-width: 1000px) {
+    .topnav { padding: 6px 12px !important; gap: 8px !important; }
+    .brand { flex: 0 0 auto !important; margin-right: 0 !important; order: 1 !important; }
+    .topnav .search { display: flex !important; width: 120px !important; order: 2 !important; margin-left: auto !important; margin-right: auto !important; }
+    .search input { width: 100% !important; font-size: 11px !important; padding: 5px 8px !important; }
+    .topnav-right { flex: 0 0 auto !important; margin-left: auto !important; gap: 4px !important; order: 3 !important; }
+    .switch-btn { order: 3 !important; }
+    .switch-btn, .sync-btn { 
+      padding: 0 !important; 
+      font-size: 0 !important; 
+      width: 30px; 
+      height: 30px; 
+      min-width: 30px;
+      display: inline-flex !important; 
+      align-items: center; 
+      justify-content: center; 
+      border-radius: 50% !important; 
+      flex-shrink: 0;
+    }
+    .switch-btn::before, .sync-btn::before { font-size: 13px; }
+    .switch-btn[href="index.html"]::before { content: "🏠"; }
+    .switch-btn[href="english.html"]::before { content: "📝"; }
+    .switch-btn[href="art.html"]::before { content: "🎨"; }
+    .switch-btn[href="dashboard.html"]::before { content: "📊"; }
+    .sync-btn::before { content: "🔄"; }
+    .tabs { gap: 0 !important; justify-content: space-between !important; width: 100% !important; order: 4 !important; }
+    .tab { padding: 4px 4px !important; font-size: 10px !important; white-space: nowrap !important; flex: 1 !important; text-align: center; }
+  }</style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <nav class="topnav">
@@ -1553,6 +1597,21 @@ else initEngButtons();
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

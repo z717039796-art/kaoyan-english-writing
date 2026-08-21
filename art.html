@@ -243,7 +243,7 @@ body::before {
   padding:16px 36px 8px;
   max-width:1200px;
   margin:0 auto;
-  overflow-x:auto;
+  
   scrollbar-width:none;
 }
 .chapter-selector::-webkit-scrollbar { display:none; }
@@ -913,10 +913,13 @@ body::before {
   .switch-btn { padding: 6px 12px; font-size: 12px; }
 }@media (max-width: 1000px) {
   .topnav { padding:0 16px; gap:10px; flex-wrap:wrap; height:auto; min-height:64px; padding-top:10px; padding-bottom:10px; }
-  .topnav .brand { order:1; }
-  .topnav .tabs { order:3; width:100%; justify-content:flex-start; overflow-x:auto; padding-bottom:4px; }
+  .topnav .brand { order:1; flex:0 0 auto; }
+  .topnav-right { order:2; flex:1; display:flex; justify-content:flex-end; gap:4px; align-items:center; }
+  .topnav-right .switch-btn { padding:4px 8px; font-size:11px; white-space:nowrap; flex-shrink:0; }
+  .topnav .tabs { order:3; flex:0 0 100%; width:100%; justify-content:flex-start; padding-bottom:4px; }
   .topnav .tab { padding:7px 14px; font-size:12px; }
-  .topnav-right { order:2; margin-left:auto; }
+  .topnav .search { display:none !important; }
+  .topnav .theme-btn { display:none; }
   .topnav .search { width:140px; }
   .page-container { padding-top:110px; }
   .home-hero h1 { font-size:32px; }
@@ -1997,7 +2000,36 @@ body::before {
 .modal-nav-btn {
   font-weight: 700;
   font-size: 15px;
-}</style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
+}  
+  /* 小屏幕导航优化 */
+  @media (max-width: 1000px) {
+    .topnav { padding: 6px 12px !important; gap: 8px !important; }
+    .brand { flex: 0 0 auto !important; margin-right: 0 !important; order: 1 !important; }
+    .topnav .search { display: flex !important; width: 120px !important; order: 2 !important; margin-left: auto !important; margin-right: auto !important; }
+    .topnav .search input { width: 100% !important; font-size: 11px !important; padding: 5px 8px !important; }
+    .topnav-right { flex: 0 0 auto !important; margin-left: 0 !important; gap: 4px !important; order: 3 !important; display: flex !important; align-items: center; }
+    .topnav-right .theme-btn { order: 3 !important; }
+    .switch-btn, .sync-btn { 
+      padding: 0 !important; 
+      font-size: 0 !important; 
+      width: 30px; 
+      height: 30px; 
+      min-width: 30px;
+      display: inline-flex !important; 
+      align-items: center; 
+      justify-content: center; 
+      border-radius: 50% !important; 
+      flex-shrink: 0;
+    }
+    .switch-btn::before, .sync-btn::before { font-size: 13px; }
+    .switch-btn[href="index.html"]::before { content: "🏠"; }
+    .switch-btn[href="english.html"]::before { content: "📝"; }
+    .switch-btn[href="art.html"]::before { content: "🎨"; }
+    .switch-btn[href="dashboard.html"]::before { content: "📊"; }
+    .sync-btn::before { content: "🔄"; }
+    .tabs { gap: 0 !important; justify-content: space-between !important; width: 100% !important; order: 4 !important; }
+    .tab { padding: 4px 4px !important; font-size: 10px !important; white-space: nowrap !important; flex: 1 !important; text-align: center; }
+  }</style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div id="app">
@@ -2012,11 +2044,11 @@ body::before {
       <div class="tab" data-page="daily" onclick="navigate('daily')">每日抽背</div>
       <div class="tab" data-page="progress" onclick="navigate('progress')">学习进度</div>
     </div>
-    <div class="topnav-right">
-      <a href="index.html" class="switch-btn home-btn" title="返回首页">← 首页</a><a href="english.html" class="switch-btn" title="切换到英语作文">英语作文 →</a><a href="dashboard.html" class="switch-btn" title="切换到复习看板" style="background:linear-gradient(135deg,rgba(5,150,105,0.1),rgba(8,145,178,0.1));border-color:rgba(5,150,105,0.2);color:#059669;">看板 →</a>
       <div class="search">
         <input type="text" id="searchInput" placeholder="搜索题目、知识点..." oninput="handleSearch(this.value)">
       </div>
+    <div class="topnav-right">
+      <a href="index.html" class="switch-btn home-btn" title="返回首页">← 首页</a><a href="english.html" class="switch-btn" title="切换到英语作文">英语作文 →</a><a href="dashboard.html" class="switch-btn" title="切换到复习看板" style="background:linear-gradient(135deg,rgba(5,150,105,0.1),rgba(8,145,178,0.1));border-color:rgba(5,150,105,0.2);color:#059669;">看板 →</a>
       <button class="theme-btn" onclick="toggleTheme()" title="切换主题">🌓</button>
     </div>
   </nav>
@@ -3166,6 +3198,28 @@ function clearDoodle() {
 }</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

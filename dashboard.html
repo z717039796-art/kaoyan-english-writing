@@ -248,10 +248,10 @@ body {
   color: var(--purple); border-radius: 6px; font-size: 11px; font-weight: 700;
 }
 @media (max-width: 1200px) {
-  .topnav { padding: 0 14px; gap: 8px; flex-wrap: nowrap; }
+  .topnav { padding: 8px 14px; gap: 8px; flex-wrap: wrap; height: auto; min-height: 64px; align-items: center; }
   .brand-name { font-size: 12px; }
-  .tabs { gap: 0px; flex: 1; min-width: 0; }
-  .tab { padding: 6px 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+  .tabs { gap: 2px; flex: 1; min-width: 0; display: flex; flex-wrap: wrap; }
+  .tab { padding: 5px 8px; font-size: 11px; white-space: nowrap; flex-shrink: 0; }
   .switch-btn { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
   .sync-btn { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
   .topnav-right { gap: 4px; flex-shrink: 0; }
@@ -906,6 +906,7 @@ setInterval(loadProgress,15000);
 </script>
 </body>
 </html>
+
 
 
 

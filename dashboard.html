@@ -270,7 +270,18 @@ body {
 }
 
 @media (max-width: 600px) {
-  .topnav { padding: 8px 10px; gap: 6px; flex-wrap: wrap; height: auto; min-height: 56px; }
+  .topnav { display: flex; flex-wrap: wrap; padding: 8px 10px; gap: 6px; height: auto; min-height: 56px; align-items: center; }
+  .brand { order: 1; flex: 0 0 auto; }
+  .brand-name { display: none; }
+  .brand-icon { width: 32px; height: 32px; font-size: 14px; }
+  .topnav-right { order: 2; flex: 0 0 auto; margin-left: auto; display: flex; gap: 4px; }
+  .tabs { order: 3; flex: 0 0 100%; width: 100%; display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-start; }
+  .tab { padding: 5px 10px; font-size: 11px; white-space: nowrap; flex: 0 0 auto; }
+  .switch-btn { padding: 4px 8px; font-size: 10px; flex: 0 0 auto; }
+  .sync-btn { padding: 4px 8px; font-size: 10px; flex: 0 0 auto; }
+  .search { display: none !important; }
+  .container { padding: 16px 12px 32px; padding-top: 110px; }
+}
   .brand { order: 1; flex-shrink: 0; }
   .brand-name { display: none; }
   .brand-icon { width: 32px; height: 32px; font-size: 14px; }
@@ -911,6 +922,7 @@ setInterval(loadProgress,15000);
 </script>
 </body>
 </html>
+
 
 
 

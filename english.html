@@ -512,8 +512,16 @@ body::after {
 }
 
 /* 响应式 */
-@media (max-width: 1600px) {
+@media (max-width: 1200px) {
   .topnav { padding: 0 14px; gap: 8px; flex-wrap: nowrap; }
+  .brand-name { font-size: 12px; }
+  .tabs { gap: 0px; flex: 1; min-width: 0; }
+  .tab { padding: 6px 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+  .switch-btn { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
+  .sync-btn { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
+  .topnav-right { gap: 4px; flex-shrink: 0; }
+  .search { display: none !important; }
+}
   .brand-name { font-size: 12px; }
   .tabs { gap: 0px; flex: 1; min-width: 0; }
   .tab { padding: 6px 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
@@ -742,6 +750,18 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
 
 @media (max-width: 600px) {
   .topnav { display: flex; flex-wrap: wrap; padding: 8px 10px; gap: 6px; height: auto; min-height: 56px; align-items: center; }
+  .brand { order: 1; flex: 0 0 auto; }
+  .brand-name { display: none; }
+  .brand-icon { width: 32px; height: 32px; font-size: 14px; }
+  .switch-btn { order: 2; flex: 0 0 auto; padding: 4px 8px; font-size: 10px; }
+  .switch-btn.home-btn { margin-left: auto; }
+  .topnav-right { order: 2; flex: 0 0 auto; margin-left: auto; display: flex; gap: 4px; }
+  .sync-btn { order: 2; flex: 0 0 auto; padding: 4px 8px; font-size: 10px; }
+  .tabs { order: 3; flex: 0 0 100%; width: 100%; display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-start; }
+  .tab { padding: 5px 10px; font-size: 11px; white-space: nowrap; flex: 0 0 auto; }
+  .search { display: none !important; }
+  .container { padding: 16px 12px 32px; padding-top: 110px; }
+}
   .brand { order: 1; flex: 0 0 auto; }
   .brand-name { display: none; }
   .brand-icon { width: 32px; height: 32px; font-size: 14px; }
@@ -1580,6 +1600,7 @@ else initEngButtons();
 </script>
 </body>
 </html>
+
 
 
 

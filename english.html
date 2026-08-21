@@ -512,7 +512,13 @@ body::after {
 }
 
 /* 响应式 */
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
+  .topnav { padding: 0 20px; gap: 16px; }
+  .brand-name { font-size: 13px; }
+  .tabs { gap: 2px; }
+  .tab { padding: 8px 14px; font-size: 13px; }
+  .switch-btn { padding: 6px 12px; font-size: 12px; }
+}@media (max-width: 900px) {
   .topnav { padding: 0 16px; gap: 12px; }
   .topnav .brand-name { display: none; }
   .topnav .search { width: 140px; }
@@ -743,6 +749,7 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
     <div class="tab" data-page="static">静态图模板</div>
     <div class="tab" data-page="essays">完整范文</div>
     <div class="tab" data-page="vocab">词汇积累</div>
+    <div class="tab" data-page="progress">学习进度</div>
   </div>
   <a href="index.html" class="switch-btn home-btn" title="返回首页">← 首页</a><a href="art.html" class="switch-btn" title="切换到艺术概论">艺术概论 →</a><a href="dashboard.html" class="switch-btn" title="切换到复习看板" style="background:linear-gradient(135deg,rgba(5,150,105,0.1),rgba(8,145,178,0.1));border-color:rgba(5,150,105,0.2);color:#059669;">看板 →</a><div class="search"><input type="text" id="searchInput" placeholder="搜索句式、关键词、翻译..."></div>
 </nav>
@@ -1408,6 +1415,31 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
   </div>
 </div>
 
+<div class="page" id="page-progress">
+  <div class="content-layout" style="display:block">
+    <main style="max-width:900px;margin:0 auto">
+      <h2 style="font-size:28px;font-weight:800;margin-bottom:24px">学习进度</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px">
+        <div style="padding:24px;background:rgba(255,255,255,0.6);backdrop-filter:blur(20px);border-radius:20px;border:1px solid rgba(255,255,255,0.8)">
+          <div style="font-size:13px;color:#9B9BB5;margin-bottom:8px">已掌握句式</div>
+          <div style="font-size:36px;font-weight:900;background:linear-gradient(135deg,#2563EB,#4F46E5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" id="engMasteredCount">0</div>
+        </div>
+        <div style="padding:24px;background:rgba(255,255,255,0.6);backdrop-filter:blur(20px);border-radius:20px;border:1px solid rgba(255,255,255,0.8)">
+          <div style="font-size:13px;color:#9B9BB5;margin-bottom:8px">收藏句式</div>
+          <div style="font-size:36px;font-weight:900;background:linear-gradient(135deg,#7C3AED,#DB2777);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" id="engFavCount">0</div>
+        </div>
+      </div>
+      <div style="padding:24px;background:rgba(255,255,255,0.6);backdrop-filter:blur(20px);border-radius:20px;border:1px solid rgba(255,255,255,0.8)">
+        <div style="font-size:16px;font-weight:700;margin-bottom:16px">使用说明</div>
+        <div style="font-size:14px;color:#6B6B8A;line-height:1.8">
+          在「动态图模板」「静态图模板」「完整范文」「词汇积累」页面中，每个句式/范文卡片右上角有 <span style="color:#2563EB;font-weight:600">掌握</span> 和 <span style="color:#7C3AED;font-weight:600">收藏</span> 按钮，点击即可标记。<br>
+          数据自动保存到本地，复习看板会同步显示掌握进度。
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
 <div class="footer">考研英语二图表作文句式知识库 · 2026</div>
 
 <script>
@@ -1462,9 +1494,66 @@ switchPage = function(name) {
   if (!searchInput.value.trim()) lastPage = name;
   origSwitch(name);
 };
+
+// ===== 掌握/收藏功能 =====
+function getEngMastered(){ try{return JSON.parse(localStorage.getItem('english_mastered')||'[]');}catch(e){return[];} }
+function getEngFavorites(){ try{return JSON.parse(localStorage.getItem('english_favorites')||'[]');}catch(e){return[];} }
+function saveEngMastered(arr){ localStorage.setItem('english_mastered',JSON.stringify(arr)); }
+function saveEngFavorites(arr){ localStorage.setItem('english_favorites',JSON.stringify(arr)); }
+
+function toggleEngMastered(id,btn){
+  const arr=getEngMastered();
+  const idx=arr.indexOf(id);
+  if(idx>=0){ arr.splice(idx,1); btn.classList.remove('active'); btn.textContent='掌握'; }
+  else { arr.push(id); btn.classList.add('active'); btn.textContent='已掌握'; }
+  saveEngMastered(arr);
+  updateEngProgress();
+}
+function toggleEngFavorite(id,btn){
+  const arr=getEngFavorites();
+  const idx=arr.indexOf(id);
+  if(idx>=0){ arr.splice(idx,1); btn.classList.remove('active'); btn.textContent='收藏'; }
+  else { arr.push(id); btn.classList.add('active'); btn.textContent='已收藏'; }
+  saveEngFavorites(arr);
+  updateEngProgress();
+}
+
+function updateEngProgress(){
+  const m=getEngMastered().length, f=getEngFavorites().length;
+  const mc=document.getElementById('engMasteredCount');
+  const fc=document.getElementById('engFavCount');
+  if(mc) mc.textContent=m;
+  if(fc) fc.textContent=f;
+}
+
+function initEngButtons(){
+  const cards=document.querySelectorAll('.sentence-card, .template, .card.example');
+  cards.forEach((card,i)=>{
+    if(card.querySelector('.eng-actions')) return;
+    const id='eng_'+i;
+    card.style.position='relative';
+    const actions=document.createElement('div');
+    actions.className='eng-actions';
+    actions.style.cssText='position:absolute;bottom:12px;right:12px;display:flex;gap:6px;z-index:10';
+    const mastered=getEngMastered(), favorites=getEngFavorites();
+    actions.innerHTML='<button class="eng-btn'+(mastered.includes(id)?' active':'')+'" onclick="toggleEngMastered(\''+id+'\',this)">'+(mastered.includes(id)?'已掌握':'掌握')+'</button>'+
+      '<button class="eng-btn fav'+(favorites.includes(id)?' active':'')+'" onclick="toggleEngFavorite(\''+id+'\',this)">'+(favorites.includes(id)?'已收藏':'收藏')+'</button>';
+    card.appendChild(actions);
+  });
+  updateEngProgress();
+}
+
+// 注入按钮样式
+const engStyle=document.createElement('style');
+engStyle.textContent='.eng-btn{padding:4px 12px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid rgba(37,99,235,0.2);background:rgba(255,255,255,0.8);color:#2563EB;cursor:pointer;transition:all 0.2s}.eng-btn:hover{background:rgba(37,99,235,0.1)}.eng-btn.active{background:#2563EB;color:white;border-color:#2563EB}.eng-btn.fav{color:#7C3AED;border-color:rgba(124,58,237,0.2)}.eng-btn.fav:hover{background:rgba(124,58,237,0.1)}.eng-btn.fav.active{background:#7C3AED;color:white;border-color:#7C3AED}';
+document.head.appendChild(engStyle);
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initEngButtons);
+else initEngButtons();
 </script>
 </body>
 </html>
+
 
 
 

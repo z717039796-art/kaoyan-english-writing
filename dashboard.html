@@ -247,7 +247,6 @@ body {
   flex-shrink: 0; padding: 1px 8px; background: rgba(124,58,237,0.15);
   color: var(--purple); border-radius: 6px; font-size: 11px; font-weight: 700;
 }
-
 @media (max-width: 1200px) {
   .topnav { padding: 0 14px; gap: 8px; flex-wrap: nowrap; }
   .brand-name { font-size: 12px; }
@@ -257,24 +256,6 @@ body {
   .sync-btn { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
   .topnav-right { gap: 4px; flex-shrink: 0; }
   .search { display: none !important; }
-}
-  .brand-name { font-size: 12px; }
-  .tabs { gap: 0px; flex: 1; min-width: 0; }
-  .tab { padding: 6px 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
-  .topnav-right { gap: 4px; flex-shrink: 0; }
-  .switch-btn { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
-  .sync-btn { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
-}
-@media (max-width: 1000px) {
-  .topnav { padding: 0 12px; gap: 6px; }
-  .brand-name { display: none; }
-  .tab { padding: 6px 8px; font-size: 11px; }
-  .topnav-right { gap: 3px; }
-  .switch-btn { padding: 5px 8px; font-size: 10px; }
-  .sync-btn { padding: 5px 8px; font-size: 10px; }
-  .overview { grid-template-columns: 1fr; }
-  .container { padding: 24px 16px 40px; }
-  .week-stats { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 600px) {
@@ -290,30 +271,6 @@ body {
   .tab { padding: 5px 10px; font-size: 11px; white-space: nowrap; flex: 0 0 auto; }
   .search { display: none !important; }
   .container { padding: 16px 12px 32px; padding-top: 110px; }
-}
-  .brand { order: 1; flex: 0 0 auto; }
-  .brand-name { display: none; }
-  .brand-icon { width: 32px; height: 32px; font-size: 14px; }
-  .switch-btn { order: 2; flex: 0 0 auto; padding: 4px 8px; font-size: 10px; }
-  .switch-btn:first-of-type { margin-left: auto; }
-  .topnav-right { order: 2; flex: 0 0 auto; margin-left: auto; display: flex; gap: 4px; }
-  .sync-btn { order: 2; flex: 0 0 auto; padding: 4px 8px; font-size: 10px; }
-  .tabs { order: 3; flex: 0 0 100%; width: 100%; display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-start; }
-  .tab { padding: 5px 10px; font-size: 11px; white-space: nowrap; flex: 0 0 auto; }
-  .search { display: none !important; }
-  .container { padding: 16px 12px 32px; padding-top: 110px; }
-}
-  .brand { order: 1; flex-shrink: 0; }
-  .brand-name { display: none; }
-  .brand-icon { width: 32px; height: 32px; font-size: 14px; }
-  .topnav-right { order: 2; margin-left: auto; flex-shrink: 0; }
-  .tabs { order: 3; width: 100%; gap: 2px; justify-content: flex-start; flex-wrap: wrap; }
-  
-  .tab { padding: 5px 10px; font-size: 11px; white-space: nowrap; flex-shrink: 0; }
-  .switch-btn { padding: 4px 8px; font-size: 10px; flex-shrink: 0; }
-  .sync-btn { padding: 4px 8px; font-size: 10px; flex-shrink: 0; }
-  .search { display: none !important; }
-  .container { padding: 16px 12px 32px; padding-top: 100px; }
 }</style>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
 </head>
@@ -943,6 +900,7 @@ setInterval(loadProgress,15000);
 </script>
 </body>
 </html>
+
 
 
 

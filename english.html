@@ -745,10 +745,10 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
   .search { display: none !important; 
   .container { padding: 16px 12px 32px; padding-top: 100px;
 @media (max-width: 1200px) {
-  .topnav { padding: 0 14px; gap: 8px; flex-wrap: nowrap; }
+  .topnav { padding: 8px 14px; gap: 8px; flex-wrap: wrap; height: auto; min-height: 64px; align-items: center; }
   .brand-name { font-size: 12px; }
-  .tabs { gap: 0px; flex: 1; min-width: 0; }
-  .tab { padding: 6px 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+  .tabs { gap: 2px; flex: 1; min-width: 0; display: flex; flex-wrap: wrap; }
+  .tab { padding: 5px 8px; font-size: 11px; white-space: nowrap; flex-shrink: 0; }
   .switch-btn { padding: 5px 10px; font-size: 11px; flex-shrink: 0; }
   .search { display: none !important; }
 }
@@ -1585,6 +1585,7 @@ else initEngButtons();
 </script>
 </body>
 </html>
+
 
 
 

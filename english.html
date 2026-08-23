@@ -2100,8 +2100,11 @@ function checkDictationAnswer() {
   
   if (dictationMode === 'zh2en') {
     // 中译英：用LCS最长公共子序列对齐单词
-    const correctWords = item.en.replace(/[.,!?;:'"]/g, '').toLowerCase().split(/\s+/).filter(w => w);
-    const userWords = userInput.replace(/[.,!?;:'"]/g, '').toLowerCase().split(/\s+/).filter(w => w);
+    // 比较用小写+去标点，显示保留原始大小写
+    const cleanText = (t) => t.replace(/[^a-zA-Z\s]/g, '').toLowerCase().split(/\s+/).filter(w => w);
+    const correctWords = cleanText(item.en);
+    const userWordsOriginal = userInput.split(/\s+/).filter(w => w.replace(/[^a-zA-Z]/g, ''));
+    const userWords = cleanText(userInput);
     
     // LCS动态规划
     const m = userWords.length, n = correctWords.length;
@@ -2138,12 +2141,13 @@ function checkDictationAnswer() {
     const correctCount = userMatched.filter(Boolean).length;
     let resultHTML = '';
     
-    // 先显示用户答案（正确绿色，错误红色）
+    // 显示用户答案（用原始单词，保留大小写）
     for (let k = 0; k < m; k++) {
+      const displayWord = userWordsOriginal[k] || userWords[k];
       if (userMatched[k]) {
-        resultHTML += `<span class="word-correct">${userWords[k]}</span> `;
+        resultHTML += `<span class="word-correct">${displayWord}</span> `;
       } else {
-        resultHTML += `<span class="word-wrong">${userWords[k]}</span> `;
+        resultHTML += `<span class="word-wrong">${displayWord}</span> `;
       }
     }
     

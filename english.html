@@ -1088,6 +1088,42 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
   line-height: 1.7;
   color: var(--text-1);
 }
+.dict-answer-text.user-answer {
+  color: var(--text-2);
+}
+.dict-score {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.dict-score.high {
+  background: rgba(22,163,74,0.12);
+  color: #16A34A;
+}
+.dict-score.mid {
+  background: rgba(234,179,8,0.12);
+  color: #CA8A04;
+}
+.dict-score.low {
+  background: rgba(220,38,38,0.12);
+  color: #DC2626;
+}
+.word-correct {
+  color: #16A34A;
+  font-weight: 600;
+}
+.word-wrong {
+  color: #DC2626;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+.word-missing {
+  color: #9B9BB5;
+  font-style: italic;
+}
 @media (max-width: 768px) {
   .dict-card { padding: 20px; }
   .dict-question { font-size: 16px; padding: 16px; }
@@ -1804,7 +1840,10 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
           <button class="dict-action-btn" id="dictShuffle">🔀 随机抽题</button>
         </div>
         <div class="dict-answer" id="dictAnswer" style="display:none">
-          <div class="dict-answer-label">正确答案：</div>
+          <div class="dict-score" id="dictScore"></div>
+          <div class="dict-answer-label">你的答案：</div>
+          <div class="dict-answer-text user-answer" id="dictUserAnswer"></div>
+          <div class="dict-answer-label" style="margin-top:16px">正确答案：</div>
           <div class="dict-answer-text" id="dictAnswerText"></div>
         </div>
       </div>
@@ -2046,10 +2085,96 @@ function loadDictationQuestion() {
 function checkDictationAnswer() {
   if (dictationFiltered.length === 0) return;
   const item = dictationFiltered[dictationIndex % dictationFiltered.length];
+  const userInput = document.getElementById('dictInput').value.trim();
   const answerEl = document.getElementById('dictAnswer');
-  const answerText = document.getElementById('dictAnswerText');
-  answerText.textContent = dictationMode === 'zh2en' ? item.en : item.zh;
+  const userAnswerEl = document.getElementById('dictUserAnswer');
+  const answerTextEl = document.getElementById('dictAnswerText');
+  const scoreEl = document.getElementById('dictScore');
+  
+  if (!userInput) {
+    userAnswerEl.textContent = '（未作答）';
+    userAnswerEl.style.color = '#9B9BB5';
+  } else {
+    userAnswerEl.style.color = '';
+  }
+  
+  if (dictationMode === 'zh2en') {
+    // 中译英：按单词批改
+    const correctWords = item.en.replace(/[.,!?;:'"]/g, '').toLowerCase().split(/\s+/).filter(w => w);
+    const userWords = userInput.replace(/[.,!?;:'"]/g, '').toLowerCase().split(/\s+/).filter(w => w);
+    let correctCount = 0;
+    let resultHTML = '';
+    
+    const maxLen = Math.max(correctWords.length, userWords.length);
+    for (let i = 0; i < maxLen; i++) {
+      if (i < userWords.length && i < correctWords.length) {
+        if (userWords[i] === correctWords[i]) {
+          resultHTML += `<span class="word-correct">${userWords[i]}</span> `;
+          correctCount++;
+        } else {
+          resultHTML += `<span class="word-wrong">${userWords[i]}</span> `;
+        }
+      } else if (i < userWords.length) {
+        resultHTML += `<span class="word-wrong">${userWords[i]}</span> `;
+      } else {
+        resultHTML += `<span class="word-missing">${correctWords[i]}</span> `;
+      }
+    }
+    
+    if (!userInput) {
+      userAnswerEl.innerHTML = '（未作答）';
+    } else {
+      userAnswerEl.innerHTML = resultHTML;
+    }
+    answerTextEl.textContent = item.en;
+    
+    const score = Math.round((correctCount / correctWords.length) * 100);
+    scoreEl.textContent = `正确率 ${score}%（${correctCount}/${correctWords.length} 词正确）`;
+    scoreEl.className = 'dict-score ' + (score >= 80 ? 'high' : score >= 50 ? 'mid' : 'low');
+  } else {
+    // 英译中：计算相似度
+    userAnswerEl.textContent = userInput || '（未作答）';
+    answerTextEl.textContent = item.zh;
+    
+    if (userInput) {
+      const similarity = calcTextSimilarity(userInput, item.zh);
+      const score = Math.round(similarity * 100);
+      scoreEl.textContent = `相似度 ${score}%`;
+      scoreEl.className = 'dict-score ' + (score >= 80 ? 'high' : score >= 50 ? 'mid' : 'low');
+    } else {
+      scoreEl.textContent = '未作答';
+      scoreEl.className = 'dict-score low';
+    }
+  }
+  
   answerEl.style.display = 'block';
+}
+
+// 计算中文文本相似度（基于字符级别的编辑距离）
+function calcTextSimilarity(s1, s2) {
+  s1 = s1.replace(/\s+/g, '');
+  s2 = s2.replace(/\s+/g, '');
+  if (s1 === s2) return 1;
+  if (!s1.length || !s2.length) return 0;
+  
+  const dp = [];
+  for (let i = 0; i <= s1.length; i++) {
+    dp[i] = [i];
+  }
+  for (let j = 0; j <= s2.length; j++) {
+    dp[0][j] = j;
+  }
+  for (let i = 1; i <= s1.length; i++) {
+    for (let j = 1; j <= s2.length; j++) {
+      if (s1[i-1] === s2[j-1]) {
+        dp[i][j] = dp[i-1][j-1];
+      } else {
+        dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1;
+      }
+    }
+  }
+  const maxLen = Math.max(s1.length, s2.length);
+  return 1 - dp[s1.length][s2.length] / maxLen;
 }
 
 function shuffleDictation() {

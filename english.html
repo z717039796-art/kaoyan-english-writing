@@ -921,6 +921,53 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
   color: var(--blue);
   font-weight: 700;
 }
+.dict-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.dict-filter-label {
+  font-size: 13px;
+  color: var(--text-3);
+  font-weight: 600;
+}
+.dict-filter-btn {
+  padding: 7px 18px;
+  border: 1px solid rgba(37,99,235,0.15);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.5);
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-family: inherit;
+}
+.dict-filter-btn:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+.dict-filter-btn.active {
+  background: rgba(37,99,235,0.1);
+  border-color: var(--blue);
+  color: var(--blue);
+}
+[data-theme="dark"] .dict-filter-btn {
+  background: rgba(30,35,50,0.5);
+  border-color: rgba(255,255,255,0.08);
+  color: var(--text-2);
+}
+[data-theme="dark"] .dict-filter-btn:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+[data-theme="dark"] .dict-filter-btn.active {
+  background: rgba(37,99,235,0.15);
+  border-color: var(--blue);
+  color: var(--blue);
+}
 .dict-card {
   background: var(--glass);
   backdrop-filter: blur(20px);
@@ -1739,6 +1786,13 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
         <div class="dict-progress">第 <span id="dictCurrent">1</span> / <span id="dictTotal">0</span> 题</div>
       </div>
       
+      <div class="dict-filter-bar">
+        <span class="dict-filter-label">题型：</span>
+        <button class="dict-filter-btn active" data-type="all">全部</button>
+        <button class="dict-filter-btn" data-type="dynamic">动态图</button>
+        <button class="dict-filter-btn" data-type="static">静态图</button>
+      </div>
+      
       <div class="dict-card">
         <div class="dict-question-label" id="dictQuestionLabel">请将以下中文翻译成英文：</div>
         <div class="dict-question" id="dictQuestion">加载中...</div>
@@ -1915,12 +1969,14 @@ function toggleTheme() {
 <script>
 // ===== 默写功能 =====
 let dictationData = [];
+let dictationFiltered = [];
 let dictationIndex = 0;
 let dictationMode = 'zh2en'; // zh2en: 中译英, en2zh: 英译中
+let dictationFilter = 'all'; // all: 全部, dynamic: 动态图, static: 静态图
 let dictationShuffled = false;
 
 function extractDictationData() {
-  const cards = document.querySelectorAll('.card.template, .card.example');
+  const cards = document.querySelectorAll('.card.template');
   const data = [];
   cards.forEach(card => {
     const enEl = card.querySelector('.en');
@@ -1928,27 +1984,46 @@ function extractDictationData() {
     if (enEl && zhEl) {
       let en = enEl.textContent.trim();
       let zh = zhEl.textContent.trim().replace(/^翻译[：:]\s*/, '');
-      // 去掉标签
       en = en.replace(/\s+/g, ' ').trim();
       zh = zh.replace(/\s+/g, ' ').trim();
       if (en.length > 10 && zh.length > 5) {
-        data.push({ en, zh });
+        // 判断题型：根据所在的page
+        const page = card.closest('.page');
+        let type = 'dynamic';
+        if (page && page.id === 'page-static') type = 'static';
+        else if (page && page.id === 'page-dynamic') type = 'dynamic';
+        else {
+          // 根据内容判断
+          if (zh.includes('占比') || zh.includes('排名') || zh.includes('比例')) type = 'static';
+          else type = 'dynamic';
+        }
+        data.push({ en, zh, type });
       }
     }
   });
   return data;
 }
 
+function applyDictationFilter() {
+  if (dictationFilter === 'all') {
+    dictationFiltered = [...dictationData];
+  } else {
+    dictationFiltered = dictationData.filter(item => item.type === dictationFilter);
+  }
+  dictationIndex = 0;
+  document.getElementById('dictTotal').textContent = dictationFiltered.length;
+}
+
 function loadDictationQuestion() {
   if (dictationData.length === 0) {
     dictationData = extractDictationData();
-    document.getElementById('dictTotal').textContent = dictationData.length;
+    applyDictationFilter();
   }
-  if (dictationData.length === 0) {
-    document.getElementById('dictQuestion').textContent = '暂无题目数据';
+  if (dictationFiltered.length === 0) {
+    document.getElementById('dictQuestion').textContent = '该题型暂无题目数据';
     return;
   }
-  const item = dictationData[dictationIndex % dictationData.length];
+  const item = dictationFiltered[dictationIndex % dictationFiltered.length];
   const label = document.getElementById('dictQuestionLabel');
   const question = document.getElementById('dictQuestion');
   const input = document.getElementById('dictInput');
@@ -1965,11 +2040,12 @@ function loadDictationQuestion() {
   }
   input.value = '';
   answer.style.display = 'none';
-  document.getElementById('dictCurrent').textContent = (dictationIndex % dictationData.length) + 1;
+  document.getElementById('dictCurrent').textContent = (dictationIndex % dictationFiltered.length) + 1;
 }
 
 function checkDictationAnswer() {
-  const item = dictationData[dictationIndex % dictationData.length];
+  if (dictationFiltered.length === 0) return;
+  const item = dictationFiltered[dictationIndex % dictationFiltered.length];
   const answerEl = document.getElementById('dictAnswer');
   const answerText = document.getElementById('dictAnswerText');
   answerText.textContent = dictationMode === 'zh2en' ? item.en : item.zh;
@@ -1977,21 +2053,22 @@ function checkDictationAnswer() {
 }
 
 function shuffleDictation() {
-  for (let i = dictationData.length - 1; i > 0; i--) {
+  const arr = dictationFiltered;
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [dictationData[i], dictationData[j]] = [dictationData[j], dictationData[i]];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
+  dictationFiltered = arr;
   dictationIndex = 0;
-  dictationShuffled = true;
   loadDictationQuestion();
 }
 
 // 初始化默写功能
 function initDictation() {
   dictationData = extractDictationData();
-  document.getElementById('dictTotal').textContent = dictationData.length;
+  applyDictationFilter();
   
-  // 模式切换
+  // 模式切换（中译英/英译中）
   document.querySelectorAll('.dict-mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.dict-mode-btn').forEach(b => b.classList.remove('active'));
@@ -2001,15 +2078,26 @@ function initDictation() {
     });
   });
   
+  // 题型筛选（全部/动态图/静态图）
+  document.querySelectorAll('.dict-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.dict-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      dictationFilter = btn.dataset.type;
+      applyDictationFilter();
+      loadDictationQuestion();
+    });
+  });
+  
   // 上一题
   document.getElementById('dictPrev').addEventListener('click', () => {
-    dictationIndex = (dictationIndex - 1 + dictationData.length) % dictationData.length;
+    dictationIndex = (dictationIndex - 1 + dictationFiltered.length) % dictationFiltered.length;
     loadDictationQuestion();
   });
   
   // 下一题
   document.getElementById('dictNext').addEventListener('click', () => {
-    dictationIndex = (dictationIndex + 1) % dictationData.length;
+    dictationIndex = (dictationIndex + 1) % dictationFiltered.length;
     loadDictationQuestion();
   });
   

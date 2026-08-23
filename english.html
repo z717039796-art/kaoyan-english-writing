@@ -2099,25 +2099,51 @@ function checkDictationAnswer() {
   }
   
   if (dictationMode === 'zh2en') {
-    // 中译英：按单词批改
+    // 中译英：用LCS最长公共子序列对齐单词
     const correctWords = item.en.replace(/[.,!?;:'"]/g, '').toLowerCase().split(/\s+/).filter(w => w);
     const userWords = userInput.replace(/[.,!?;:'"]/g, '').toLowerCase().split(/\s+/).filter(w => w);
-    let correctCount = 0;
+    
+    // LCS动态规划
+    const m = userWords.length, n = correctWords.length;
+    const dp = [];
+    for (let i = 0; i <= m; i++) {
+      dp[i] = new Array(n + 1).fill(0);
+    }
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        if (userWords[i-1] === correctWords[j-1]) {
+          dp[i][j] = dp[i-1][j-1] + 1;
+        } else {
+          dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+        }
+      }
+    }
+    
+    // 回溯找出匹配的单词
+    const userMatched = new Array(m).fill(false);
+    const correctMatched = new Array(n).fill(false);
+    let i = m, j = n;
+    while (i > 0 && j > 0) {
+      if (userWords[i-1] === correctWords[j-1]) {
+        userMatched[i-1] = true;
+        correctMatched[j-1] = true;
+        i--; j--;
+      } else if (dp[i-1][j] >= dp[i][j-1]) {
+        i--;
+      } else {
+        j--;
+      }
+    }
+    
+    const correctCount = userMatched.filter(Boolean).length;
     let resultHTML = '';
     
-    const maxLen = Math.max(correctWords.length, userWords.length);
-    for (let i = 0; i < maxLen; i++) {
-      if (i < userWords.length && i < correctWords.length) {
-        if (userWords[i] === correctWords[i]) {
-          resultHTML += `<span class="word-correct">${userWords[i]}</span> `;
-          correctCount++;
-        } else {
-          resultHTML += `<span class="word-wrong">${userWords[i]}</span> `;
-        }
-      } else if (i < userWords.length) {
-        resultHTML += `<span class="word-wrong">${userWords[i]}</span> `;
+    // 先显示用户答案（正确绿色，错误红色）
+    for (let k = 0; k < m; k++) {
+      if (userMatched[k]) {
+        resultHTML += `<span class="word-correct">${userWords[k]}</span> `;
       } else {
-        resultHTML += `<span class="word-missing">${correctWords[i]}</span> `;
+        resultHTML += `<span class="word-wrong">${userWords[k]}</span> `;
       }
     }
     

@@ -2327,6 +2327,19 @@ function renderDictationList() {
     `;
   });
   list.innerHTML = html;
+  
+  // 给每个输入框添加回车提交
+  dictationFiltered.forEach((item, idx) => {
+    const input = document.getElementById(`dict-input-${idx}`);
+    if (input) {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          submitDictAnswer(idx);
+        }
+      });
+    }
+  });
 }
 
 // 展开/收起题目

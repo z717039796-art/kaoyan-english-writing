@@ -2100,21 +2100,34 @@ function checkDictationAnswer() {
   
   if (dictationMode === 'zh2en') {
     // 中译英：用LCS最长公共子序列对齐单词
-    // 比较用小写+去标点，显示保留原始大小写
-    const cleanText = (t) => t.replace(/[^a-zA-Z\s]/g, '').toLowerCase().split(/\s+/).filter(w => w);
-    const correctWords = cleanText(item.en);
-    const userWordsOriginal = userInput.split(/\s+/).filter(w => w.replace(/[^a-zA-Z]/g, ''));
-    const userWords = cleanText(userInput);
+    // 比较用英文单词，中文占位符不参与比较但正常显示
+    const isEnglishWord = (w) => /[a-zA-Z]/.test(w);
+    const cleanEng = (w) => w.replace(/[^a-zA-Z]/g, '').toLowerCase();
     
-    // LCS动态规划
-    const m = userWords.length, n = correctWords.length;
+    // 正确答案：提取英文单词用于比较
+    const correctAllWords = item.en.split(/\s+/).filter(w => w);
+    const correctEngWords = correctAllWords.filter(isEnglishWord).map(cleanEng);
+    
+    // 用户答案：保留所有原始词，英文词参与比较
+    const userAllWords = userInput.split(/\s+/).filter(w => w);
+    const userEngIndices = [];
+    const userEngWords = [];
+    userAllWords.forEach((w, idx) => {
+      if (isEnglishWord(w)) {
+        userEngIndices.push(idx);
+        userEngWords.push(cleanEng(w));
+      }
+    });
+    
+    // LCS动态规划（只比较英文单词）
+    const m = userEngWords.length, n = correctEngWords.length;
     const dp = [];
     for (let i = 0; i <= m; i++) {
       dp[i] = new Array(n + 1).fill(0);
     }
     for (let i = 1; i <= m; i++) {
       for (let j = 1; j <= n; j++) {
-        if (userWords[i-1] === correctWords[j-1]) {
+        if (userEngWords[i-1] === correctEngWords[j-1]) {
           dp[i][j] = dp[i-1][j-1] + 1;
         } else {
           dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
@@ -2122,14 +2135,12 @@ function checkDictationAnswer() {
       }
     }
     
-    // 回溯找出匹配的单词
-    const userMatched = new Array(m).fill(false);
-    const correctMatched = new Array(n).fill(false);
+    // 回溯找出匹配的英文单词
+    const userEngMatched = new Array(m).fill(false);
     let i = m, j = n;
     while (i > 0 && j > 0) {
-      if (userWords[i-1] === correctWords[j-1]) {
-        userMatched[i-1] = true;
-        correctMatched[j-1] = true;
+      if (userEngWords[i-1] === correctEngWords[j-1]) {
+        userEngMatched[i-1] = true;
         i--; j--;
       } else if (dp[i-1][j] >= dp[i][j-1]) {
         i--;
@@ -2138,16 +2149,23 @@ function checkDictationAnswer() {
       }
     }
     
-    const correctCount = userMatched.filter(Boolean).length;
+    const correctCount = userEngMatched.filter(Boolean).length;
     let resultHTML = '';
     
-    // 显示用户答案（用原始单词，保留大小写）
-    for (let k = 0; k < m; k++) {
-      const displayWord = userWordsOriginal[k] || userWords[k];
-      if (userMatched[k]) {
-        resultHTML += `<span class="word-correct">${displayWord}</span> `;
+    // 显示用户答案：英文词按对错标色，中文占位符普通显示
+    let engIdx = 0;
+    for (let k = 0; k < userAllWords.length; k++) {
+      const word = userAllWords[k];
+      if (isEnglishWord(word)) {
+        if (userEngMatched[engIdx]) {
+          resultHTML += `<span class="word-correct">${word}</span> `;
+        } else {
+          resultHTML += `<span class="word-wrong">${word}</span> `;
+        }
+        engIdx++;
       } else {
-        resultHTML += `<span class="word-wrong">${displayWord}</span> `;
+        // 中文/数字占位符，普通颜色显示
+        resultHTML += `<span style="color:var(--text-2)">${word}</span> `;
       }
     }
     
@@ -2158,8 +2176,8 @@ function checkDictationAnswer() {
     }
     answerTextEl.textContent = item.en;
     
-    const score = Math.round((correctCount / correctWords.length) * 100);
-    scoreEl.textContent = `正确率 ${score}%（${correctCount}/${correctWords.length} 词正确）`;
+    const score = Math.round((correctCount / correctEngWords.length) * 100);
+    scoreEl.textContent = `正确率 ${score}%（${correctCount}/${correctEngWords.length} 词正确）`;
     scoreEl.className = 'dict-score ' + (score >= 80 ? 'high' : score >= 50 ? 'mid' : 'low');
   } else {
     // 英译中：计算相似度

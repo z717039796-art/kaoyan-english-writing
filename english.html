@@ -954,6 +954,167 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
   border-color: var(--blue);
   color: var(--blue);
 }
+.dict-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+.dict-item {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.dict-item:hover {
+  border-color: rgba(37,99,235,0.3);
+  box-shadow: 0 4px 20px rgba(37,99,235,0.08);
+}
+.dict-item-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+}
+.dict-item-num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(37,99,235,0.1);
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dict-item-preview {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.dict-item-type {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.dict-item-type.dynamic {
+  background: rgba(59,130,246,0.12);
+  color: #3B82F6;
+}
+.dict-item-type.static {
+  background: rgba(139,92,246,0.12);
+  color: #8B5CF6;
+}
+.dict-item-arrow {
+  flex-shrink: 0;
+  font-size: 18px;
+  color: var(--text-3);
+  transition: transform 0.3s;
+}
+.dict-item.open .dict-item-arrow {
+  transform: rotate(180deg);
+}
+.dict-item-body {
+  display: none;
+  padding: 0 20px 20px;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+.dict-item.open .dict-item-body {
+  display: block;
+}
+.dict-item-question {
+  font-size: 15px;
+  color: var(--text-1);
+  line-height: 1.7;
+  padding: 14px 16px;
+  background: rgba(37,99,235,0.04);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 10px 10px 0;
+  margin: 16px 0;
+}
+.dict-item-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  background: rgba(255,255,255,0.8);
+  color: var(--text-1);
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.dict-item-input:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+.dict-item-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.dict-item-submit {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2563EB, #4F46E5);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+.dict-item-submit:hover {
+  opacity: 0.9;
+}
+.dict-item-result {
+  display: none;
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 12px;
+}
+.dict-item-result.show {
+  display: block;
+}
+[data-theme="dark"] .dict-item {
+  background: rgba(30,35,50,0.5);
+  border-color: rgba(255,255,255,0.08);
+}
+[data-theme="dark"] .dict-item:hover {
+  border-color: rgba(37,99,235,0.4);
+}
+[data-theme="dark"] .dict-item-body {
+  border-top-color: rgba(255,255,255,0.06);
+}
+[data-theme="dark"] .dict-item-question {
+  background: rgba(37,99,235,0.08);
+}
+[data-theme="dark"] .dict-item-input {
+  background: rgba(20,25,40,0.6);
+  border-color: rgba(255,255,255,0.1);
+  color: var(--text-1);
+}
+[data-theme="dark"] .dict-item-result {
+  background: rgba(20,25,40,0.5);
+}
 [data-theme="dark"] .dict-filter-btn {
   background: rgba(30,35,50,0.5);
   border-color: rgba(255,255,255,0.08);
@@ -1813,13 +1974,13 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
       <div class="content-header" style="margin-bottom:24px">
         <div class="ch-eyebrow">DICTATION · 默写训练</div>
         <h1>句式默写</h1>
-        <p>中译英 / 英译中双向训练，从所有句式中随机抽题，提交后显示正确答案对比。</p>
+        <p>中译英 / 英译中双向训练，点击题目展开作答，提交后显示批改结果。</p>
       </div>
       
       <div class="dict-mode-bar">
         <button class="dict-mode-btn active" data-mode="zh2en">中译英</button>
         <button class="dict-mode-btn" data-mode="en2zh">英译中</button>
-        <div class="dict-progress">第 <span id="dictCurrent">1</span> / <span id="dictTotal">0</span> 题</div>
+        <div class="dict-progress">共 <span id="dictTotal">0</span> 题</div>
       </div>
       
       <div class="dict-filter-bar">
@@ -1829,24 +1990,7 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
         <button class="dict-filter-btn" data-type="static">静态图</button>
       </div>
       
-      <div class="dict-card">
-        <div class="dict-question-label" id="dictQuestionLabel">请将以下中文翻译成英文：</div>
-        <div class="dict-question" id="dictQuestion">加载中...</div>
-        <textarea class="dict-input" id="dictInput" placeholder="在此输入你的答案..." rows="4"></textarea>
-        <div class="dict-actions">
-          <button class="dict-action-btn" id="dictPrev">← 上一题</button>
-          <button class="dict-action-btn primary" id="dictCheck">提交答案</button>
-          <button class="dict-action-btn" id="dictNext">下一题 →</button>
-          <button class="dict-action-btn" id="dictShuffle">🔀 随机抽题</button>
-        </div>
-        <div class="dict-answer" id="dictAnswer" style="display:none">
-          <div class="dict-score" id="dictScore"></div>
-          <div class="dict-answer-label">你的答案：</div>
-          <div class="dict-answer-text user-answer" id="dictUserAnswer"></div>
-          <div class="dict-answer-label" style="margin-top:16px">正确答案：</div>
-          <div class="dict-answer-text" id="dictAnswerText"></div>
-        </div>
-      </div>
+      <div class="dict-list" id="dictList"></div>
     </main>
   </div>
 </div>
@@ -2006,13 +2150,11 @@ function toggleTheme() {
 })();
 </script>
 <script>
-// ===== 默写功能 =====
+// ===== 默写功能（列表模式）=====
 let dictationData = [];
 let dictationFiltered = [];
-let dictationIndex = 0;
 let dictationMode = 'zh2en'; // zh2en: 中译英, en2zh: 英译中
 let dictationFilter = 'all'; // all: 全部, dynamic: 动态图, static: 静态图
-let dictationShuffled = false;
 
 function extractDictationData() {
   const cards = document.querySelectorAll('.card.template');
@@ -2026,13 +2168,11 @@ function extractDictationData() {
       en = en.replace(/\s+/g, ' ').trim();
       zh = zh.replace(/\s+/g, ' ').trim();
       if (en.length > 10 && zh.length > 5) {
-        // 判断题型：根据所在的page
         const page = card.closest('.page');
         let type = 'dynamic';
         if (page && page.id === 'page-static') type = 'static';
         else if (page && page.id === 'page-dynamic') type = 'dynamic';
         else {
-          // 根据内容判断
           if (zh.includes('占比') || zh.includes('排名') || zh.includes('比例')) type = 'static';
           else type = 'dynamic';
         }
@@ -2049,197 +2189,176 @@ function applyDictationFilter() {
   } else {
     dictationFiltered = dictationData.filter(item => item.type === dictationFilter);
   }
-  dictationIndex = 0;
   document.getElementById('dictTotal').textContent = dictationFiltered.length;
 }
 
-function loadDictationQuestion() {
-  if (dictationData.length === 0) {
-    dictationData = extractDictationData();
-    applyDictationFilter();
-  }
-  if (dictationFiltered.length === 0) {
-    document.getElementById('dictQuestion').textContent = '该题型暂无题目数据';
-    return;
-  }
-  const item = dictationFiltered[dictationIndex % dictationFiltered.length];
-  const label = document.getElementById('dictQuestionLabel');
-  const question = document.getElementById('dictQuestion');
-  const input = document.getElementById('dictInput');
-  const answer = document.getElementById('dictAnswer');
-  
+// 批改单个题目
+function gradeQuestion(item, userInput) {
   if (dictationMode === 'zh2en') {
-    label.textContent = '请将以下中文翻译成英文：';
-    question.textContent = item.zh;
-    input.placeholder = '请输入英文翻译...';
-  } else {
-    label.textContent = '请将以下英文翻译成中文：';
-    question.textContent = item.en;
-    input.placeholder = '请输入中文翻译...';
-  }
-  input.value = '';
-  answer.style.display = 'none';
-  document.getElementById('dictCurrent').textContent = (dictationIndex % dictationFiltered.length) + 1;
-}
-
-function checkDictationAnswer() {
-  if (dictationFiltered.length === 0) return;
-  const item = dictationFiltered[dictationIndex % dictationFiltered.length];
-  const userInput = document.getElementById('dictInput').value.trim();
-  const answerEl = document.getElementById('dictAnswer');
-  const userAnswerEl = document.getElementById('dictUserAnswer');
-  const answerTextEl = document.getElementById('dictAnswerText');
-  const scoreEl = document.getElementById('dictScore');
-  
-  if (!userInput) {
-    userAnswerEl.textContent = '（未作答）';
-    userAnswerEl.style.color = '#9B9BB5';
-  } else {
-    userAnswerEl.style.color = '';
-  }
-  
-  if (dictationMode === 'zh2en') {
-    // 中译英：用LCS最长公共子序列对齐单词
-    // 比较用英文单词，中文占位符不参与比较但正常显示
     const isEnglishWord = (w) => /[a-zA-Z]/.test(w);
     const cleanEng = (w) => w.replace(/[^a-zA-Z]/g, '').toLowerCase();
     
-    // 正确答案：提取英文单词用于比较
     const correctAllWords = item.en.split(/\s+/).filter(w => w);
     const correctEngWords = correctAllWords.filter(isEnglishWord).map(cleanEng);
     
-    // 用户答案：保留所有原始词，英文词参与比较
     const userAllWords = userInput.split(/\s+/).filter(w => w);
-    const userEngIndices = [];
     const userEngWords = [];
-    userAllWords.forEach((w, idx) => {
-      if (isEnglishWord(w)) {
-        userEngIndices.push(idx);
-        userEngWords.push(cleanEng(w));
-      }
+    userAllWords.forEach((w) => {
+      if (isEnglishWord(w)) userEngWords.push(cleanEng(w));
     });
     
-    // LCS动态规划（只比较英文单词）
     const m = userEngWords.length, n = correctEngWords.length;
     const dp = [];
-    for (let i = 0; i <= m; i++) {
-      dp[i] = new Array(n + 1).fill(0);
-    }
+    for (let i = 0; i <= m; i++) dp[i] = new Array(n + 1).fill(0);
     for (let i = 1; i <= m; i++) {
       for (let j = 1; j <= n; j++) {
-        if (userEngWords[i-1] === correctEngWords[j-1]) {
-          dp[i][j] = dp[i-1][j-1] + 1;
-        } else {
-          dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
-        }
+        if (userEngWords[i-1] === correctEngWords[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+        else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
       }
     }
     
-    // 回溯找出匹配的英文单词
     const userEngMatched = new Array(m).fill(false);
     let i = m, j = n;
     while (i > 0 && j > 0) {
       if (userEngWords[i-1] === correctEngWords[j-1]) {
         userEngMatched[i-1] = true;
         i--; j--;
-      } else if (dp[i-1][j] >= dp[i][j-1]) {
-        i--;
-      } else {
-        j--;
-      }
+      } else if (dp[i-1][j] >= dp[i][j-1]) i--;
+      else j--;
     }
     
     const correctCount = userEngMatched.filter(Boolean).length;
     let resultHTML = '';
-    
-    // 显示用户答案：英文词按对错标色，中文占位符普通显示
     let engIdx = 0;
     for (let k = 0; k < userAllWords.length; k++) {
       const word = userAllWords[k];
       if (isEnglishWord(word)) {
-        if (userEngMatched[engIdx]) {
-          resultHTML += `<span class="word-correct">${word}</span> `;
-        } else {
-          resultHTML += `<span class="word-wrong">${word}</span> `;
-        }
+        if (userEngMatched[engIdx]) resultHTML += `<span class="word-correct">${word}</span> `;
+        else resultHTML += `<span class="word-wrong">${word}</span> `;
         engIdx++;
       } else {
-        // 中文/数字占位符，普通颜色显示
         resultHTML += `<span style="color:var(--text-2)">${word}</span> `;
       }
     }
     
-    if (!userInput) {
-      userAnswerEl.innerHTML = '（未作答）';
-    } else {
-      userAnswerEl.innerHTML = resultHTML;
-    }
-    answerTextEl.textContent = item.en;
-    
     const score = Math.round((correctCount / correctEngWords.length) * 100);
-    scoreEl.textContent = `正确率 ${score}%（${correctCount}/${correctEngWords.length} 词正确）`;
-    scoreEl.className = 'dict-score ' + (score >= 80 ? 'high' : score >= 50 ? 'mid' : 'low');
+    return {
+      userHTML: userInput ? resultHTML : '（未作答）',
+      correctText: item.en,
+      scoreText: `正确率 ${score}%（${correctCount}/${correctEngWords.length} 词正确）`,
+      scoreClass: score >= 80 ? 'high' : score >= 50 ? 'mid' : 'low'
+    };
   } else {
-    // 英译中：计算相似度
-    userAnswerEl.textContent = userInput || '（未作答）';
-    answerTextEl.textContent = item.zh;
-    
+    let scoreText = '未作答';
+    let scoreClass = 'low';
     if (userInput) {
       const similarity = calcTextSimilarity(userInput, item.zh);
       const score = Math.round(similarity * 100);
-      scoreEl.textContent = `相似度 ${score}%`;
-      scoreEl.className = 'dict-score ' + (score >= 80 ? 'high' : score >= 50 ? 'mid' : 'low');
-    } else {
-      scoreEl.textContent = '未作答';
-      scoreEl.className = 'dict-score low';
+      scoreText = `相似度 ${score}%`;
+      scoreClass = score >= 80 ? 'high' : score >= 50 ? 'mid' : 'low';
     }
+    return {
+      userHTML: userInput || '（未作答）',
+      correctText: item.zh,
+      scoreText,
+      scoreClass
+    };
   }
-  
-  answerEl.style.display = 'block';
 }
 
-// 计算中文文本相似度（基于字符级别的编辑距离）
 function calcTextSimilarity(s1, s2) {
   s1 = s1.replace(/\s+/g, '');
   s2 = s2.replace(/\s+/g, '');
   if (s1 === s2) return 1;
   if (!s1.length || !s2.length) return 0;
-  
   const dp = [];
-  for (let i = 0; i <= s1.length; i++) {
-    dp[i] = [i];
-  }
-  for (let j = 0; j <= s2.length; j++) {
-    dp[0][j] = j;
-  }
+  for (let i = 0; i <= s1.length; i++) dp[i] = [i];
+  for (let j = 0; j <= s2.length; j++) dp[0][j] = j;
   for (let i = 1; i <= s1.length; i++) {
     for (let j = 1; j <= s2.length; j++) {
-      if (s1[i-1] === s2[j-1]) {
-        dp[i][j] = dp[i-1][j-1];
-      } else {
-        dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1;
-      }
+      if (s1[i-1] === s2[j-1]) dp[i][j] = dp[i-1][j-1];
+      else dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1;
     }
   }
   const maxLen = Math.max(s1.length, s2.length);
   return 1 - dp[s1.length][s2.length] / maxLen;
 }
 
-function shuffleDictation() {
-  const arr = dictationFiltered;
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+// 渲染题目列表
+function renderDictationList() {
+  const list = document.getElementById('dictList');
+  if (!list) return;
+  
+  if (dictationFiltered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-3)">该题型暂无题目</div>';
+    return;
   }
-  dictationFiltered = arr;
-  dictationIndex = 0;
-  loadDictationQuestion();
+  
+  let html = '';
+  dictationFiltered.forEach((item, idx) => {
+    const preview = dictationMode === 'zh2en' ? item.zh : item.en;
+    const question = dictationMode === 'zh2en' ? item.zh : item.en;
+    const placeholder = dictationMode === 'zh2en' ? '请输入英文翻译...' : '请输入中文翻译...';
+    const typeLabel = item.type === 'dynamic' ? '动态图' : '静态图';
+    
+    html += `
+      <div class="dict-item" data-idx="${idx}">
+        <div class="dict-item-header" onclick="toggleDictItem(${idx})">
+          <div class="dict-item-num">${idx + 1}</div>
+          <div class="dict-item-preview">${preview}</div>
+          <div class="dict-item-type ${item.type}">${typeLabel}</div>
+          <div class="dict-item-arrow">▼</div>
+        </div>
+        <div class="dict-item-body">
+          <div class="dict-item-question">${question}</div>
+          <textarea class="dict-item-input" id="dict-input-${idx}" placeholder="${placeholder}" rows="3"></textarea>
+          <div class="dict-item-actions">
+            <button class="dict-item-submit" onclick="submitDictAnswer(${idx})">提交答案</button>
+          </div>
+          <div class="dict-item-result" id="dict-result-${idx}">
+            <div class="dict-score" id="dict-score-${idx}"></div>
+            <div class="dict-answer-label">你的答案：</div>
+            <div class="dict-answer-text user-answer" id="dict-user-${idx}"></div>
+            <div class="dict-answer-label" style="margin-top:12px">正确答案：</div>
+            <div class="dict-answer-text" id="dict-correct-${idx}"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  list.innerHTML = html;
+}
+
+// 展开/收起题目
+function toggleDictItem(idx) {
+  const item = document.querySelector(`.dict-item[data-idx="${idx}"]`);
+  if (item) item.classList.toggle('open');
+}
+
+// 提交单个题目的答案
+function submitDictAnswer(idx) {
+  const item = dictationFiltered[idx];
+  const input = document.getElementById(`dict-input-${idx}`);
+  const result = document.getElementById(`dict-result-${idx}`);
+  const scoreEl = document.getElementById(`dict-score-${idx}`);
+  const userEl = document.getElementById(`dict-user-${idx}`);
+  const correctEl = document.getElementById(`dict-correct-${idx}`);
+  
+  const userInput = input.value.trim();
+  const graded = gradeQuestion(item, userInput);
+  
+  scoreEl.textContent = graded.scoreText;
+  scoreEl.className = 'dict-score ' + graded.scoreClass;
+  userEl.innerHTML = graded.userHTML;
+  correctEl.textContent = graded.correctText;
+  result.classList.add('show');
 }
 
 // 初始化默写功能
 function initDictation() {
   dictationData = extractDictationData();
   applyDictationFilter();
+  renderDictationList();
   
   // 模式切换（中译英/英译中）
   document.querySelectorAll('.dict-mode-btn').forEach(btn => {
@@ -2247,7 +2366,7 @@ function initDictation() {
       document.querySelectorAll('.dict-mode-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       dictationMode = btn.dataset.mode;
-      loadDictationQuestion();
+      renderDictationList();
     });
   });
   
@@ -2258,29 +2377,9 @@ function initDictation() {
       btn.classList.add('active');
       dictationFilter = btn.dataset.type;
       applyDictationFilter();
-      loadDictationQuestion();
+      renderDictationList();
     });
   });
-  
-  // 上一题
-  document.getElementById('dictPrev').addEventListener('click', () => {
-    dictationIndex = (dictationIndex - 1 + dictationFiltered.length) % dictationFiltered.length;
-    loadDictationQuestion();
-  });
-  
-  // 下一题
-  document.getElementById('dictNext').addEventListener('click', () => {
-    dictationIndex = (dictationIndex + 1) % dictationFiltered.length;
-    loadDictationQuestion();
-  });
-  
-  // 提交答案
-  document.getElementById('dictCheck').addEventListener('click', checkDictationAnswer);
-  
-  // 随机抽题
-  document.getElementById('dictShuffle').addEventListener('click', shuffleDictation);
-  
-  loadDictationQuestion();
 }
 
 if (document.readyState === 'loading') {

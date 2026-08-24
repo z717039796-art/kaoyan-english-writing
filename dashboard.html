@@ -232,6 +232,62 @@ body {
 .phase-status.done { background: rgba(5,150,105,0.1); color: var(--green); }
 .phase-status.pending { background: rgba(156,163,175,0.1); color: var(--text-3); }
 
+/* 艺术学概论章节计划 */
+.plan-subtabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.plan-subtab {
+  padding: 12px 28px; border-radius: 12px; font-size: 16px; font-weight: 700;
+  background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-2);
+  cursor: pointer; transition: all 0.2s; backdrop-filter: blur(24px);
+}
+.plan-subtab:hover { background: rgba(124,58,237,0.08); color: var(--text-1); }
+.plan-subtab.active {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: white; border-color: transparent;
+  box-shadow: 0 4px 12px rgba(124,58,237,0.25);
+}
+.chapter-plan-list { display: flex; flex-direction: column; gap: 12px; }
+.chapter-item {
+  background: var(--card-bg); backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); border: 1px solid var(--card-border);
+  border-radius: 18px; overflow: hidden; transition: all 0.25s;
+}
+.chapter-item:hover { border-color: rgba(124,58,237,0.3); box-shadow: 0 4px 16px rgba(124,58,237,0.08); }
+.chapter-item-header {
+  display: flex; align-items: center; gap: 16px; padding: 20px 24px; cursor: pointer; user-select: none;
+}
+.chapter-num {
+  flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(37,99,235,0.12));
+  color: var(--purple); font-size: 18px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.chapter-title { flex: 1; font-size: 18px; font-weight: 700; color: var(--text-1); }
+.chapter-days {
+  flex-shrink: 0; font-size: 14px; font-weight: 700; padding: 6px 16px;
+  border-radius: 999px; background: rgba(5,150,105,0.1); color: var(--green);
+}
+.chapter-arrow { flex-shrink: 0; font-size: 18px; color: var(--text-3); transition: transform 0.25s; }
+.chapter-item.open .chapter-arrow { transform: rotate(180deg); }
+.chapter-item-body { display: none; padding: 0 24px 24px; border-top: 1px solid var(--card-border); }
+.chapter-item.open .chapter-item-body { display: block; }
+.chapter-section { margin-top: 20px; }
+.chapter-section-label {
+  font-size: 16px; font-weight: 700; color: var(--purple); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.chapter-section-content {
+  font-size: 17px; line-height: 1.9; color: var(--text-2);
+  padding: 16px 20px; background: rgba(124,58,237,0.04); border-radius: 12px;
+  border-left: 3px solid var(--purple);
+}
+.chapter-phase-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 20px; }
+.chapter-phase {
+  padding: 18px; background: rgba(37,99,235,0.04); border-radius: 12px;
+  border-top: 3px solid var(--blue);
+}
+.chapter-phase-title { font-size: 15px; font-weight: 700; color: var(--blue); margin-bottom: 10px; }
+.chapter-phase-content { font-size: 16px; line-height: 1.8; color: var(--text-2); }
+
 /* 复习计划日历 */
 .plan-months { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
 .plan-month-btn {
@@ -579,9 +635,42 @@ body {
 
   <!-- 复习计划页 -->
   <div class="page" id="page-plan">
-    <div class="page-title">复习计划 <span class="subtitle">艾宾浩斯专项复习日历 · 8月-12月完整计划</span></div>
-    <div class="plan-months" id="planMonths"></div>
-    <div class="plan-calendar" id="planCalendar"></div>
+    <div class="page-title">复习计划 <span class="subtitle">艺术学概论章节计划 · 艾宾浩斯专项复习日历</span></div>
+    
+    <!-- 复习计划子tab -->
+    <div class="plan-subtabs" style="display:flex;gap:8px;margin-bottom:20px">
+      <div class="plan-subtab active" onclick="switchPlanSubtab('chapter')">📖 章节计划</div>
+      <div class="plan-subtab" onclick="switchPlanSubtab('calendar')">🔄 艾宾浩斯日历</div>
+    </div>
+    
+    <!-- 艺术学概论章节计划 -->
+    <div id="planChapterSection">
+      <div class="chapter-plan-summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:28px;font-weight:900;color:var(--purple)">12</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:4px">章节总数</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:28px;font-weight:900;color:var(--blue)">43</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:4px">建议总天数</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:28px;font-weight:900;color:var(--green)">3</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:4px">复习阶段</div>
+        </div>
+        <div class="card" style="padding:16px;text-align:center">
+          <div style="font-size:28px;font-weight:900;color:var(--orange)">★★</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:4px">重点章节</div>
+        </div>
+      </div>
+      <div class="chapter-plan-list" id="chapterPlanList"></div>
+    </div>
+    
+    <!-- 艾宾浩斯复习日历 -->
+    <div id="planCalendarSection" style="display:none">
+      <div class="plan-months" id="planMonths"></div>
+      <div class="plan-calendar" id="planCalendar"></div>
+    </div>
   </div>
 </div>
 
@@ -924,6 +1013,59 @@ function selectPlanMonth(month){
   renderPlanCalendar();
 }
 
+// ===== 艺术学概论章节计划 =====
+const chapterPlan = [
+  { chapter:'绪论', core:'研究对象与定位/学习意义/研究方法', keyPoints:'艺术学的学科定位、艺术学与艺术理论的区别、马克思主义艺术学方法论', basic:'通读+整理框架笔记，理解学科体系', advanced:'结合真题理解绪论出题方式（多为选择/名词）', sprint:'快速过一遍，确保基本概念不丢分', days:2 },
+  { chapter:'第一章 艺术观念', core:'第一节 艺术观念的演变（中国/西方/马克思主义）\n第二节 艺术的特性', keyPoints:'★艺术掌握世界的方式、艺术生产理论、艺术审美特性、中国"乐记"/西方模仿说/表现说、马克思主义艺术观', basic:'精读全章，整理中西艺术观念演变时间线，重点理解艺术生产与消费关系', advanced:'专题论述：艺术生产理论对当代艺术的启示；名词解释集中背诵', sprint:'默写核心概念，确保论述题能用艺术生产理论分析问题', days:4 },
+  { chapter:'第二章 艺术的功能', core:'第一节 艺术功能理论回顾\n第二节 艺术的主要功能', keyPoints:'★审美认识功能、审美教育功能、审美娱乐功能、审美体验功能、孔子"兴观群怨"、柏拉图/亚里士多德功能论', basic:'通读，整理四大功能的定义+例子，区分中西功能论差异', advanced:'论述题：艺术的审美教育功能在音乐教育中的体现（结合本专业）', sprint:'四大功能定义默写，能举例说明', days:3 },
+  { chapter:'第三章 艺术创作', core:'第一节 艺术创作主体\n第二节 艺术创作方式特点\n第三节 艺术创作过程', keyPoints:'★★创作动因/构思/物化三阶段、艺术家的人文修养与心理机制、一度创作与二度创作、个体与集体创作、胸中之竹到手中之竹', basic:'精读全章，创作过程三阶段是超级重点，必须画流程图理解', advanced:'论述题：艺术创作过程论（动因→构思→物化）；结合音乐创作举例', sprint:'三阶段默写+举例，创作主体四要素背诵', days:5 },
+  { chapter:'第四章 艺术作品', core:'第一节 艺术作品的媒介\n第二节 艺术作品的形式\n第三节 艺术作品的内容', keyPoints:'★艺术媒介类别与作用、艺术形式特征、题材与主题、形象与情境、艺术意蕴、内容与形式的辩证关系', basic:'通读，重点理解内容与形式的关系，整理媒介/形式/内容三层结构', advanced:'论述题：艺术作品内容与形式的辩证统一关系；名词解释：艺术意蕴', sprint:'内容形式关系论述模板背诵，媒介类别举例', days:4 },
+  { chapter:'第五章 艺术接受', core:'第一节 艺术接受的主体\n第二节 艺术接受的特征', keyPoints:'★接受主体的主观条件、期待视野、接受的再创造性、体验性/过程性/异同性、接受对创作的反作用', basic:'精读，理解接受美学核心观点，整理接受四特征', advanced:'论述题：艺术接受的再创造性；接受主体对艺术史建构的参与性', sprint:'四特征默写，期待视野概念背诵', days:4 },
+  { chapter:'第六章 艺术类型', core:'第一节 艺术分类历史演变\n第二节 主要艺术类型（7类）\n第三节 各种艺术之间的关系', keyPoints:'★★音乐艺术（本专业重点！）、艺术分类原则、各艺术类型审美特征、艺术的分化与综合、各门艺术相互联系', basic:'通读，音乐艺术部分精读做详细笔记，其他类型了解审美特征即可', advanced:'专题：音乐艺术的审美特征（必背！）；各艺术类型之间的关系论述', sprint:'音乐艺术审美特征全文默写，其他类型抓核心特征', days:5 },
+  { chapter:'第七章 艺术的发展', core:'第一节 艺术的起源\n第二节 艺术的发展进程', keyPoints:'★艺术起源五种学说（模仿/游戏/表现/巫术/劳动）、多元决定论、艺术发展规律、艺术发展中的继承与创新', basic:'通读，起源五种学说是名词解释高频考点，整理每种学说代表人物', advanced:'名词解释：艺术起源五学说；论述题：艺术发展中的继承与创新', sprint:'五学说代表人物+观点默写，继承创新关系背诵', days:4 },
+  { chapter:'第八章 艺术的风格、流派与思潮', core:'第一节 艺术风格\n第二节 艺术流派\n第三节 艺术思潮', keyPoints:'★艺术风格界定与类别、风格的基本特点、流派形成与流变、艺术思潮类型、风格/流派/思潮三者关系', basic:'精读，区分风格→流派→思潮三个层级，整理三者关系图', advanced:'论述题：艺术风格、流派与思潮的关系；名词解释各3个', sprint:'三者定义+关系默写，能举例说明', days:4 },
+  { chapter:'第九章 艺术批评', core:'第一节 含义与性质/原则/意义\n第二节 批评主体与构成\n第三节 批评维度与方法', keyPoints:'艺术批评的性质与原则、批评主体构成、社会历史批评/心理批评/文本批评等方法、批评与创作的关系', basic:'通读，了解批评的主要方法，重点理解批评的原则和意义', advanced:'名词解释：艺术批评；了解几种批评方法的核心观点', sprint:'批评定义+原则默写，方法抓关键词', days:3 },
+  { chapter:'第十章 艺术的当代嬗变', core:'第一节 全球化背景下的艺术\n第二节 创意产业和艺术市场\n第三节 数字技术条件下的艺术\n第四节 当代媒介与艺术传播', keyPoints:'高雅艺术与大众艺术、文化创意产业、数字技术对各艺术的影响、媒介与艺术传播、本土化与多样化', basic:'通读了解即可，本章多为论述题素材，结合当代现象理解', advanced:'论述题：数字技术对音乐艺术的影响（结合本专业）；全球化与本土化', sprint:'积累当代案例，论述题能用即可', days:3 },
+  { chapter:'结语+全书复盘', core:'全书逻辑体系梳理', keyPoints:'创作→作品→接受（艺术系统）、观念→功能→发展→风格→批评（艺术总论）、当代嬗变', basic:'画全书思维导图，建立"艺术系统"整体框架', advanced:'按真题题型分类整理全书考点（名词/简答/论述）', sprint:'全书框架默写，查漏补缺', days:2 }
+];
+
+function renderChapterPlan(){
+  const list = document.getElementById('chapterPlanList');
+  if(!list) return;
+  let html = '';
+  chapterPlan.forEach((item, idx) => {
+    html += '<div class="chapter-item" data-idx="'+idx+'">';
+    html += '<div class="chapter-item-header" onclick="toggleChapter('+idx+')">';
+    html += '<div class="chapter-num">'+(idx+1)+'</div>';
+    html += '<div class="chapter-title">'+item.chapter+'</div>';
+    html += '<div class="chapter-days">'+item.days+'天</div>';
+    html += '<div class="chapter-arrow">▼</div>';
+    html += '</div>';
+    html += '<div class="chapter-item-body">';
+    html += '<div class="chapter-section"><div class="chapter-section-label">📚 核心节</div><div class="chapter-section-content">'+item.core.replace(/\n/g,'<br>')+'</div></div>';
+    html += '<div class="chapter-section"><div class="chapter-section-label">⭐ 重点考点</div><div class="chapter-section-content">'+item.keyPoints+'</div></div>';
+    html += '<div class="chapter-phase-grid">';
+    html += '<div class="chapter-phase"><div class="chapter-phase-title">基础阶段 (7-8月)</div><div class="chapter-phase-content">'+item.basic+'</div></div>';
+    html += '<div class="chapter-phase"><div class="chapter-phase-title">提升阶段 (9-10月)</div><div class="chapter-phase-content">'+item.advanced+'</div></div>';
+    html += '<div class="chapter-phase"><div class="chapter-phase-title">冲刺阶段 (11-12月)</div><div class="chapter-phase-content">'+item.sprint+'</div></div>';
+    html += '</div>';
+    html += '</div></div>';
+  });
+  list.innerHTML = html;
+}
+
+function toggleChapter(idx){
+  const item = document.querySelector('.chapter-item[data-idx="'+idx+'"]');
+  if(item) item.classList.toggle('open');
+}
+
+function switchPlanSubtab(type){
+  document.querySelectorAll('.plan-subtab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('planChapterSection').style.display = type==='chapter' ? 'block' : 'none';
+  document.getElementById('planCalendarSection').style.display = type==='calendar' ? 'block' : 'none';
+}
+
 function renderPlanCalendar(){
   const calendar=document.getElementById('planCalendar');
   const todayStr=formatDate(new Date());
@@ -1029,6 +1171,7 @@ renderTasks();
 renderTimeAllocation();
 renderPhases();
 renderPlanMonths();
+renderChapterPlan();
 renderPlanCalendar();
 calcWeekStats();
 renderTodayReview();

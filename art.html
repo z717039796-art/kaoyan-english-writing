@@ -390,6 +390,98 @@ body::before {
   letter-spacing: normal;
   font-weight:600;
 }
+
+/* 首页复习指南 */
+.home-guide {
+  display:grid;
+  grid-template-columns:1fr 1.5fr;
+  gap:16px;
+  margin-bottom:32px;
+}
+.guide-phase {
+  background:var(--glass);
+  backdrop-filter:blur(24px) saturate(200%);
+  -webkit-backdrop-filter:blur(24px) saturate(200%);
+  border:1px solid var(--glass-border);
+  border-radius:var(--r-card);
+  padding:24px;
+  position:relative;
+  overflow:hidden;
+}
+.guide-phase::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:3px;
+  background:linear-gradient(90deg, var(--blue), var(--purple));
+}
+.guide-phase-label {
+  font-size:11px;
+  font-weight:800;
+  color:var(--text-4);
+  letter-spacing:.1em;
+  margin-bottom:10px;
+}
+.guide-phase-name {
+  font-size:26px;
+  font-weight:900;
+  margin-bottom:6px;
+  letter-spacing:-.02em;
+}
+.guide-phase-desc {
+  font-size:14px;
+  color:var(--text-3);
+  font-weight:600;
+}
+.guide-focus {
+  background:var(--glass);
+  backdrop-filter:blur(24px) saturate(200%);
+  -webkit-backdrop-filter:blur(24px) saturate(200%);
+  border:1px solid var(--glass-border);
+  border-radius:var(--r-card);
+  padding:24px;
+}
+.guide-focus-label {
+  font-size:13px;
+  font-weight:800;
+  color:var(--text-2);
+  margin-bottom:14px;
+}
+.guide-focus-chips {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.focus-chip {
+  padding:10px 18px;
+  background:rgba(124,58,237,0.08);
+  border:1px solid rgba(124,58,237,0.2);
+  border-radius:999px;
+  font-size:14px;
+  font-weight:700;
+  color:var(--purple);
+  cursor:pointer;
+  transition:all .25s;
+}
+.focus-chip:hover {
+  background:rgba(124,58,237,0.15);
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(124,58,237,0.2);
+}
+.card-star {
+  font-size:10px;
+  margin-left:6px;
+  font-weight:900;
+}
+.card-star.star-1 { color:#F59E0B; }
+.card-star.star-2 { color:#EF4444; }
+.card-key {
+  font-size:12px;
+  color:var(--text-3);
+  margin:8px 0 12px;
+  line-height:1.5;
+  font-weight:500;
+}
 .section-title {
   font-size:24px;
   font-weight:900;
@@ -900,6 +992,7 @@ body::before {
 /* ===== 响应式 ===== */
 @media(max-width:1024px) {
   .overview-grid { grid-template-columns:repeat(2,1fr); }
+  .home-guide { grid-template-columns:1fr; }
   .progress-grid { grid-template-columns:repeat(3,1fr); }
   .progress-row-bar { width:120px; }
   .topnav { padding:0 20px; gap:16px; }
@@ -2289,6 +2382,29 @@ function renderChapterNav() {
 function renderHome() {
   const mastered = state.mastered.length;
   const pct = Math.round(mastered / QUESTIONS.length * 100);
+  
+  // 当前复习阶段判断
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  let phaseName, phaseDesc, phaseColor;
+  if(month <= 8) { phaseName = '基础强化期'; phaseDesc = '7-8月 · 精读+框架笔记'; phaseColor = '#2563EB'; }
+  else if(month <= 10) { phaseName = '专题提升期'; phaseDesc = '9-10月 · 专题突破+真题'; phaseColor = '#7C3AED'; }
+  else { phaseName = '冲刺模考期'; phaseDesc = '11-12月 · 模考+押题背诵'; phaseColor = '#DC2626'; }
+  
+  // 章节计划重点数据
+  const chapterPlan = [
+    { days:4, star:1, key:'艺术生产理论、中西艺术观念演变' },
+    { days:3, star:0, key:'四大审美功能、兴观群怨' },
+    { days:5, star:2, key:'创作三阶段（动因→构思→物化）★★' },
+    { days:4, star:1, key:'内容与形式辩证关系、艺术意蕴' },
+    { days:4, star:1, key:'期待视野、接受的再创造性' },
+    { days:5, star:2, key:'音乐艺术审美特征（本专业重点）★★' },
+    { days:4, star:1, key:'艺术起源五学说、继承与创新' },
+    { days:4, star:1, key:'风格/流派/思潮三者关系' },
+    { days:3, star:0, key:'艺术批评性质与原则' },
+    { days:3, star:0, key:'数字技术对音乐艺术的影响' }
+  ];
+  
   let html = `<div class="home-hero">
     <h1>艺术学概论</h1>
     <div class="subtitle">考研复习助手 · 狂背版</div>
@@ -2299,17 +2415,40 @@ function renderHome() {
     <div class="overview-card green"><div class="overview-num">${mastered}</div><div class="overview-label">已掌握</div></div>
     <div class="overview-card red"><div class="overview-num">${pct}%</div><div class="overview-label">完成度</div></div>
   </div>
+  
+  <!-- 当前阶段 + 复习重点 -->
+  <div class="home-guide">
+    <div class="guide-phase">
+      <div class="guide-phase-label">CURRENT PHASE</div>
+      <div class="guide-phase-name" style="color:${phaseColor}">${phaseName}</div>
+      <div class="guide-phase-desc">${phaseDesc}</div>
+    </div>
+    <div class="guide-focus">
+      <div class="guide-focus-label">本阶段重点章节</div>
+      <div class="guide-focus-chips">
+        <span class="focus-chip" onclick="navigate('chapter', 2)">第三章 艺术创作 ★★</span>
+        <span class="focus-chip" onclick="navigate('chapter', 5)">第六章 艺术类型 ★★</span>
+        <span class="focus-chip" onclick="navigate('chapter', 0)">第一章 艺术观念</span>
+        <span class="focus-chip" onclick="navigate('chapter', 3)">第四章 艺术作品</span>
+      </div>
+    </div>
+  </div>
+  
   <div class="section-title">章节目录</div>
   <div class="chapter-grid">`;
   CHAPTERS.forEach((ch, i) => {
     const masteredInCh = QUESTIONS.filter(q => q.chapter === ch.name && state.mastered.includes(q.id)).length;
     const pctCh = Math.round(masteredInCh / ch.count * 100);
+    const plan = chapterPlan[i] || {days:0, star:0, key:''};
+    const starTag = plan.star === 2 ? '<span class="card-star star-2">★★</span>' : (plan.star === 1 ? '<span class="card-star star-1">★</span>' : '');
     html += `<div class="chapter-card" onclick="navigate('chapter', ${i})">
-      <div class="card-num">第${i+1}章</div>
+      <div class="card-num">第${i+1}章 ${starTag}</div>
       <div class="card-name">${ch.name.replace(/^第[一二三四五六七八九十]+章/, '')}</div>
+      <div class="card-key">${plan.key}</div>
       <div class="card-stats">
         <div class="card-stat"><strong>${ch.count}</strong> 题</div>
         <div class="card-stat"><strong>${ch.kp_count}</strong> 知识点</div>
+        <div class="card-stat"><strong>${plan.days}</strong> 天</div>
       </div>
       <div class="card-progress"><div class="card-progress-fill" style="width:${pctCh}%"></div></div>
     </div>`;

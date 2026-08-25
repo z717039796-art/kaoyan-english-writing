@@ -114,16 +114,21 @@ body::before {
   white-space:nowrap;
 }
 .topnav .tabs {
-  display:flex; gap:4px;
+  display:flex; gap:2px;
   flex:1; justify-content:center;
+  overflow-x:auto;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
 }
+.topnav .tabs::-webkit-scrollbar { display:none; }
 .topnav .tab {
-  padding:10px 22px; border-radius:var(--r-pill);
-  font-size:14px; font-weight:700; color:var(--text-3);
+  padding:8px 16px; border-radius:var(--r-pill);
+  font-size:13px; font-weight:700; color:var(--text-3);
   cursor:pointer; transition:all 0.25s cubic-bezier(0.25,0.1,0.25,1);
   border:1px solid transparent;
   letter-spacing:0.01em;
   white-space:nowrap;
+  flex-shrink:0;
 }
 .topnav .tab:hover {
   color:var(--text-1);
@@ -882,6 +887,326 @@ body::before {
 }
 .random-answer.show { display:block; animation:fadeIn .35s ease; }
 
+/* ===== 论据库（新布局） ===== */
+.evidence-page {
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+.evidence-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:24px;
+  flex-wrap:wrap;
+}
+.evidence-header-text {
+  flex:1;
+  min-width:280px;
+}
+.evidence-title {
+  font-size:32px;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:8px;
+  letter-spacing:-.02em;
+}
+.evidence-subtitle {
+  font-size:14px;
+  color:var(--text-3);
+  font-weight:500;
+}
+.evidence-search-box {
+  flex:0 0 360px;
+  min-width:280px;
+}
+.evidence-search-box input {
+  width:100%;
+  padding:14px 20px;
+  background:var(--glass);
+  backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  font-size:15px;
+  color:var(--text-1);
+  outline:none;
+  transition:all .25s;
+}
+.evidence-search-box input:focus {
+  border-color:rgba(124,58,237,0.4);
+  box-shadow:0 0 0 3px rgba(124,58,237,0.1);
+}
+
+.evidence-body {
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:24px;
+  align-items:start;
+}
+
+/* 左侧导航 */
+.evidence-sidebar {
+  background:var(--glass);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  padding:20px 16px;
+  position:sticky;
+  top:20px;
+  max-height:calc(100vh - 120px);
+  overflow-y:auto;
+}
+.evidence-sidebar-title {
+  font-size:13px;
+  font-weight:800;
+  color:var(--text-3);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:14px;
+  padding:0 8px;
+}
+.evidence-nav-list {
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.evidence-nav-item {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:all .2s;
+  border-left:3px solid transparent;
+}
+.evidence-nav-item:hover {
+  background:rgba(124,58,237,0.06);
+}
+.evidence-nav-item.active {
+  background:linear-gradient(135deg, rgba(124,58,237,0.1), rgba(37,99,235,0.08));
+  border-left-color:var(--chapter-color);
+}
+.evidence-nav-badge {
+  flex-shrink:0;
+  width:26px;
+  height:26px;
+  border-radius:7px;
+  background:var(--chapter-color);
+  color:white;
+  font-size:11px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.evidence-nav-name {
+  flex:1;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-2);
+  line-height:1.3;
+}
+.evidence-nav-item.active .evidence-nav-name {
+  color:var(--text-1);
+  font-weight:700;
+}
+.evidence-nav-count {
+  flex-shrink:0;
+  font-size:11px;
+  font-weight:700;
+  color:var(--text-4);
+  background:var(--glass-strong);
+  padding:2px 8px;
+  border-radius:999px;
+}
+
+/* 右侧内容 */
+.evidence-content {
+  min-width:0;
+}
+.evidence-content-header {
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:24px;
+  padding:20px 24px;
+  background:var(--glass);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  border-left:4px solid var(--chapter-color);
+}
+.evidence-content-badge {
+  flex-shrink:0;
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:var(--chapter-color);
+  color:white;
+  font-size:18px;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+.evidence-content-title {
+  font-size:22px;
+  font-weight:900;
+  color:var(--text-1);
+  margin-bottom:4px;
+}
+.evidence-content-desc {
+  font-size:13px;
+  color:var(--text-3);
+  font-weight:500;
+}
+
+.evidence-cards {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
+  gap:20px;
+}
+.evidence-item-card {
+  background:var(--glass);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  padding:22px;
+  transition:all .3s;
+  display:flex;
+  flex-direction:column;
+}
+.evidence-item-card:hover {
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-float);
+  border-color:rgba(124,58,237,0.25);
+}
+.evidence-item-header {
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom:14px;
+}
+.evidence-item-num {
+  flex-shrink:0;
+  width:32px;
+  height:32px;
+  border-radius:9px;
+  color:white;
+  font-size:13px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.evidence-item-info {
+  flex:1;
+  min-width:0;
+}
+.evidence-item-name {
+  font-size:18px;
+  font-weight:800;
+  color:var(--text-1);
+  margin-bottom:4px;
+  line-height:1.3;
+}
+.evidence-item-author {
+  font-size:13px;
+  color:var(--text-3);
+  font-weight:500;
+}
+.evidence-item-tags {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:16px;
+}
+.evidence-item-tag {
+  padding:4px 10px;
+  border-radius:6px;
+  font-size:11px;
+  font-weight:700;
+}
+.evidence-item-points {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  flex:1;
+}
+.evidence-item-point {
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+.evidence-point-marker {
+  flex-shrink:0;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  margin-top:9px;
+}
+.evidence-point-content {
+  font-size:15px;
+  line-height:1.8;
+  color:var(--text-2);
+  flex:1;
+}
+
+/* 空状态 */
+.evidence-empty {
+  padding:20px;
+  text-align:center;
+  color:var(--text-3);
+  font-size:13px;
+}
+.evidence-empty-state {
+  text-align:center;
+  padding:80px 20px;
+}
+.evidence-empty-icon {
+  font-size:48px;
+  margin-bottom:16px;
+}
+.evidence-empty-text {
+  font-size:18px;
+  font-weight:700;
+  color:var(--text-2);
+  margin-bottom:8px;
+}
+.evidence-empty-hint {
+  font-size:14px;
+  color:var(--text-3);
+}
+
+/* 响应式 */
+@media(max-width:1024px) {
+  .evidence-body {
+    grid-template-columns:1fr;
+  }
+  .evidence-sidebar {
+    position:static;
+    max-height:none;
+  }
+  .evidence-nav-list {
+    flex-direction:row;
+    flex-wrap:wrap;
+  }
+  .evidence-nav-item {
+    flex:0 0 auto;
+  }
+  .evidence-cards {
+    grid-template-columns:1fr;
+  }
+}
+
 /* ===== 进度页 ===== */
 .progress-grid {
   display:grid;
@@ -1022,6 +1347,7 @@ body::before {
   .overview-card { padding:18px 12px; }
   .overview-num { font-size:26px; }
   .chapter-grid { grid-template-columns:1fr; }
+  .evidence-items { grid-template-columns:1fr; }
   .knowledge-questions { padding-left:0; }
   .progress-grid { grid-template-columns:1fr; gap:10px; }
   .progress-row { flex-wrap:wrap; gap:10px; }
@@ -2174,6 +2500,7 @@ body::before {
       <div class="tab" data-page="favorites" onclick="navigate('favorites')">收藏</div>
       <div class="tab" data-page="random" onclick="navigate('random')">随机练习</div>
       <div class="tab" data-page="daily" onclick="navigate('daily')">每日抽背</div>
+      <div class="tab" data-page="evidence" onclick="navigate('evidence')">论据库</div>
       <div class="tab" data-page="progress" onclick="navigate('progress')">学习进度</div>
     </div>
       <div class="search">
@@ -2944,6 +3271,467 @@ function resetDaily() {
   render();
 }
 
+// ===== 论据库（按章节知识点分类） =====
+const evidenceData = [
+  {
+    chapter: '绪论',
+    chapterIdx: 0,
+    color: '#64748B',
+    items: []
+  },
+  {
+    chapter: '第一章 艺术观念',
+    chapterIdx: 1,
+    color: '#7C3AED',
+    items: []
+  },
+  {
+    chapter: '第二章 艺术的功能',
+    chapterIdx: 2,
+    color: '#2563EB',
+    items: [
+      {
+        name: '《黄河大合唱》',
+        author: '冼星海',
+        tags: ['审美教育功能', '审美认识功能', '审美体验功能'],
+        points: [
+          '审美教育功能：《黄河大合唱》创作于抗战时期，听众在欣赏音乐美的同时，也能感受到那段悲痛的历史，从而激发爱国情怀，在审美中得到思想上的熏陶。这正体现了艺术的审美教育功能，即艺术家通过塑造典型形象，帮助欣赏者在审美中认识社会历史。',
+          '审美认识功能：作品深刻反映了中国人民当时的抗日斗争生活，激励了无数中华儿女为国家独立和解放而奋斗，体现了艺术对社会生活的认识和反映作用。',
+          '审美体验功能：听众通过对作品的欣赏，能够获得愉悦和情感的共鸣，在审美体验中释放压力、陶冶情操。'
+        ]
+      }
+    ]
+  },
+  {
+    chapter: '第三章 艺术创作',
+    chapterIdx: 3,
+    color: '#059669',
+    items: [
+      {
+        name: '《命运交响曲》',
+        author: '贝多芬',
+        tags: ['形象思维', '创作过程', '构思阶段'],
+        points: [
+          '形象思维的特征：贝多芬将自身遭受病痛折磨的体验和顽强抗争的精神融入作品，以"命运敲门"的动机贯穿全曲。这体现了形象思维的具象性、情感性、主观性和想象性特征——艺术家将自身体验到的事物具象化，在创作过程中融入自身的思想和情感，从整体上把握形象的内在本质和规律。',
+          '创作过程的构思阶段（胸中之竹）：贝多芬在创作《命运交响曲》时，首先在艺术构思中圈定了"与命运抗争"的题材，确立了直面苦难、奋勇搏斗的主题，并完成了音乐主题、情感基调、交响体裁的定位，在脑海中孕育出完整的审美意象，为下一步的物化作准备。'
+        ]
+      },
+      {
+        name: '《天净沙·秋思》',
+        author: '马致远',
+        tags: ['形象思维', '抽象思维'],
+        points: [
+          '形象思维的运用：作品通过枯藤、老树、昏鸦等一系列意象，借助联想和想象，营造出苍凉萧瑟的意境，体现了形象思维始终依靠想象、情感等心理功能，始终离不开具体可感的形象。',
+          '抽象思维的运用：词中句子之间的平仄变化、句式结构的安排，都需要依靠抽象思维进行理性分析和规律总结，体现了抽象思维在艺术创作中的辅助作用。'
+        ]
+      },
+      {
+        name: '"春风又绿江南岸"',
+        author: '王安石',
+        tags: ['抽象思维', '艺术创作'],
+        points: [
+          '抽象思维的概括性与间接性：王安石将"春风又到江南岸"改为"春风又绿江南岸"，一字之差，境界全出。这一修改过程反映出作者借助抽象思维对作品进行不断的精进和打磨，体现了抽象思维在艺术创作中对局部视角的审视和对事物本质规律的揭示。'
+        ]
+      },
+      {
+        name: '《父亲》',
+        author: '罗中立',
+        tags: ['形象思维与抽象思维结合'],
+        points: [
+          '形象思维与抽象思维的辩证统一：罗中立创作《父亲》时，主要依靠形象思维推动整体构思，塑造出饱含深情的中国农民形象；同时又运用抽象思维不断修改和完善，使作品既有强烈的感染力，又有严谨完整的艺术结构。这体现了艺术创作中以形象思维为主导、以抽象思维为辅助的辩证关系。'
+        ]
+      },
+      {
+        name: '合唱复调创作',
+        author: '通用案例',
+        tags: ['创作过程', '物化阶段'],
+        points: [
+          '创作过程的物化阶段（手中之竹）：在合唱复调创作中，作曲家需要深入认识和把握人声与器乐各声部的音域音色，熟练掌握复调技法，遵守创作规范，才能将构思阶段形成的审美意象物化为可供他人鉴赏的艺术作品。这体现了物化阶段对艺术家技艺和媒介认知的要求。'
+        ]
+      },
+      {
+        name: '《幻想交响曲》',
+        author: '柏辽兹',
+        tags: ['灵感思维', '创作动因'],
+        points: [
+          '灵感的突发性：柏辽兹曾为一段旋律苦苦构思，长期反复思考却毫无进展，然而在一次从梦中惊醒的瞬间，那段旋律突然涌现，毫无预兆。这体现了灵感作为创作动因的突发性特征。'
+        ]
+      },
+      {
+        name: '《黄河船夫曲》',
+        author: '冼星海',
+        tags: ['灵感思维', '创作动因'],
+        points: [
+          '灵感的偶然性：冼星海偶然间听见船夫号子，从中获得灵感，创作出《黄河船夫曲》。灵感的到来往往在意想不到的时机偶然触发，但这仍是在长期积累的基础上建立的。',
+          '灵感的独创性：《黄河船夫曲》借由灵感的触发，再融合西方作曲技巧，形成了独具特色的音乐作品。'
+        ]
+      }
+    ]
+  },
+  {
+    chapter: '第四章 艺术作品',
+    chapterIdx: 4,
+    color: '#D97706',
+    items: [
+      {
+        name: '《黄河大合唱》',
+        author: '冼星海',
+        tags: ['形式与内容', '艺术语言', '艺术结构'],
+        points: [
+          '艺术作品的形式：《黄河大合唱》中，旋律、节奏、声部等属于艺术语言，是作品的外部形式；曲式架构、乐段的排布等构成作品的结构，是内部形式。这些形式本身具有独立的听觉美感，同时又与歌颂民族抗争精神的内容紧密结合。',
+          '艺术作品的内容：作品以两岸人民抗争的抗战为题材，以借黄河歌颂民族爱国精神为主题，题材与主题共同构成了艺术作品的内容。',
+          '形式与内容的辩证关系：作者为了表现抗战救国的思想内容，采用了气势恢宏的合唱形式和交响乐伴奏；而宏大合唱、多乐章套曲这一音乐形式，又进一步烘托出民族抗战的情感。内容决定形式，形式反作用于内容，二者互相包含、互相转化。'
+        ]
+      },
+      {
+        name: '孔乙己',
+        author: '鲁迅',
+        tags: ['艺术典型', '典型人物'],
+        points: [
+          '艺术典型的特征：鲁迅笔下的孔乙己始终不愿脱下长衫，这一细节揭示了封建科举制度对旧式读书人思想的禁锢。作者借由孔乙己这一个体形象，映射出深刻的社会问题，体现了艺术典型在鲜明个性中体现广泛普遍性、在偶然中反映必然的特征。'
+        ]
+      },
+      {
+        name: '《寒江独钓图》',
+        author: '马远',
+        tags: ['艺术意境', '留白'],
+        points: [
+          '艺术意境的特征：马远的《寒江独钓图》通过大量留白，营造出烟波浩渺的场景，呈现出朦胧之美，体现了意境"虚实相生、言有尽而意无穷"的审美特征，是中国古典美学的重要范畴。'
+        ]
+      },
+      {
+        name: '越剧《梁山伯与祝英台》',
+        author: '通用案例',
+        tags: ['艺术典型', '戏曲艺术'],
+        points: [
+          '艺术典型在戏曲中的体现：越剧《梁山伯与祝英台》作为戏曲艺术，侧重塑造梁山伯与祝英台这两个典型人物，通过鲜明的人物形象来传达主题思想，体现了以表现为主的艺术门类对艺术典型的重视。'
+        ]
+      },
+      {
+        name: '小提琴协奏曲《梁山伯与祝英台》',
+        author: '何占豪、陈钢',
+        tags: ['艺术意境', '音乐艺术'],
+        points: [
+          '艺术意境在音乐中的体现：小提琴协奏曲《梁山伯与祝英台》作为协奏曲，侧重借助各声部之间的配合来营造艺术意境，通过音乐语言传达情感和氛围，体现了以再现为主的艺术门类对意境营造的重视。'
+        ]
+      }
+    ]
+  },
+  {
+    chapter: '第五章 艺术接受',
+    chapterIdx: 5,
+    color: '#DC2626',
+    items: [
+      {
+        name: '《黄河大合唱》',
+        author: '冼星海',
+        tags: ['艺术接受', '审美体验', '再创造性'],
+        points: [
+          '艺术接受的体验性：听众在欣赏《黄河大合唱》时，不仅能体验到音乐美，还能感受到那段悲痛的历史，从而激发爱国情怀，在审美中得到思想上的熏陶。这体现了艺术接受中接受主体的体验性特征。'
+        ]
+      }
+    ]
+  },
+  {
+    chapter: '第六章 艺术类型',
+    chapterIdx: 6,
+    color: '#0891B2',
+    items: [
+      {
+        name: '《黄河大合唱》',
+        author: '冼星海',
+        tags: ['音乐艺术', '综合艺术'],
+        points: [
+          '音乐艺术的审美特征：《黄河大合唱》以旋律、节奏、声部等艺术语言，以曲式架构、乐段排布构成作品结构，采用气势恢宏的合唱形式和交响乐伴奏来表现抗战救国的思想内容，体现了音乐艺术以声音为媒介、以情感表达为核心的审美特征。'
+        ]
+      },
+      {
+        name: '《命运交响曲》',
+        author: '贝多芬',
+        tags: ['音乐艺术', '交响音乐'],
+        points: [
+          '音乐艺术的情感性：贝多芬将自身遭受病痛折磨的体验和顽强抗争的精神融入作品，以"命运敲门"的动机贯穿全曲，体现了音乐艺术长于表达情感、以情动人的审美特征。'
+        ]
+      },
+      {
+        name: '《送别》',
+        author: '李叔同',
+        tags: ['音乐艺术', '学堂乐歌'],
+        points: [
+          '音乐艺术的审美特征：《送别》用质朴的旋律抒发内心的感慨，形成了含蓄的创作风格，体现了音乐艺术以简洁的音乐语言表达深厚情感的审美特征。'
+        ]
+      },
+      {
+        name: '《寒江独钓图》',
+        author: '马远',
+        tags: ['美术艺术', '绘画'],
+        points: [
+          '绘画艺术的审美特征：《寒江独钓图》通过大量留白营造烟波浩渺的场景，呈现出朦胧之美，体现了绘画艺术以线条和色彩为媒介、重在营造意境的审美特征。'
+        ]
+      },
+      {
+        name: '《父亲》',
+        author: '罗中立',
+        tags: ['美术艺术', '油画'],
+        points: [
+          '绘画艺术的典型性：罗中立的《父亲》塑造出饱含深情的中国农民形象，体现了绘画艺术通过视觉形象塑造典型人物的审美特征。'
+        ]
+      },
+      {
+        name: '越剧《梁山伯与祝英台》',
+        author: '通用案例',
+        tags: ['戏曲艺术', '综合艺术'],
+        points: [
+          '戏曲艺术的审美特征：越剧《梁山伯与祝英台》作为戏曲艺术，侧重塑造梁山伯与祝英台这两个典型人物，体现了戏曲艺术综合唱、念、做、打，以塑造人物为核心的审美特征。'
+        ]
+      },
+      {
+        name: '小提琴协奏曲《梁山伯与祝英台》',
+        author: '何占豪、陈钢',
+        tags: ['音乐艺术', '协奏曲'],
+        points: [
+          '音乐艺术的审美特征：小提琴协奏曲《梁山伯与祝英台》作为协奏曲，侧重借助各声部之间的配合来营造艺术意境，体现了音乐艺术以声音为媒介、以情感表达为核心的审美特征。'
+        ]
+      },
+      {
+        name: '孔乙己',
+        author: '鲁迅',
+        tags: ['文学艺术', '小说'],
+        points: [
+          '文学艺术的审美特征：鲁迅借由孔乙己这一个体形象，映射出深刻的社会问题，体现了文学艺术以语言为媒介、通过塑造典型形象反映社会生活的审美特征。'
+        ]
+      }
+    ]
+  },
+  {
+    chapter: '第七章 艺术的发展',
+    chapterIdx: 7,
+    color: '#7C3AED',
+    items: [
+      {
+        name: '赵元任',
+        author: '音乐家、语言学家',
+        tags: ['艺术发展', '继承与创新', '民族音乐'],
+        points: [
+          '艺术发展中的继承与创新：赵元任长期研究中国传统民间音乐，探索民族五声调式独有的艺术特质，同时吸收西方作曲理论，在此基础上推陈出新，推动了民族音乐的现代化发展。这体现了艺术发展中继承与创新的辩证统一关系。'
+        ]
+      }
+    ]
+  },
+  {
+    chapter: '第八章 艺术的风格、流派与思潮',
+    chapterIdx: 8,
+    color: '#2563EB',
+    items: [
+      {
+        name: '《送别》',
+        author: '李叔同',
+        tags: ['艺术风格', '创作风格'],
+        points: [
+          '艺术风格的形成：李叔同借由自身丰富的人生阅历和深厚的人文修养，形成了含蓄的创作风格，如《送别》用质朴的旋律抒发内心的感慨。这体现了艺术风格是艺术家创作个性的集中体现，与艺术家的人生阅历、思想情感密切相关。'
+        ]
+      }
+    ]
+  },
+  {
+    chapter: '第九章 艺术批评',
+    chapterIdx: 9,
+    color: '#059669',
+    items: []
+  },
+  {
+    chapter: '第十章 艺术的当代嬗变',
+    chapterIdx: 10,
+    color: '#D97706',
+    items: [
+      {
+        name: '赵元任',
+        author: '音乐家、语言学家',
+        tags: ['艺术当代嬗变', '民族音乐现代化'],
+        points: [
+          '艺术的当代嬗变：赵元任吸收西方作曲理论，在中国传统民间音乐的基础上推陈出新，推动了民族音乐的现代化发展，体现了在全球化背景下，艺术在继承传统的同时不断创新发展的当代趋势。'
+        ]
+      }
+    ]
+  },
+  {
+    chapter: '艺术家（创作主体）',
+    chapterIdx: -1,
+    color: '#DC2626',
+    items: [
+      {
+        name: '李叔同',
+        author: '音乐家、教育家',
+        tags: ['艺术家素质', '人文修养', '美育', '人类灵魂工程师'],
+        points: [
+          '艺术家的人文修养：李叔同借由自身丰富的人生阅历和深厚的人文修养，形成了含蓄的创作风格，体现了人文修养对艺术家创作的重要影响。',
+          '人类灵魂的工程师：李叔同积极推广学堂乐歌，通过艺术大力发展美育教育，自觉担起提升大众精神世界、温润大众灵魂的使命，体现了艺术家作为人类灵魂工程师的社会责任。'
+        ]
+      },
+      {
+        name: '冼星海',
+        author: '音乐家',
+        tags: ['艺术家素质', '社会责任感', '优秀作品创造者'],
+        points: [
+          '优秀作品的创造者：冼星海创作的作品多具有鲜明的爱国思想，深刻反映了中国人民当时的抗日斗争生活，激励了无数中华儿女为国家独立和解放而奋斗，体现了艺术家作为优秀作品创造者的核心素质。'
+        ]
+      },
+      {
+        name: '赵元任',
+        author: '音乐家、语言学家',
+        tags: ['艺术家素质', '文化传承', '先进文化继承者'],
+        points: [
+          '先进文化的继承者和开创者：赵元任长期研究中国传统民间音乐，探索民族五声调式独有的艺术特质，同时吸收西方作曲理论，在此基础上推陈出新，推动了民族音乐的现代化发展，体现了艺术家继承先进文化、不断开拓创新的素质。'
+        ]
+      },
+      {
+        name: '贝多芬',
+        author: '音乐家',
+        tags: ['艺术家素质', '创作主体', '人生阅历'],
+        points: [
+          '艺术家的人生阅历与创作：贝多芬将自身遭受病痛折磨的体验和顽强抗争的精神融入作品，以"命运敲门"的动机贯穿全曲，体现了艺术家的人生阅历和思想情感对创作的深刻影响。'
+        ]
+      }
+    ]
+  }
+];
+
+let evidenceCategory = 'all';
+let evidenceSearch = '';
+let currentEvidenceChapter = null;
+
+function renderEvidence() {
+  // 初始化当前章节
+  const chaptersWithItems = evidenceData.filter(c => c.items.length > 0);
+  if(!currentEvidenceChapter || !chaptersWithItems.find(c => c.chapter === currentEvidenceChapter)) {
+    currentEvidenceChapter = chaptersWithItems[0]?.chapter || null;
+  }
+  
+  // 过滤后的章节列表
+  const filteredChapters = chaptersWithItems.filter(cat => {
+    if(evidenceCategory !== 'all' && evidenceCategory !== cat.chapter) return false;
+    if(!evidenceSearch) return true;
+    return cat.items.some(item => {
+      const searchLower = evidenceSearch.toLowerCase();
+      return item.name.toLowerCase().includes(searchLower) ||
+             item.author.toLowerCase().includes(searchLower) ||
+             item.tags.some(t => t.toLowerCase().includes(searchLower)) ||
+             item.points.some(p => p.toLowerCase().includes(searchLower));
+    });
+  });
+  
+  // 如果当前章节被过滤掉了，切换到第一个
+  if(!filteredChapters.find(c => c.chapter === currentEvidenceChapter)) {
+    currentEvidenceChapter = filteredChapters[0]?.chapter || null;
+  }
+  
+  const currentChapter = filteredChapters.find(c => c.chapter === currentEvidenceChapter);
+  
+  let html = `<div class="evidence-page">
+    <!-- 顶部标题区 -->
+    <div class="evidence-header">
+      <div class="evidence-header-text">
+        <div class="evidence-title">📚 论据库</div>
+        <div class="evidence-subtitle">按章节知识点分类 · 作业例子语料整理 · 答题直接引用</div>
+      </div>
+      <div class="evidence-search-box">
+        <input type="text" id="evidenceSearchInput" placeholder="🔍 搜索例子、作者、考点..." value="${evidenceSearch}" oninput="searchEvidence(this.value)">
+      </div>
+    </div>
+    
+    <!-- 主体：左侧导航 + 右侧内容 -->
+    <div class="evidence-body">
+      <!-- 左侧章节导航 -->
+      <div class="evidence-sidebar">
+        <div class="evidence-sidebar-title">章节目录</div>
+        <div class="evidence-nav-list">`;
+  
+  filteredChapters.forEach(cat => {
+    const isActive = cat.chapter === currentEvidenceChapter;
+    html += `<div class="evidence-nav-item ${isActive?'active':''}" onclick="switchEvidenceChapter('${cat.chapter}')" style="--chapter-color:${cat.color}">
+      <span class="evidence-nav-badge">${cat.chapterIdx >= 0 ? cat.chapterIdx : '★'}</span>
+      <span class="evidence-nav-name">${cat.chapter}</span>
+      <span class="evidence-nav-count">${cat.items.length}</span>
+    </div>`;
+  });
+  
+  if(filteredChapters.length === 0) {
+    html += `<div class="evidence-empty">没有找到匹配的章节</div>`;
+  }
+  
+  html += `</div>
+      </div>
+      
+      <!-- 右侧内容区 -->
+      <div class="evidence-content">`;
+  
+  if(currentChapter) {
+    // 当前章节标题
+    html += `<div class="evidence-content-header" style="--chapter-color:${currentChapter.color}">
+      <div class="evidence-content-badge">${currentChapter.chapterIdx >= 0 ? currentChapter.chapterIdx : '★'}</div>
+      <div>
+        <div class="evidence-content-title">${currentChapter.chapter}</div>
+        <div class="evidence-content-desc">共 ${currentChapter.items.length} 个例子 · 点击卡片可查看完整论据</div>
+      </div>
+    </div>`;
+    
+    // 例子卡片
+    html += `<div class="evidence-cards">`;
+    currentChapter.items.forEach((item, idx) => {
+      html += `<div class="evidence-item-card">
+        <div class="evidence-item-header">
+          <div class="evidence-item-num" style="background:${currentChapter.color}">${idx+1}</div>
+          <div class="evidence-item-info">
+            <div class="evidence-item-name">${item.name}</div>
+            <div class="evidence-item-author">${item.author}</div>
+          </div>
+        </div>
+        <div class="evidence-item-tags">`;
+      item.tags.forEach(tag => {
+        html += `<span class="evidence-item-tag" style="color:${currentChapter.color};background:${currentChapter.color}15">${tag}</span>`;
+      });
+      html += `</div>
+        <div class="evidence-item-points">`;
+      item.points.forEach((point, pIdx) => {
+        html += `<div class="evidence-item-point">
+          <span class="evidence-point-marker" style="background:${currentChapter.color}"></span>
+          <span class="evidence-point-content">${point}</span>
+        </div>`;
+      });
+      html += `</div>
+      </div>`;
+    });
+    html += `</div>`;
+  } else {
+    html += `<div class="evidence-empty-state">
+      <div class="evidence-empty-icon">🔍</div>
+      <div class="evidence-empty-text">没有找到匹配的例子</div>
+      <div class="evidence-empty-hint">试试换个关键词搜索</div>
+    </div>`;
+  }
+  
+  html += `</div>
+    </div>
+  </div>`;
+  
+  return html;
+}
+
+function switchEvidenceChapter(chapter) {
+  currentEvidenceChapter = chapter;
+  render();
+}
+
+function filterEvidence(category) {
+  evidenceCategory = category;
+  render();
+}
+
+function searchEvidence(value) {
+  evidenceSearch = value;
+  render();
+}
+
 function renderProgress() {
   const mastered = state.mastered.length;
   const pct = Math.round(mastered / QUESTIONS.length * 100);
@@ -2981,6 +3769,7 @@ function render() {
     case 'favorites': html = renderFavorites(); break;
     case 'random': html = renderRandom(); break;
     case 'daily': html = renderDaily(); break;
+    case 'evidence': html = renderEvidence(); break;
     case 'progress': html = renderProgress(); break;
     default: html = renderHome();
   }

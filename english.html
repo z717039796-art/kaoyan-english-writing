@@ -2284,7 +2284,7 @@ function calcTextSimilarity(s1, s2) {
   return 1 - dp[s1.length][s2.length] / maxLen;
 }
 
-// 渲染题目列表
+// 渲染题目列表（懒加载：收起时不渲染body）
 function renderDictationList() {
   const list = document.getElementById('dictList');
   if (!list) return;
@@ -2297,8 +2297,6 @@ function renderDictationList() {
   let html = '';
   dictationFiltered.forEach((item, idx) => {
     const preview = dictationMode === 'zh2en' ? item.zh : item.en;
-    const question = dictationMode === 'zh2en' ? item.zh : item.en;
-    const placeholder = dictationMode === 'zh2en' ? '请输入英文翻译...' : '请输入中文翻译...';
     const typeLabel = item.type === 'dynamic' ? '动态图' : '静态图';
     
     html += `
@@ -2309,27 +2307,42 @@ function renderDictationList() {
           <div class="dict-item-type ${item.type}">${typeLabel}</div>
           <div class="dict-item-arrow">▼</div>
         </div>
-        <div class="dict-item-body">
-          <div class="dict-item-question">${question}</div>
-          <textarea class="dict-item-input" id="dict-input-${idx}" placeholder="${placeholder}" rows="3"></textarea>
-          <div class="dict-item-actions">
-            <button class="dict-item-submit" onclick="submitDictAnswer(${idx})">提交答案</button>
-          </div>
-          <div class="dict-item-result" id="dict-result-${idx}">
-            <div class="dict-score" id="dict-score-${idx}"></div>
-            <div class="dict-answer-label">你的答案：</div>
-            <div class="dict-answer-text user-answer" id="dict-user-${idx}"></div>
-            <div class="dict-answer-label" style="margin-top:12px">正确答案：</div>
-            <div class="dict-answer-text" id="dict-correct-${idx}"></div>
-          </div>
-        </div>
+        <div class="dict-item-body" id="dict-body-${idx}"></div>
       </div>
     `;
   });
   list.innerHTML = html;
+}
+
+// 展开/收起题目（展开时才渲染内容）
+function toggleDictItem(idx) {
+  const item = document.querySelector(`.dict-item[data-idx="${idx}"]`);
+  if (!item) return;
   
-  // 给每个输入框添加回车提交
-  dictationFiltered.forEach((item, idx) => {
+  const isOpen = item.classList.toggle('open');
+  const body = document.getElementById(`dict-body-${idx}`);
+  
+  if (isOpen && body && !body.dataset.rendered) {
+    const question = dictationMode === 'zh2en' ? dictationFiltered[idx].zh : dictationFiltered[idx].en;
+    const placeholder = dictationMode === 'zh2en' ? '请输入英文翻译...' : '请输入中文翻译...';
+    
+    body.innerHTML = `
+      <div class="dict-item-question">${question}</div>
+      <textarea class="dict-item-input" id="dict-input-${idx}" placeholder="${placeholder}" rows="3"></textarea>
+      <div class="dict-item-actions">
+        <button class="dict-item-submit" onclick="submitDictAnswer(${idx})">提交答案</button>
+      </div>
+      <div class="dict-item-result" id="dict-result-${idx}">
+        <div class="dict-score" id="dict-score-${idx}"></div>
+        <div class="dict-answer-label">你的答案：</div>
+        <div class="dict-answer-text user-answer" id="dict-user-${idx}"></div>
+        <div class="dict-answer-label" style="margin-top:12px">正确答案：</div>
+        <div class="dict-answer-text" id="dict-correct-${idx}"></div>
+      </div>
+    `;
+    body.dataset.rendered = 'true';
+    
+    // 回车提交
     const input = document.getElementById(`dict-input-${idx}`);
     if (input) {
       input.addEventListener('keydown', (e) => {
@@ -2339,13 +2352,7 @@ function renderDictationList() {
         }
       });
     }
-  });
-}
-
-// 展开/收起题目
-function toggleDictItem(idx) {
-  const item = document.querySelector(`.dict-item[data-idx="${idx}"]`);
-  if (item) item.classList.toggle('open');
+  }
 }
 
 // 提交单个题目的答案
@@ -2395,10 +2402,30 @@ function initDictation() {
   });
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initDictation);
-} else {
+// 延迟初始化：只有用户点击默写tab时才初始化
+let dictationInitialized = false;
+function ensureDictationInit() {
+  if (dictationInitialized) return;
+  dictationInitialized = true;
   initDictation();
+}
+
+// 监听默写tab点击
+document.addEventListener('click', (e) => {
+  const tab = e.target.closest('.tab');
+  if (tab && tab.textContent.includes('默写')) {
+    setTimeout(ensureDictationInit, 50);
+  }
+});
+
+// 如果默认就在默写页面，才初始化
+const defaultActiveTab = document.querySelector('.tab.active');
+if (defaultActiveTab && defaultActiveTab.textContent.includes('默写')) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ensureDictationInit);
+  } else {
+    ensureDictationInit();
+  }
 }
 </script></body>
 </html>

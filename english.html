@@ -2197,15 +2197,14 @@ function gradeQuestion(item, userInput) {
   if (dictationMode === 'zh2en') {
     const isEnglishWord = (w) => /[a-zA-Z]/.test(w);
     const cleanEng = (w) => w.replace(/[^a-zA-Z]/g, '').toLowerCase();
+    // 把斜杠、连字符等都当成分隔符，避免line/bar变成linebar
+    const splitWords = (text) => text.replace(/[\/\-_,.;:!?()\[\]{}]/g, ' ').split(/\s+/).filter(w => w);
     
-    const correctAllWords = item.en.split(/\s+/).filter(w => w);
+    const correctAllWords = splitWords(item.en);
     const correctEngWords = correctAllWords.filter(isEnglishWord).map(cleanEng);
     
-    const userAllWords = userInput.split(/\s+/).filter(w => w);
-    const userEngWords = [];
-    userAllWords.forEach((w) => {
-      if (isEnglishWord(w)) userEngWords.push(cleanEng(w));
-    });
+    const userAllWords = splitWords(userInput);
+    const userEngWords = userAllWords.filter(isEnglishWord).map(cleanEng);
     
     const m = userEngWords.length, n = correctEngWords.length;
     const dp = [];

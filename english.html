@@ -2173,7 +2173,13 @@ function extractDictationData() {
       en = en.replace(/^例句[：:]\s*/, '');
       en = en.replace(/\s+/g, ' ').trim();
       zh = zh.replace(/\s+/g, ' ').trim();
-      // 去重：相同的英文句子只保留一个
+      // 过滤掉全文翻译（太长的中文，通常是整段翻译）
+      if (zh.length > 200) return;
+      // 过滤掉以"全文翻译"开头的
+      if (zh.startsWith('全文翻译')) return;
+      // 过滤掉英文太短的（可能是标签或标题）
+      if (en.replace(/[^a-zA-Z]/g, '').length < 15) return;
+      // 去重：相同的英文句子只保留一个（忽略填空内容和标点）
       const enKey = en.toLowerCase().replace(/[^a-z]/g, '');
       if (en.length > 10 && zh.length > 5 && !seen.has(enKey)) {
         seen.add(enKey);

@@ -1508,7 +1508,7 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
     </div>
 
     
-    <h4 class="mini-title" id="d-10">句5：校园类特殊句式（适用于校园/个人成长话题）</h4>
+    <h4 class="mini-title" id="d-10">句5：通用原因分析句式（适用于各类话题）</h4>
     <div class="card template" data-search="deeper value capacity choice multitude possibilities discern commitment costs choices">
       <span class="en"><b>基础模板句1：</b>The deeper value of <span class="blank">题目相关词</span> lies in enabling individuals to develop a genuine capacity for choice.</span>
       <div class="zh">翻译：题目相关词更深层的价值在于使个体发展出真正的选择能力。</div>
@@ -1729,7 +1729,7 @@ table td:first-child { color: var(--text-1); font-weight: 700; }
     </div>
 
     
-    <h4 class="mini-title" id="s-7">句5：校园类特殊句式（适用于校园/个人成长话题）</h4>
+    <h4 class="mini-title" id="s-7">句5：通用原因分析句式（适用于各类话题）</h4>
     <div class="card template" data-search="deeper value capacity choice multitude possibilities discern commitment costs choices">
       <span class="en"><b>基础模板句1：</b>The deeper value of <span class="blank">题目相关词</span> lies in enabling individuals to develop a genuine capacity for choice.</span>
       <div class="zh">翻译：题目相关词更深层的价值在于使个体发展出真正的选择能力。</div>
@@ -2192,9 +2192,9 @@ function extractDictationData() {
     if (enEl && zhEl) {
       let en = enEl.textContent.trim();
       let zh = zhEl.textContent.trim().replace(/^翻译[：:]\s*/, '');
-      // 去掉英文里的中文前缀，如"基础模板："、"基础模板（政府角度）："
-      en = en.replace(/^基础模板[（(][^）)]*[）)][：:]\s*/, '');
-      en = en.replace(/^基础模板[：:]\s*/, '');
+      // 去掉英文里的中文前缀，如"基础模板："、"基础模板（政府角度）："、"基础模板句1："
+      en = en.replace(/^基础模板句?\d*[（(][^）)]*[）)][：:]\s*/, '');
+      en = en.replace(/^基础模板句?\d*[：:]\s*/, '');
       en = en.replace(/\s+/g, ' ').trim();
       zh = zh.replace(/\s+/g, ' ').trim();
       // 过滤掉英文太短的（可能是标签或标题）

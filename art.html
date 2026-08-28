@@ -1207,6 +1207,209 @@ body::before {
   }
 }
 
+/* ===== 题库 ===== */
+.quiz-page {
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+.quiz-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.quiz-title {
+  font-size:32px;
+  font-weight:900;
+  background:linear-gradient(135deg,#059669,#0891B2);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:6px;
+  letter-spacing:-.02em;
+}
+.quiz-subtitle {
+  font-size:14px;
+  color:var(--text-3);
+  font-weight:500;
+}
+.quiz-stats {
+  display:flex;
+  gap:12px;
+}
+.quiz-stat {
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+  padding:10px 18px;
+  text-align:center;
+}
+.quiz-stat-num {
+  font-size:24px;
+  font-weight:900;
+  color:#059669;
+}
+.quiz-stat-label {
+  font-size:11px;
+  color:var(--text-3);
+  margin-top:2px;
+}
+.quiz-filters {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  padding:14px 18px;
+}
+.quiz-filter-group {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.quiz-filter-label {
+  font-size:13px;
+  font-weight:700;
+  color:var(--text-2);
+  white-space:nowrap;
+}
+.quiz-filter-chips {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.quiz-chip {
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .2s;
+  border:1px solid var(--glass-border);
+  background:var(--bg-2);
+  color:var(--text-2);
+}
+.quiz-chip:hover {
+  border-color:rgba(5,150,105,0.3);
+  color:#059669;
+}
+.quiz-chip.active {
+  background:linear-gradient(135deg,#059669,#0891B2);
+  color:white;
+  border-color:transparent;
+}
+.quiz-list {
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.quiz-card {
+  background:var(--glass);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--glass-border);
+  border-radius:16px;
+  overflow:hidden;
+  transition:all .3s;
+}
+.quiz-card:hover {
+  border-color:rgba(5,150,105,0.25);
+  box-shadow:var(--shadow-float);
+}
+.quiz-card-header {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:18px 22px;
+  cursor:pointer;
+  transition:background .2s;
+}
+.quiz-card-header:hover {
+  background:rgba(5,150,105,0.03);
+}
+.quiz-card-num {
+  flex-shrink:0;
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#059669,#0891B2);
+  color:white;
+  font-size:16px;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.quiz-card-question {
+  flex:1;
+  font-size:17px;
+  font-weight:700;
+  color:var(--text-1);
+  line-height:1.5;
+}
+.quiz-card-tags {
+  display:flex;
+  gap:6px;
+  flex-shrink:0;
+}
+.quiz-tag {
+  padding:4px 10px;
+  border-radius:6px;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.quiz-tag.type {
+  background:rgba(124,58,237,0.1);
+  color:#7c3aed;
+}
+.quiz-tag.chapter {
+  background:rgba(5,150,105,0.1);
+  color:#059669;
+}
+.quiz-card-toggle {
+  flex-shrink:0;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:var(--bg-2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  color:var(--text-3);
+  transition:transform .3s;
+}
+.quiz-card.expanded .quiz-card-toggle {
+  transform:rotate(180deg);
+}
+.quiz-card-answer {
+  display:none;
+  padding:0 22px 22px;
+  border-top:1px solid var(--glass-border);
+}
+.quiz-card.expanded .quiz-card-answer {
+  display:block;
+  animation:fadeIn .3s ease;
+}
+.quiz-answer-text {
+  padding-top:18px;
+  font-size:15px;
+  line-height:1.9;
+  color:var(--text-2);
+  white-space:pre-wrap;
+}
+.quiz-empty {
+  text-align:center;
+  padding:60px 20px;
+  color:var(--text-3);
+  font-size:15px;
+}
+
 /* ===== 进度页 ===== */
 .progress-grid {
   display:grid;
@@ -2501,6 +2704,7 @@ body::before {
       <div class="tab" data-page="random" onclick="navigate('random')">随机练习</div>
       <div class="tab" data-page="daily" onclick="navigate('daily')">每日抽背</div>
       <div class="tab" data-page="evidence" onclick="navigate('evidence')">论据库</div>
+      <div class="tab" data-page="quiz" onclick="navigate('quiz')">题库</div>
       <div class="tab" data-page="progress" onclick="navigate('progress')">学习进度</div>
     </div>
       <div class="search">
@@ -2622,6 +2826,8 @@ function navigate(page, chapterIdx) {
   state.page = page;
   state.currentChapter = chapterIdx !== undefined ? chapterIdx : null;
   state.searchQuery = '';
+  quizSearch = '';
+  evidenceSearch = '';
   const searchInput = document.getElementById('searchInput');
   if(searchInput) searchInput.value = '';
   document.getElementById('filterBar').style.display = (page === 'chapter') ? 'flex' : 'none';
@@ -2634,6 +2840,16 @@ function navigate(page, chapterIdx) {
 
 function handleSearch(val) {
   state.searchQuery = val.trim();
+  if(state.page === 'quiz') {
+    quizSearch = val.trim();
+    render();
+    return;
+  }
+  if(state.page === 'evidence') {
+    evidenceSearch = val.trim();
+    render();
+    return;
+  }
   if(val.length > 0) {
     state.page = 'search';
     document.getElementById('filterBar').style.display = 'none';
@@ -3620,6 +3836,143 @@ const evidenceData = [
   }
 ];
 
+// ===== 题库数据 =====
+const quizBank = [
+  {
+    id: 1,
+    question: '艺术接受主体的地位和作用体现在哪些方面？请举例说明。',
+    type: '论述题',
+    chapter: '第五章 艺术接受',
+    chapterIdx: 5,
+    answer: `艺术接受主体是指在艺术接受活动中，针对艺术作品而进行阅读、观赏、聆听以及批评研究的人。艺术接受主体的地位和作用是艺术接受主体在艺术接受活动中发挥其主观能动性而得以体现的，分别表现为接受主体对艺术接受的主导性、接受主体对艺术创作的反作用、接受主体对艺术史建构的参与性。
+
+首先，接受主体对艺术接受的主导性。艺术接受是接受主体调动其心理和生理因素进行审美实践活动，接受主体始终占据主体地位发挥着主导作用。其主导性是通过"期待视野"发挥影响的，它是接受美学的概念，是接受者进入接受过程之前已具备的一套定向性的心理结构图式，是对艺术作品的预先估盼，大体可分为三个层次：文体期待、意象期待、意蕴期待。从阐释学来看又涉及"前理解"这一概念，即艺术接受者对艺术作品的理解往往建立在艺术认识和文化认知的基础上，海德格尔认为其分为三个层次构成：先行具有、先行见到、先行掌握，伽达默尔认为理解不应克服主体的历史性和局限性，应充分发挥其历史性，使理解者的前理解和成见变成一种合法的成见。如《红楼梦》，不同读者依据自身阅历、文化知识形成不同期待视野，结合自身认知即前理解，读者的阅历与文本相交融产生新的理解，赋予作品新的时代内涵即合法的成见，这充分体现了接受主体对艺术接受的主导性。
+
+其次，接受主体对艺术创作的反作用。在艺术创作过程中，艺术家在构思自己的作品时，会为心目中的接受者设身处地地考虑，希望接受者来达成理解，接受者被艺术家纳入自己的构思之中，对创作活动构成了影响，同时在艺术家心中也存在着潜在的听众和观众。如聂耳在创作《义勇军进行曲》时，以全国爱国群众为预设的接受主体，为了方便传唱，采用节奏铿锵的进行曲风格，旋律上选用影片《风云儿女》的主题歌，通俗易懂，来满足民众心中保家卫国的心声，正是大众的爱国精神诉求让作曲家在构思时更加贴合接受者们的意愿，对节拍进行设计，充分体现了接受主体对艺术创作的反作用。
+
+最后，接受主体对艺术史建构的参与性。艺术发展要遵循新陈代谢的规律，遗传规律反映到艺术领域便成了艺术发展的历史继承性，只有在保留和吸收以前时代艺术创作成果的基础上，后代艺术家才能创造出真正的新艺术，继承性是由艺术创作和艺术接受共同造成的。继承并不是因循而是为了创新，创新是艺术的生命，创新的艺术作品会改变大众的审美趣味，造就新的接受主体。新的艺术接受主体不仅有新的审美意识，而且能够用其自身的能动性来反作用于艺术创作，从而推动艺术发展；富有开拓性的艺术创作就是通过隐含着的接受者来创造新的未来的真实的接受者，人类艺术史就是这样在无数的创作者和接受者协同协作下推进的，艺术史也是这样不断推进向前的。如巴赫的作品，在其逝世许多年以后被重新发掘、演奏、解读，最后才确立巴赫在音乐史上的崇高地位，体现接受主体对艺术史建构的参与性。
+
+综上所述，艺术接受者并不是被动的接纳艺术作品，而是通过艺术接受活动发挥其主观能动性反作用于艺术家的创作，再通过一代又一代的接受者的解读对艺术史进行建构，在艺术活动中发挥重要的作用和具有举足轻重的地位。`
+  },
+  {
+    id: 2,
+    question: '请你结合具体实例简要叙述艺术作品的形式与内容之间的关系。',
+    type: '论述题',
+    chapter: '第四章 艺术作品',
+    chapterIdx: 4,
+    answer: `艺术作品是指在艺术生产过程中形成的成果或产品。艺术作品的形式是艺术作品内容的具体存在形式；而艺术作品的内容指作品中表现出来的具体的、生动的社会生活和情感内涵，来源于艺术家对生活的认识和理解。两者始终紧密相连，是互相包含、互相转化的关系。
+
+首先，艺术作品的形式具有相对独立性和必然共性。相对独立性以美术门类为例，用色彩、线条、造型等形式，能够传达和表现出一定的气氛、情绪、格调。必然共性指在具体的艺术作品中，形式与内容皆是艺术作品不可分割的两个方面。艺术作品的形式可以看作是由艺术语言组合与结构两种形式所构成，前者为外部形式后者为内部形式，两者体现了艺术形式的多样化。如合唱作品《黄河大合唱》，旋律、节奏、声部等艺术语言即外部形式，曲式结构、乐段的排布构成了作品的结构即内部形式。这些形式本身拥有独立的听觉美感，同时又与歌颂民族抗争精神的内容紧密结合。
+
+其次，艺术作品的内容不是抽象的概括说明，是题材、主题、情节、环境等因素融会而成的具体、生动的展示，主要由题材和主题构成。广义上说题材即是取材范围，狭义上是作品中叙述的具体事件和具体人物等，主题是通过题材所体现出来的思想内涵，是构成艺术作品内容的核心和灵魂。如《黄河大合唱》中以两岸人民的抗争的抗战题材以及从中体现出来的借黄河歌颂民族爱国精神的爱国主义主题，共同构成了其艺术作品的内容。
+
+最后，艺术作品的形式与内容之间是艺术作品中不可分割的两个方面，互相包含，互相转化，即内容是形式的内容，形式是内容的形式，两者都以对方的存在而存在，是相互依附、共生的关系。内容是形式的内容，从来没有存在过只有内容而没有形式的艺术作品，内容决定形式，有什么样的内容就要求有什么样的形式相匹配。如《黄河大合唱》作者要表现其抗战救国的思想内容，便采用了气势恢宏的合唱形式，交响乐伴奏来表现。形式是内容的形式，同样没有存在过只有形式而没有内容的作品，形式具有相对独立性可以反作用于艺术作品的内容，好的形式可以为内容深化其感染力，糟糕的形式会破坏其内容的表达。如《黄河大合唱》正因为作者决定采用宏大合唱、多乐章的康塔塔这一音乐形式，使这一音乐形式更加烘托了民族抗战的情感，两者的相互转换都是为了更好的为作品服务。
+
+综上所述，艺术作品的形式与内容是互相包含，互相转化，并具有共生的关系，你中有我我中有你，很难想象只有形式没有内容的艺术作品或只有内容没有形式的艺术作品，艺术家在创作中不断追求具有美感的形式和深刻有内涵的内容，二者在相互转化中更好的创作出优秀的艺术作品。`
+  },
+  {
+    id: 3,
+    question: '艺术作品中典型与意境的关系是什么？应如何看待？',
+    type: '论述题',
+    chapter: '第四章 艺术作品',
+    chapterIdx: 4,
+    answer: `在艺术作品中，典型又称"典型形象""典型人物"，狭义上指艺术作品中塑造出的成功人物形象，广义上指应当包括典型人物、典型事件、典型环境等；而意境则是中国古典美学传统中的一个重要范畴，在艺术中是一种情景交融的境界，是艺术中主客观因素的有机统一，情与境是有机结合的，呈现出境中有情，情中有境的特点。典型与意境二者呈现出既有联系，又有区别的关系。一部优秀的艺术作品常常兼具典型与意境，但各有侧重，艺术家要把握两者之间的区别与联系，更好的创作出具有思想内涵和审美感染力的艺术作品。
+
+首先，艺术典型是普遍性与特殊性、必然性与偶然性、共性与个性的有机统一，也就是说艺术作品中的典型，是在鲜明的个性中体现广泛普遍的共性，将独一无二的形象置身于具有普遍性的社会情境之中，通过现象来反映其本质，在偶然中反映其必然，这便使典型人物形象成为优秀作品的一个显著特征。相较于艺术形象，二者虽都是共性与个性的有机统一，但典型更具有强烈、差异性个性和更普遍的共性，是艺术形象的凝练与升华。如鲁迅笔下的孔乙己始终不愿脱下长衫，揭示了封建科举制度对旧式读书人思想的禁锢，借由孔乙己这一个体形象，映射出深刻的社会现实。
+
+其次，艺术意境不单单体现在情景交融，即既有来自艺术家主观的情感，也有来自客观现实升华的境，还体现出三个方面的特点：意境是一种虚实相生的朦胧美，如中国的山水画，马远的《寒江独钓图》画作大量的留白营造出烟波浩渺的场景，呈现出空寂之美；意境是一种由有限到无限的超越美，即呈现出"言有尽而意无穷"的境界；意境是一种不设不施的自然美，追求天然之美、纯真之美、素朴之美，一种自然天真趣味。
+
+最后，典型和意境对各类艺术都具有普遍意义，二者既有联系，又存在区别。典型与意境重情，典型倾向再现，意境倾向表现；典型侧重于写实，意境侧重抒情；典型侧重于塑造鲜明人物形象，意境侧重于形象对艺术家内心情境的抒发。以再现为主的各类艺术如电影、电视剧等更注重在作品中塑造典型，以表现为主的门类艺术如书法、绘画、音乐等更注重在作品中营造意境。以梁山伯与祝英台这一题材为例，越剧《梁山伯与祝英台》作为戏曲艺术侧重塑造梁山伯与祝英台两个典型人物，而小提琴协奏曲《梁山伯与祝英台》作为音乐艺术侧重借由各声部乐器之间的配合来营造艺术意境。典型理论是西方文艺理论中的基石，意境理论则彰显中国古典理论的精髓，二者共同构成了人类艺术形象创造的两大高峰。`
+  },
+  {
+    id: 4,
+    question: '结合你所理解，艺术家应该具备的基本素质有哪些？',
+    type: '论述题',
+    chapter: '第三章 艺术创作',
+    chapterIdx: 3,
+    answer: `艺术家是长期从事艺术创作并取得较高成就的人的总称，是从事艺术生产这一特殊精神生产的人，在整个艺术创作活动中有着重要作用，离开了艺术家就没有了艺术创作，也就没有了艺术作品、艺术鉴赏和整个艺术活动。因此艺术家应当具备成为优秀作品的创造者、人类灵魂的工程师、先进文化的继承者和开创者等基本素质。
+
+首先，艺术家应是优秀作品的创造者。作为艺术家应当凭借自身的艺术才华，通过创造性劳动，创作出优秀的艺术作品，来满足人们日益增长的精神需求和审美需求。同时艺术家还应当为社会创作符合时代、社会价值的艺术作品，应当主动适应社会对艺术家的期待与定位。例如冼星海这一位我们耳熟能详的艺术家，他所创作的作品多具有鲜明的爱国思想，深刻地反映了中国人民当时的抗日斗争生活，激励了无数中华儿女为国家的独立和解放而奋斗。
+
+其次，艺术家应是人类灵魂的工程师。艺术诉之于人的情感，直通人的心灵，具有怡情养性、铸造灵魂的功能。艺术家在创作艺术作品时更应当将家国情怀、人生理想、时代精神融入进作品之中，启迪人们的思想，陶冶人们的情操，用这样的作品来滋润人民的心灵，推动社会的进步。例如李叔同，他积极推广学堂乐歌，通过艺术大力发展美育教育，自觉担当起提升大众的精神世界以及温润大众灵魂的使命。
+
+最后，艺术家应是先进文化的继承者和开创者。艺术家应传承发扬文化和艺术经典，不断的求新、求变、求突破、求发展，还要自觉担当起弘扬中华优秀传统文化，投身社会主义精神文明建设的使命。例如音乐家赵元任，他长期研究中国传统民间音乐，探索民间音乐的调式和润腔的艺术特质，吸收西方作曲理论，在此基础上推陈出新，推动了中国民族音乐的现代化发展。
+
+综上所述，成为一名优秀的艺术家就应当具备成为优秀作品的创造者、人类灵魂的工程师、先进文化的继承者和开创者的基本素质。艺术家要坚守初心，无功利的创作艺术作品，创作出更多能够满足人民大众日益增长的精神需求和审美需求的优秀作品。`
+  },
+  {
+    id: 5,
+    question: '艺术创作中"从胸中之竹"到"手中之竹"这一过程是指什么？两者有什么联系？',
+    type: '论述题',
+    chapter: '第三章 艺术创作',
+    chapterIdx: 3,
+    answer: `艺术创作是一种创造性活动，从"胸中之竹"到"手中之竹"即从构思到物化的过程。胸中之竹即构思，指艺术家在创作动因的驱使下，依据自己秉承的创作观念，运用不同艺术门类拥有的创作方法，通过审美意象、谋划新作品的思维过程；手中之竹即物化，指艺术家借助一定的物质材料媒介，运用一定的技能、技巧将构思所得的审美意象物化为可供他人鉴赏的艺术作品和艺术形象。两者紧密相连，辩证统一。
+
+首先，"胸中之竹"即艺术构思阶段。艺术家需要解决"创作什么"和"怎么创作"的问题，同时完成三个任务：第一，圈定题材，依据一定的标准对社会生活的领域加以选择；第二，确立主题，一般艺术家会选择自己熟悉、观众最关心的题材，选择某种艺术媒介最适合表达和最有创作冲动、创作欲望的话题；最后完成定位，如受众、作品类型、创作风格等多方面的定位。如贝多芬创作《命运交响曲》，在艺术构思中圈定人与命运抗争的题材，确立直面苦难、顽强搏斗的主题，以及完成高雅主题、情感基调、交响体裁的定位，在脑海中孕育完整的审美意象，为下一步物化作准备。
+
+其次，"手中之竹"即物化阶段。艺术家往往会关注深入认知艺术媒介，艺术的物化必须以艺术媒介作为桥梁，因而艺术家要对所运用的媒介有充分的认知、熟练的驾驭，灵活变通做到"技"兼备，既需掌握本门类的艺术语言，同时也可以借鉴其他门类的方法，最后灵活运用表达规范，有助于后世创作者便于模仿借鉴，便于突破创新。例如合唱复调创作，作曲家要把握人声与器乐各声部的音色特点，掌握复调技法，在创作规范中物化传递出令人满意的艺术作品。
+
+最后，构思与物化两者辩证统一。构思为物化提供基础和前提，有构思、生成的审美意象才有物化所需的加工对象，没有构思，物化也无从谈起；物化为构思的意象实现，只存在于艺术家大脑中的意象无法被感知和接受，只有通过物化才能转化为客观存在的作品。两者相辅相成，缺一不可。
+
+综上所述，构思与物化两者紧密相连，环环相扣，辩证统一，两者协同配合共同完成完整的艺术创作活动，从而创作出令人满意的艺术作品。`
+  },
+  {
+    id: 6,
+    question: '请简要说说形象思维和抽象思维的区别和联系。',
+    type: '论述题',
+    chapter: '第三章 艺术创作',
+    chapterIdx: 3,
+    answer: `形象思维是在对形象信息传递的客观形象体系进行感受、储存的基础上，结合自身的认识和情感进行识别，并用一定的艺术语言和艺术媒介创造和描述形象的一种思维方式。抽象思维一般称逻辑思维，它是人们在认识过程中借助概念、推理等思维形式反映客观现实的思维活动。二者之间既有区别又有联系，是对立统一的关系。
+
+首先，在思维过程中，形象思维始终依靠想象、情感等多种心理功能，也离不开具体可感的形象。在艺术创作之中，艺术家不断发挥自身的想象、联想等心理活动进行能动的创造活动，创造具体可感的艺术形象，如《天净沙·秋思》中一系列的意象，借由联想、想象营造出悲凉的意境。抽象思维则始终离不开比较、分析、概念，需要有明确的思维方向，而充分的思维依据。如《天净沙·秋思》中词与词之间的平仄变化、句式结构都要依靠抽象思维的理性分析、规律总结。
+
+其次，从二者的特征来看，形象思维具有具象性、情感性、主体性、想象性、创造性等特征，其特征始终贯穿于艺术创作的过程之中，即体验、构思、物化三个阶段。艺术家常常会将自己体验到的事物具象化，在创作过程中融入自身的想象、情感，从整体上把握形象内在的本质和规律，如贝多芬《命运交响曲》将自身病痛折磨的体验融入创作。而抽象思维则具有逻辑性、概括性、间接性等特征，往往艺术家在运用抽象思维时采用局部的视角，来揭示事物某一方面的本质或规律，如王安石"春风又绿江南岸"中"绿"字的选择，反映出作者用抽象思维对作品不断的精选、打磨。
+
+最后，形象思维和抽象思维也有着相互渗透、相互转化、相互促进的联系，两者相辅相成。在艺术创造中，以形象思维为主导，从整体上来创作艺术形象，以抽象思维为辅，侧重局部的分析，作为形象思维的补充。当遇到形象思维解决不了的问题，立马切换到抽象思维往往能够迎刃而解，等问题解决后立刻回到形象思维上来。如《立在地球边上放号》主要靠形象思维推动，又用抽象思维不断修改，创作出一个包含深情的中国农民形象。
+
+综上所述，形象思维与抽象思维二者对立统一，既有区别又有联系。在艺术创造活动中，我们要坚持以形象思维为主导，同时抽象思维为辅助，使艺术作品具有强烈的感染力和严谨完整的结构。`
+  },
+  {
+    id: 7,
+    question: '你认为合格的艺术家应该是怎样的？',
+    type: '论述题',
+    chapter: '第三章 艺术创作',
+    chapterIdx: 3,
+    answer: `艺术家是长期从事艺术创作并取得较高艺术成就的人的总称。艺术家作为艺术创作的主体，他自身的艺术经验、艺术观念以及审美体验都关乎着其艺术作品的好坏，也直接能够反映出其艺术作品能否实现艺术的四大功能。因此一名合格的艺术家不仅仅需要具备优秀的性格特征以及深厚的人文修养，还需要自觉担当起以美育人的美育使命，只有当两者有机结合，才能够创作出独具艺术个性又兼具审美价值和时代价值的优秀作品。
+
+首先，从艺术创作的角度，艺术家作为艺术创作的主体，他首先应当具备一定的人文修养。人文修养的形成需要艺术家通过不断的修习、修炼来获得，从而得到人文知识、人文精神、人文情怀三个层面的不断提升，才能够增加艺术作品的人文底蕴以及人文内涵。与其相辅相成的还有艺术家自身个性的形成，艺术家作为个体的人，他自己的人生阅历、思想感悟、创作风格，对艺术作品的创作同样非常关键。只有当艺术家积淀丰富的人生阅历，在现实生活中收集充足的创作素材，才能够获取到情感真挚、审美真挚的情感，和独特的体验。艺术家通过在社会生活中的不断磨练，慢慢融合自己的思想与情感，形成一套自己的创作风格。著名的音乐家、教育家李叔同，借由自身丰富的人生阅历和深厚的人文修养，形成了含蓄的创作风格，如《送别》用质朴的旋律抒发了内心的感慨。当一名艺术家具备了足够的人文修养，形成自己的创作风格，便具备了成为优秀作品的创造者、人类灵魂的工程师、先进文化的传承者和开创者的基本条件。但光凭内在修养也是不够的，艺术家还需要精心打磨艺术技巧，将其构思出的艺术意象转化为供人欣赏的艺术作品。
+
+其次，从艺术的主要功能的角度，一名合格的艺术家在创作艺术作品时应当考虑其作品给欣赏者所带来的作用和影响，因此充分发挥艺术的审美认识、教育、娱乐、体验功能尤为重要。艺术家在创作作品时不能一味的追求形式上的技巧，还应考虑大众的审美需要和精神需要。借助审美教育功能，艺术家通过塑造一个个的典型形象，帮助欣赏者通过其作品去了解和认识社会和历史，发挥审美教育功能。既然艺术家选择用审美的艺术形式去影响和推动社会的进步和发展的事业，就应该充分发挥审美教育潜移默化、寓教于乐的特点，去影响每一个人的思想意识。注重审美娱乐功能也很重要，欣赏者通过对其作品的观赏能够使得身心得到愉悦和休息，应当创作健康有内涵的作品来舒缓人们的压力。这些都离不开审美体验功能的展开，艺术要用真挚的艺术情感能动的感染人，实现两者之间的共鸣。《黄河大合唱》便是典型范例，创作者立足抗战时期进行创作，听众能够从中体验到音乐美的同时也能体悟到那段悲痛的历史，激发爱国情怀，在审美中得到思想上的熏陶。
+
+综上所述，结合艺术创作和艺术的功能，不难看出成为一名合格的艺术家需要具备一定的艺术素养和社会责任感。从作品创作层面，合格的艺术家自身需要有坚实的基础、系统的表达、精湛的技能技巧；从社会价值层面，艺术家应当立足审美，充分发挥美育教育的重要性，坚持将个人能力与社会角色的责任和担当相结合，才能成为不负时代的合格艺术家。`
+  },
+  {
+    id: 8,
+    question: '灵感思维是什么？',
+    type: '简答题',
+    chapter: '第三章 艺术创作',
+    chapterIdx: 3,
+    answer: `灵感思维是指以人的自觉为前提媒介，并能获得有社会价值的新知识的思维活动，它是在一定的抽象思维或形象思维的基础上，突如其来地产生新概念或新意象的顿悟式的思维形式。
+
+首先，灵感思维作为一种顿悟式的思维形式，具有突发性、偶然性、独创性和模糊性的特点，而这四种特点的产生都需要建立在一定的抽象思维和形象思维的基础之上。
+
+突发性指灵感的到来，多是突如其来，不期而至的，它是艺术家长期积累、精心构思等共同在一瞬间能量爆发的结果，并非凭空出现。如柏辽兹曾为一段旋律苦苦构思，长期反复思考而毫无进展，但一次从梦中惊醒的瞬间那段旋律突然出现，循环往复，毫无预兆。
+
+偶然性是指灵感的到来往往会在意想不到的时机、场合偶然的触发，这是在长期构思的基础上建立的。如冼星海偶然听见船夫号子，从中得到灵感创作出了《黄河船夫曲》。
+
+独创性指灵感爆发后所带来的想法和创意是独特新颖的，《黄河船夫曲》借由实际得来灵感再加上西方作曲技巧形成了一种独特的音乐作品。
+
+模糊性指灵感所带来的艺术意象通常是朦胧的、不确切的，需要艺术家进一步的加工、思考。如马致远《天净沙·秋思》的创作最先得来的还是一个朦胧的秋日乡愁的意境，通过逐步构思，打磨出枯藤、老树、昏鸦等意象。
+
+综上所述，灵感的到来并不是凭空想象、凭空捏造，任何灵感的产生都离不开艺术家的呕心沥血的探索、锲而不舍的追求、孜孜不倦的苦思得来的，好比"踏破铁鞋无觅处，得来全不费功夫"。`
+  }
+];
+
+let quizTypeFilter = 'all';
+let quizChapterFilter = 'all';
+let quizSearch = '';
+let quizExpanded = {};
+
 let evidenceCategory = 'all';
 let evidenceSearch = '';
 let currentEvidenceChapter = null;
@@ -3756,6 +4109,93 @@ function searchEvidence(value) {
   render();
 }
 
+// ===== 题库渲染 =====
+function renderQuiz() {
+  // 过滤题目
+  const filtered = quizBank.filter(q => {
+    if(quizTypeFilter !== 'all' && q.type !== quizTypeFilter) return false;
+    if(quizChapterFilter !== 'all' && q.chapter !== quizChapterFilter) return false;
+    if(quizSearch) {
+      const s = quizSearch.toLowerCase();
+      return q.question.toLowerCase().includes(s) || q.answer.toLowerCase().includes(s);
+    }
+    return true;
+  });
+
+  // 章节列表
+  const chapters = [...new Set(quizBank.map(q => q.chapter))];
+  const types = [...new Set(quizBank.map(q => q.type))];
+
+  let html = `<div class="quiz-page">
+    <div class="quiz-header">
+      <div>
+        <div class="quiz-title">📝 真题库</div>
+        <div class="quiz-subtitle">历年练习题与参考答案，按题型和章节筛选</div>
+      </div>
+      <div class="quiz-stats">
+        <div class="quiz-stat"><div class="quiz-stat-num">${quizBank.length}</div><div class="quiz-stat-label">总题数</div></div>
+        <div class="quiz-stat"><div class="quiz-stat-num">${filtered.length}</div><div class="quiz-stat-label">当前显示</div></div>
+      </div>
+    </div>
+    <div class="quiz-filters">
+      <div class="quiz-filter-group">
+        <span class="quiz-filter-label">题型：</span>
+        <div class="quiz-filter-chips">
+          <div class="quiz-chip ${quizTypeFilter==='all'?'active':''}" onclick="setQuizType('all')">全部</div>
+          ${types.map(t => `<div class="quiz-chip ${quizTypeFilter===t?'active':''}" onclick="setQuizType('${t}')">${t}</div>`).join('')}
+        </div>
+      </div>
+      <div class="quiz-filter-group">
+        <span class="quiz-filter-label">章节：</span>
+        <div class="quiz-filter-chips">
+          <div class="quiz-chip ${quizChapterFilter==='all'?'active':''}" onclick="setQuizChapter('all')">全部</div>
+          ${chapters.map(c => `<div class="quiz-chip ${quizChapterFilter===c?'active':''}" onclick="setQuizChapter('${c}')">${c.replace(/^第[一二三四五六七八九十]+章\s*/, '')}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="quiz-list">`;
+
+  if(filtered.length === 0) {
+    html += `<div class="quiz-empty">没有找到匹配的题目</div>`;
+  } else {
+    filtered.forEach((q, idx) => {
+      const isExpanded = quizExpanded[q.id];
+      html += `<div class="quiz-card ${isExpanded?'expanded':''}" id="quiz-${q.id}">
+        <div class="quiz-card-header" onclick="toggleQuiz(${q.id})">
+          <div class="quiz-card-num">${idx+1}</div>
+          <div class="quiz-card-question">${q.question}</div>
+          <div class="quiz-card-tags">
+            <span class="quiz-tag type">${q.type}</span>
+            <span class="quiz-tag chapter">${q.chapter.replace(/^第[一二三四五六七八九十]+章\s*/, '')}</span>
+          </div>
+          <div class="quiz-card-toggle">▼</div>
+        </div>
+        <div class="quiz-card-answer">
+          <div class="quiz-answer-text">${q.answer}</div>
+        </div>
+      </div>`;
+    });
+  }
+
+  html += `</div></div>`;
+  return html;
+}
+
+function setQuizType(type) {
+  quizTypeFilter = type;
+  render();
+}
+
+function setQuizChapter(chapter) {
+  quizChapterFilter = chapter;
+  render();
+}
+
+function toggleQuiz(id) {
+  quizExpanded[id] = !quizExpanded[id];
+  render();
+}
+
 function renderProgress() {
   const mastered = state.mastered.length;
   const pct = Math.round(mastered / QUESTIONS.length * 100);
@@ -3794,6 +4234,7 @@ function render() {
     case 'random': html = renderRandom(); break;
     case 'daily': html = renderDaily(); break;
     case 'evidence': html = renderEvidence(); break;
+    case 'quiz': html = renderQuiz(); break;
     case 'progress': html = renderProgress(); break;
     default: html = renderHome();
   }

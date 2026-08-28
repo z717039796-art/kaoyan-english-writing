@@ -2157,17 +2157,26 @@ let dictationMode = 'zh2en'; // zh2en: 中译英, en2zh: 英译中
 let dictationFilter = 'all'; // all: 全部, dynamic: 动态图, static: 静态图
 
 function extractDictationData() {
-  const cards = document.querySelectorAll('.card.template');
+  const cards = document.querySelectorAll('.card.template, .card.example');
   const data = [];
+  const seen = new Set();
   cards.forEach(card => {
     const enEl = card.querySelector('.en');
     const zhEl = card.querySelector('.zh');
     if (enEl && zhEl) {
       let en = enEl.textContent.trim();
       let zh = zhEl.textContent.trim().replace(/^翻译[：:]\s*/, '');
+      // 去掉英文里的中文前缀，如"基础模板："、"范文变体（2026家庭视角）："、"2013范文："、"例句："
+      en = en.replace(/^基础模板[：:]\s*/, '');
+      en = en.replace(/^范文变体[（(][^）)]*[）)][：:]\s*/, '');
+      en = en.replace(/^\d{4}范文[：:]\s*/, '');
+      en = en.replace(/^例句[：:]\s*/, '');
       en = en.replace(/\s+/g, ' ').trim();
       zh = zh.replace(/\s+/g, ' ').trim();
-      if (en.length > 10 && zh.length > 5) {
+      // 去重：相同的英文句子只保留一个
+      const enKey = en.toLowerCase().replace(/[^a-z]/g, '');
+      if (en.length > 10 && zh.length > 5 && !seen.has(enKey)) {
+        seen.add(enKey);
         const page = card.closest('.page');
         let type = 'dynamic';
         if (page && page.id === 'page-static') type = 'static';

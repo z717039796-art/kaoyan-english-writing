@@ -2134,19 +2134,35 @@ function updateEngProgress(){
 
 function initEngButtons(){
   const cards=document.querySelectorAll('.sentence-card, .template, .card.example');
-  cards.forEach((card,i)=>{
-    if(card.querySelector('.eng-actions')) return;
-    const id='eng_'+i;
-    card.style.position='relative';
-    const actions=document.createElement('div');
-    actions.className='eng-actions';
-    actions.style.cssText='position:absolute;bottom:12px;right:12px;display:flex;gap:6px;z-index:10';
-    const mastered=getEngMastered(), favorites=getEngFavorites();
-    actions.innerHTML='<button class="eng-btn'+(mastered.includes(id)?' active':'')+'" onclick="toggleEngMastered(\''+id+'\',this)">'+(mastered.includes(id)?'已掌握':'掌握')+'</button>'+
-      '<button class="eng-btn fav'+(favorites.includes(id)?' active':'')+'" onclick="toggleEngFavorite(\''+id+'\',this)">'+(favorites.includes(id)?'已收藏':'收藏')+'</button>';
-    card.appendChild(actions);
-  });
-  updateEngProgress();
+  const mastered=getEngMastered(), favorites=getEngFavorites();
+  let idx=0;
+  
+  function processBatch(){
+    const batchSize=20;
+    let count=0;
+    while(idx<cards.length && count<batchSize){
+      const card=cards[idx];
+      if(!card.querySelector('.eng-actions')){
+        const id='eng_'+idx;
+        card.style.position='relative';
+        const actions=document.createElement('div');
+        actions.className='eng-actions';
+        actions.style.cssText='position:absolute;bottom:12px;right:12px;display:flex;gap:6px;z-index:10';
+        actions.innerHTML='<button class="eng-btn'+(mastered.includes(id)?' active':'')+'" onclick="toggleEngMastered(\''+id+'\',this)">'+(mastered.includes(id)?'已掌握':'掌握')+'</button>'+
+          '<button class="eng-btn fav'+(favorites.includes(id)?' active':'')+'" onclick="toggleEngFavorite(\''+id+'\',this)">'+(favorites.includes(id)?'已收藏':'收藏')+'</button>';
+        card.appendChild(actions);
+      }
+      idx++;
+      count++;
+    }
+    if(idx<cards.length){
+      if(window.requestIdleCallback) requestIdleCallback(processBatch,{timeout:500});
+      else setTimeout(processBatch,16);
+    }else{
+      updateEngProgress();
+    }
+  }
+  processBatch();
 }
 
 // 注入按钮样式
@@ -2154,8 +2170,13 @@ const engStyle=document.createElement('style');
 engStyle.textContent='.eng-btn{padding:4px 12px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid rgba(37,99,235,0.2);background:rgba(255,255,255,0.8);color:#2563EB;cursor:pointer;transition:all 0.2s}.eng-btn:hover{background:rgba(37,99,235,0.1)}.eng-btn.active{background:#2563EB;color:white;border-color:#2563EB}.eng-btn.fav{color:#7C3AED;border-color:rgba(124,58,237,0.2)}.eng-btn.fav:hover{background:rgba(124,58,237,0.1)}.eng-btn.fav.active{background:#7C3AED;color:white;border-color:#7C3AED}';
 document.head.appendChild(engStyle);
 
-if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initEngButtons);
-else initEngButtons();
+// 延迟初始化，不阻塞页面加载
+function startInitEngButtons(){
+  if(window.requestIdleCallback) requestIdleCallback(initEngButtons,{timeout:1000});
+  else setTimeout(initEngButtons,300);
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',startInitEngButtons);
+else startInitEngButtons();
 </script>
 <script>
 function toggleTheme() {

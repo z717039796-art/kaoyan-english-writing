@@ -3975,132 +3975,104 @@ let quizExpanded = {};
 
 let evidenceCategory = 'all';
 let evidenceSearch = '';
-let currentEvidenceChapter = null;
+let evidenceExpanded = {};
 
 function renderEvidence() {
-  // 初始化当前章节
-  const chaptersWithItems = evidenceData.filter(c => c.items.length > 0);
-  if(!currentEvidenceChapter || !chaptersWithItems.find(c => c.chapter === currentEvidenceChapter)) {
-    currentEvidenceChapter = chaptersWithItems[0]?.chapter || null;
-  }
-  
-  // 过滤后的章节列表
-  const filteredChapters = chaptersWithItems.filter(cat => {
-    if(evidenceCategory !== 'all' && evidenceCategory !== cat.chapter) return false;
-    if(!evidenceSearch) return true;
-    return cat.items.some(item => {
-      const searchLower = evidenceSearch.toLowerCase();
-      return item.name.toLowerCase().includes(searchLower) ||
-             item.author.toLowerCase().includes(searchLower) ||
-             item.tags.some(t => t.toLowerCase().includes(searchLower)) ||
-             item.points.some(p => p.toLowerCase().includes(searchLower));
+  // 扁平化所有例子，带上章节信息
+  const allItems = [];
+  evidenceData.forEach(chapter => {
+    chapter.items.forEach(item => {
+      allItems.push({...item, chapter: chapter.chapter, chapterIdx: chapter.chapterIdx, color: chapter.color});
     });
   });
-  
-  // 如果当前章节被过滤掉了，切换到第一个
-  if(!filteredChapters.find(c => c.chapter === currentEvidenceChapter)) {
-    currentEvidenceChapter = filteredChapters[0]?.chapter || null;
-  }
-  
-  const currentChapter = filteredChapters.find(c => c.chapter === currentEvidenceChapter);
-  
-  let html = `<div class="evidence-page">
-    <!-- 顶部标题区 -->
-    <div class="evidence-header">
-      <div class="evidence-header-text">
-        <div class="evidence-title">📚 论据库</div>
-        <div class="evidence-subtitle">按章节知识点分类 · 作业例子语料整理 · 答题直接引用</div>
+
+  // 过滤
+  const filtered = allItems.filter(item => {
+    if(evidenceCategory !== 'all' && item.chapter !== evidenceCategory) return false;
+    if(evidenceSearch) {
+      const s = evidenceSearch.toLowerCase();
+      return item.name.toLowerCase().includes(s) ||
+             item.author.toLowerCase().includes(s) ||
+             item.tags.some(t => t.toLowerCase().includes(s)) ||
+             item.points.some(p => p.toLowerCase().includes(s));
+    }
+    return true;
+  });
+
+  // 章节列表
+  const chapters = evidenceData.filter(c => c.items.length > 0);
+
+  let html = `<div class="quiz-page">
+    <div class="quiz-header">
+      <div>
+        <div class="quiz-title" style="background:linear-gradient(135deg,#7c3aed,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">📚 论据库</div>
+        <div class="quiz-subtitle">按章节知识点分类 · 作业例子语料整理 · 答题直接引用</div>
       </div>
-      <div class="evidence-search-box">
-        <input type="text" id="evidenceSearchInput" placeholder="🔍 搜索例子、作者、考点..." value="${evidenceSearch}" oninput="searchEvidence(this.value)">
+      <div class="quiz-stats">
+        <div class="quiz-stat"><div class="quiz-stat-num" style="color:#7c3aed;">${allItems.length}</div><div class="quiz-stat-label">总例子</div></div>
+        <div class="quiz-stat"><div class="quiz-stat-num" style="color:#7c3aed;">${filtered.length}</div><div class="quiz-stat-label">当前显示</div></div>
       </div>
     </div>
-    
-    <!-- 主体：左侧导航 + 右侧内容 -->
-    <div class="evidence-body">
-      <!-- 左侧章节导航 -->
-      <div class="evidence-sidebar">
-        <div class="evidence-sidebar-title">章节目录</div>
-        <div class="evidence-nav-list">`;
-  
-  filteredChapters.forEach(cat => {
-    const isActive = cat.chapter === currentEvidenceChapter;
-    html += `<div class="evidence-nav-item ${isActive?'active':''}" onclick="switchEvidenceChapter('${cat.chapter}')" style="--chapter-color:${cat.color}">
-      <span class="evidence-nav-badge">${cat.chapterIdx >= 0 ? cat.chapterIdx : '★'}</span>
-      <span class="evidence-nav-name">${cat.chapter}</span>
-      <span class="evidence-nav-count">${cat.items.length}</span>
-    </div>`;
-  });
-  
-  if(filteredChapters.length === 0) {
-    html += `<div class="evidence-empty">没有找到匹配的章节</div>`;
-  }
-  
-  html += `</div>
-      </div>
-      
-      <!-- 右侧内容区 -->
-      <div class="evidence-content">`;
-  
-  if(currentChapter) {
-    // 当前章节标题
-    html += `<div class="evidence-content-header" style="--chapter-color:${currentChapter.color}">
-      <div class="evidence-content-badge">${currentChapter.chapterIdx >= 0 ? currentChapter.chapterIdx : '★'}</div>
-      <div>
-        <div class="evidence-content-title">${currentChapter.chapter}</div>
-        <div class="evidence-content-desc">共 ${currentChapter.items.length} 个例子 · 点击卡片可查看完整论据</div>
-      </div>
-    </div>`;
-    
-    // 例子卡片
-    html += `<div class="evidence-cards">`;
-    currentChapter.items.forEach((item, idx) => {
-      html += `<div class="evidence-item-card">
-        <div class="evidence-item-header">
-          <div class="evidence-item-num" style="background:${currentChapter.color}">${idx+1}</div>
-          <div class="evidence-item-info">
-            <div class="evidence-item-name">${item.name}</div>
-            <div class="evidence-item-author">${item.author}</div>
-          </div>
+    <div class="quiz-filters">
+      <div class="quiz-filter-group">
+        <span class="quiz-filter-label">章节：</span>
+        <div class="quiz-filter-chips">
+          <div class="quiz-chip ${evidenceCategory==='all'?'active':''}" onclick="setEvidenceChapter('all')" style="${evidenceCategory==='all'?'background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border-color:transparent;':''}">全部</div>
+          ${chapters.map(c => `<div class="quiz-chip ${evidenceCategory===c.chapter?'active':''}" onclick="setEvidenceChapter('${c.chapter}')" style="${evidenceCategory===c.chapter?'background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border-color:transparent;':''}">${c.chapter.replace(/^第[一二三四五六七八九十]+章\s*/, '')}</div>`).join('')}
         </div>
-        <div class="evidence-item-tags">`;
+      </div>
+    </div>
+    <div class="quiz-list">`;
+
+  if(filtered.length === 0) {
+    html += `<div class="quiz-empty">没有找到匹配的例子</div>`;
+  } else {
+    filtered.forEach((item, idx) => {
+      const isExpanded = evidenceExpanded[idx];
+      html += `<div class="quiz-card ${isExpanded?'expanded':''}" id="evidence-${idx}">
+        <div class="quiz-card-header" onclick="toggleEvidence(${idx})">
+          <div class="quiz-card-num" style="background:${item.color}">${idx+1}</div>
+          <div style="flex:1;">
+            <div class="quiz-card-question">${item.name}</div>
+            <div style="font-size:13px;color:var(--text-3);margin-top:2px;font-weight:500;">${item.author}</div>
+          </div>
+          <div class="quiz-card-tags">
+            <span class="quiz-tag chapter" style="background:${item.color}15;color:${item.color};">${item.chapter.replace(/^第[一二三四五六七八九十]+章\s*/, '')}</span>
+          </div>
+          <div class="quiz-card-toggle">▼</div>
+        </div>
+        <div class="quiz-card-answer">
+          <div style="padding-top:16px;padding-bottom:8px;">
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">`;
       item.tags.forEach(tag => {
-        html += `<span class="evidence-item-tag" style="color:${currentChapter.color};background:${currentChapter.color}15">${tag}</span>`;
+        html += `<span class="quiz-tag type" style="background:${item.color}15;color:${item.color};">${tag}</span>`;
       });
       html += `</div>
-        <div class="evidence-item-points">`;
+            <div class="quiz-answer-text">`;
       item.points.forEach((point, pIdx) => {
-        html += `<div class="evidence-item-point">
-          <span class="evidence-point-marker" style="background:${currentChapter.color}"></span>
-          <span class="evidence-point-content">${point}</span>
+        html += `<div style="margin-bottom:10px;display:flex;gap:10px;align-items:flex-start;">
+          <span style="flex-shrink:0;width:6px;height:6px;border-radius:50%;background:${item.color};margin-top:9px;"></span>
+          <span>${point}</span>
         </div>`;
       });
       html += `</div>
+          </div>
+        </div>
       </div>`;
     });
-    html += `</div>`;
-  } else {
-    html += `<div class="evidence-empty-state">
-      <div class="evidence-empty-icon">🔍</div>
-      <div class="evidence-empty-text">没有找到匹配的例子</div>
-      <div class="evidence-empty-hint">试试换个关键词搜索</div>
-    </div>`;
   }
-  
-  html += `</div>
-    </div>
-  </div>`;
-  
+
+  html += `</div></div>`;
   return html;
 }
 
-function switchEvidenceChapter(chapter) {
-  currentEvidenceChapter = chapter;
+function setEvidenceChapter(chapter) {
+  evidenceCategory = chapter;
   render();
 }
 
-function filterEvidence(category) {
-  evidenceCategory = category;
+function toggleEvidence(idx) {
+  evidenceExpanded[idx] = !evidenceExpanded[idx];
   render();
 }
 

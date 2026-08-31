@@ -2690,7 +2690,76 @@ body::before {
     .topnav .search { width: 120px !important; }
     .switch-btn, .sync-btn { width: 30px !important; height: 30px !important; min-width: 30px !important; }
     .tab { padding: 4px 4px !important; font-size: 10px !important; }
-  }}</style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
+  }}
+  .last-visited-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(59,130,246,0.08));
+    border: 1px solid rgba(124,58,237,0.2);
+    border-radius: 16px;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: all .3s;
+  }
+  .last-visited-card:hover {
+    border-color: rgba(124,58,237,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(124,58,237,0.12);
+  }
+  .lv-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+  .lv-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .lv-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #7c3aed;
+    margin-bottom: 4px;
+    letter-spacing: .05em;
+  }
+  .lv-question {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-1);
+    margin-bottom: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .lv-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--text-3);
+  }
+  .lv-action {
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #7c3aed;
+    background: rgba(124,58,237,0.1);
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all .2s;
+  }
+  .last-visited-card:hover .lv-action {
+    background: #7c3aed;
+    color: white;
+  }
+  @media(max-width:600px) {
+    .last-visited-card { padding: 14px 16px; gap: 12px; }
+    .lv-icon { font-size: 24px; }
+    .lv-question { font-size: 14px; }
+    .lv-meta { flex-wrap: wrap; gap: 8px; }
+    .lv-action { font-size: 12px; padding: 6px 12px; }
+  }
+</style><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236366f1%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div id="app">
@@ -2791,13 +2860,15 @@ let state = {
   theme: localStorage.getItem('art_theme') || 'light',
   collapsedKPs: {},
   randomQuestion: null,
-  showRandomAnswer: false
+  showRandomAnswer: false,
+  lastVisited: JSON.parse(localStorage.getItem('art_last_visited') || 'null')
 };
 
 function save() {
   localStorage.setItem('art_favorites', JSON.stringify(state.favorites));
   localStorage.setItem('art_mastered', JSON.stringify(state.mastered));
   localStorage.setItem('art_theme', state.theme);
+  if(state.lastVisited) localStorage.setItem('art_last_visited', JSON.stringify(state.lastVisited));
 }
 
 function getTypeClass(type) {
@@ -2836,6 +2907,17 @@ function navigate(page, chapterIdx) {
     el.classList.toggle('active', el.dataset.page === page);
   });
   render();
+}
+
+function continueLastVisited() {
+  if(!state.lastVisited) return;
+  const lv = state.lastVisited;
+  // 先跳转到对应章节
+  navigate('chapter', lv.chapterIdx);
+  // 延迟打开模态框
+  setTimeout(() => {
+    openModal(lv.questionId);
+  }, 100);
 }
 
 function handleSearch(val) {
@@ -2958,6 +3040,22 @@ function renderHome() {
     <div class="overview-card green"><div class="overview-num">${mastered}</div><div class="overview-label">已掌握</div></div>
     <div class="overview-card red"><div class="overview-num">${pct}%</div><div class="overview-label">完成度</div></div>
   </div>
+  
+  <!-- 上次看到 -->
+  ${state.lastVisited ? `
+  <div class="last-visited-card" onclick="continueLastVisited()">
+    <div class="lv-icon">📖</div>
+    <div class="lv-content">
+      <div class="lv-label">上次看到</div>
+      <div class="lv-question">${state.lastVisited.questionText}</div>
+      <div class="lv-meta">
+        <span>${state.lastVisited.chapter}</span>
+        <span>${state.lastVisited.type}</span>
+        <span>${state.lastVisited.time}</span>
+      </div>
+    </div>
+    <div class="lv-action">继续 →</div>
+  </div>` : ''}
   
   <!-- 当前阶段 + 复习重点 -->
   <div class="home-guide">
@@ -4304,6 +4402,17 @@ function openModal(id) {
   if(hideBtn) { hideBtn.classList.remove('active'); hideBtn.textContent = '🙈'; }
   document.getElementById('modalOverlay').classList.add('show');
   document.body.style.overflow = 'hidden';
+  // 记录上次浏览位置
+  const chIdx = CHAPTERS.findIndex(c => c.name === q.chapter);
+  state.lastVisited = {
+    questionId: id,
+    questionText: q.question.replace(/^\d+\.\s*/, ''),
+    chapter: q.chapter,
+    chapterIdx: chIdx >= 0 ? chIdx : 0,
+    type: getTypeName(q.type),
+    time: new Date().toLocaleString('zh-CN', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'})
+  };
+  save();
 }
 
 function closeModal(event) {

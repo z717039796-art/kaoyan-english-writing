@@ -1307,6 +1307,95 @@ body::before {
   flex-direction:column;
   gap:16px;
 }
+
+/* ===== 题库子标签 ===== */
+.quiz-subtabs {
+  display:flex;
+  gap:10px;
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  padding:8px;
+}
+.quiz-subtab {
+  flex:1;
+  text-align:center;
+  padding:12px 18px;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  transition:all .2s;
+  color:var(--text-3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.quiz-subtab:hover { color:#059669; background:rgba(5,150,105,0.06); }
+.quiz-subtab.active {
+  background:linear-gradient(135deg,#059669,#0891B2);
+  color:white;
+  box-shadow:0 6px 18px rgba(5,150,105,0.25);
+}
+.quiz-subtab-count {
+  font-size:12px;
+  font-weight:700;
+  background:rgba(255,255,255,0.25);
+  padding:2px 9px;
+  border-radius:20px;
+}
+.quiz-subtab:not(.active) .quiz-subtab-count {
+  background:rgba(5,150,105,0.12);
+  color:#059669;
+}
+
+/* ===== 押题卷分组 ===== */
+.yati-paper {
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  padding:20px 22px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+.yati-paper-head {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.yati-paper-badge {
+  font-size:15px;
+  font-weight:900;
+  color:white;
+  background:linear-gradient(135deg,#D97706,#EA580C);
+  padding:8px 16px;
+  border-radius:10px;
+  box-shadow:0 4px 14px rgba(217,119,6,0.3);
+}
+.yati-paper-meta {
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-3);
+}
+.yati-section { display:flex; flex-direction:column; gap:12px; }
+.yati-section-title {
+  font-size:14px;
+  font-weight:800;
+  color:#D97706;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.yati-section-title::after {
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--glass-border);
+}
+.yati-section .quiz-list { gap:12px; }
 .quiz-card {
   background:var(--glass);
   backdrop-filter:blur(24px);
@@ -3863,6 +3952,40 @@ const evidenceData = [
         ]
       },
       {
+        name: '《二泉映月》',
+        author: '华彦钧（阿炳）',
+        tags: ['音乐', '艺术与生活', '共通美感', '典型', '艺术源泉'],
+        points: [
+          '艺术来源于生活：民间艺人华彦钧长期街头卖艺、历经风霜，将切身感受融入音符，创作出如泣如诉、悲怆慨叹的《二泉映月》，体现了生活是艺术创作的源泉，艺术形象的饱满程度取决于艺术家的生活积累。',
+          '共通美感：无论欣赏者是否了解民间音乐、是否了解作者境遇，都能体悟到《二泉映月》中的苦难与坎坷，体现了建立在人类相通情感基础上、跨越个体差异的共通美感。'
+        ]
+      },
+      {
+        name: '《牡丹亭》',
+        author: '汤显祖',
+        tags: ['戏曲', '浪漫主义', '情感表现', '个性解放'],
+        points: [
+          '戏曲艺术的浪漫主义与情感表现：《牡丹亭》通过杜丽娘、柳梦梅生死离合的爱情故事，洋溢着追求个人幸福、呼唤个性解放、反对封建制度的浪漫主义理想，体现了戏曲艺术以情感人、表现艺术家主体情感的特征。'
+        ]
+      },
+      {
+        name: '《蒙娜丽莎》',
+        author: '达芬奇',
+        tags: ['美术', '绘画', '文艺复兴', '艺术典型'],
+        points: [
+          '绘画艺术的典型形象与永恒魅力：达芬奇《蒙娜丽莎》以神秘微笑著称，将科学的写实技法与人文内涵相结合，塑造出鲜明独特又意蕴丰富的典型形象，具有极高的艺术价值，体现了造型艺术的审美特征。'
+        ]
+      },
+      {
+        name: '《公民凯恩》',
+        author: '奥逊·威尔斯',
+        tags: ['电影', '蒙太奇', '影视语言'],
+        points: [
+          '影视艺术的蒙太奇手法：《公民凯恩》运用交叉蒙太奇，穿插不同时空的采访镜头，逐步完成人物塑造，体现了蒙太奇通过镜头、声音的组接来超越单个画面含义、构建叙事、表达思想的影视艺术审美特征。'
+        ]
+      }
+    ,
+      {
         name: '孔乙己',
         author: '鲁迅',
         tags: ['文学艺术', '小说'],
@@ -3989,6 +4112,34 @@ const evidenceData = [
           '先进文化的继承者和开创者：赵元任长期研究中国传统民间音乐，探索民族五声调式独有的艺术特质，同时吸收西方作曲理论，在此基础上推陈出新，推动了民族音乐的现代化发展，体现了艺术家继承先进文化、不断开拓创新的素质。'
         ]
       },
+      {
+        name: '莫扎特',
+        author: '音乐家、作曲家',
+        tags: ['艺术家素质', '维也纳古典乐派', '理性与情感统一'],
+        points: [
+          '艺术家的创作才能与理性修养：莫扎特是维也纳古典乐派的重要代表，其音乐结构严谨、旋律优美、和声丰富，充满理性和逻辑又具有强烈的情感表现力，体现了艺术家深厚的艺术修养与卓越的创作才华。',
+          '艺术家的创作成就：莫扎特在歌剧（《费加罗的婚礼》《唐璜》）和交响乐、奏鸣曲、协奏曲等领域都取得巨大成就，作品至今广泛演奏，体现了艺术家作为优秀作品创造者的核心素质。'
+        ]
+      },
+      {
+        name: '汤显祖',
+        author: '戏曲作家',
+        tags: ['艺术家素质', '浪漫主义', '临川派', '情感表现'],
+        points: [
+          '艺术家的情感表现与浪漫主义创作：汤显祖在《牡丹亭》中通过杜丽娘和柳梦梅生死离合的爱情故事，追求个人幸福、呼唤个性解放，将浪漫主义手法引入传奇创作，体现了艺术创作中强烈的情感表现。',
+          '艺术家的创作个性与流派开创：汤显祖作品语言浓丽华艳、意境深远，注重展示人物内心世界，是临川派的开创人物，与莎士比亚并称中西戏剧巨星，体现了艺术家鲜明的创作个性和艺术成就。'
+        ]
+      },
+      {
+        name: '达芬奇',
+        author: '画家、科学家',
+        tags: ['艺术家素质', '文艺复兴', '科学与艺术结合', '全才'],
+        points: [
+          '艺术家科学与艺术的结合：达芬奇注重科学和艺术的结合，认为艺术是表现真理和美的方式、科学是探索真理和规律的手段，代表作《蒙娜丽莎》《最后的晚餐》展现了精湛技艺与深刻洞察力，体现了艺术家全面的文化修养。',
+          '艺术家的人文修养与全才素质：达芬奇是"文艺复兴三杰"之一，成就跨越艺术、科学多个领域，致力于通过艺术表达自然的和谐与完美，体现了艺术家深厚的人文修养和作为"全才"的主体素质。'
+        ]
+      }
+    ,
       {
         name: '贝多芬',
         author: '音乐家',
@@ -4261,16 +4412,113 @@ const quizBank = [
 
 <b>综上所述</b>，科技的进步会推动艺术的发展为艺术创作提供新的创作思路，为艺术作品提供新的物质材料媒介。艺术在发展的同时也会反哺科技，为科技注入新的活力，让科技赋予了审美属性。在当代艺术实践之中，我们既要合理运用科技手段，又要坚持艺术的人文内核，推动艺术在技术与审美的平衡之中持续向前发展。`
   }
-
-
-
-
 ];
+
+yatiBank = [
+  {
+    name: '押题卷一',
+    questions: [
+    {
+        id: 13,
+        question: '蒙太奇',
+        type: '名词解释',
+        chapter: '第六章 艺术类型',
+        chapterIdx: 6,
+        answer: `蒙太奇是电影剪辑的核心概念与手法，意为装配和组合。在电影中，它指通过镜头、场次、声音的组接，来超越单个画面本身的含义、节奏、情感效应。蒙太奇理论在20世纪20年代被系统提出，强调镜头之间的冲突与组合，可引导观众的理性与心理反应，构建叙事、表达思想甚至象征隐喻。蒙太奇不仅服务于连贯叙事，还通过对比、平行、交叉等手法实现情感强化、概念抽象和时间压缩。蒙太奇可以分为叙事蒙太奇、理性蒙太奇、节奏蒙太奇等。如《公民凯恩》运用交叉蒙太奇，穿插不同时空的采访镜头，逐步完成人物的塑造。蒙太奇集中体现了影视艺术的审美特征，深刻影响了全球影视电影创作与理论的发展。`
+      },
+      {
+        id: 14,
+        question: '莫扎特',
+        type: '名词解释',
+        chapter: '艺术家（创作主体）',
+        chapterIdx: -1,
+        answer: `莫扎特是奥地利作曲家，从小学习音乐，童年时期在演奏与作曲方面展现出罕见的音乐才华。25岁离开家乡前往维也纳，其重要的作品几乎都是在维也纳创作的，他是维也纳乐派的重要代表人物，在声乐和器乐领域都取得了巨大的成功。莫扎特创作了19部歌剧，其中《费加罗的婚礼》《唐璜》等堪称古典主义歌剧的典范；他的器乐创作包含了交响乐、奏鸣曲、协奏曲等，也获得了相当高的成就。莫扎特的音乐充满了理性和逻辑，同时又具有强烈的情感表现力，其作品结构严谨、旋律优美、和声丰富，展现了他卓越的创作才华和音乐造诣。莫扎特的音乐对后世产生了深远的影响，他的作品不仅在当时备受赞誉，而且对后世音乐家具有启发作用，其作品至今仍广泛演奏，是古典音乐的瑰宝。`
+      },
+      {
+        id: 15,
+        question: '民间舞蹈',
+        type: '名词解释',
+        chapter: '第六章 艺术类型',
+        chapterIdx: 6,
+        answer: `民间舞蹈是一种艺术形式，源自民间，深受民俗文化的影响，即兴表演却风格稳定，以自娱自乐为主要功能。民间舞者身份多样，既有乡土民间艺人，也有地方舞蹈工作者和民间职业舞者，他们共同传承和发展这一艺术形式。民间舞从原始祭祀舞蹈到现代舞台艺术的演变中，不断吸收和借鉴舞台舞蹈，形成了丰富多样的舞蹈形式。民间舞还注重与音乐唱歌的结合，巧妙使用扇子、手帕等工具丰富表现力，情节生动、形象鲜明，多以故事传说为依据，人物性格突出。同时民间舞蹈强调即兴发挥，舞者在情绪最热烈时，往往能创作出光彩独特的舞蹈。民间舞蹈表达了民众对生活的热爱和对自然的敬畏，它不仅是自娱自乐的载体，也是传承民族文化的重要手段，丰富了世界舞蹈艺术的宝库，促进了文化交流与互鉴。`
+      },
+      {
+        id: 16,
+        question: '汤显祖',
+        type: '名词解释',
+        chapter: '艺术家（创作主体）',
+        chapterIdx: -1,
+        answer: `汤显祖是中国明代著名的戏曲作家，江西临川人。汤显祖毕生从事写作，一生作品很多，有诗、文、赋、曲等，但流传下来的并不多，影响较大的有传奇五种：《邯郸记》《牡丹亭》《紫钗记》《南柯记》《紫箫记》，前四种合称为"临川四梦"，其中《牡丹亭》流传最广。《牡丹亭》通过讲述杜丽娘和柳梦梅生死离别的爱情故事，洋溢着追求个人幸福、呼唤个性解放、反对封建制度的浪漫主义理想。汤显祖将浪漫主义手法引入传奇创作，在人物塑造方面注重展示人物的内心世界，作品语言浓丽华艳，意境深远。汤显祖为临川派的开创人物，其创作对当时和后世带来了重大的影响。近代随着对外文化交流的发展，汤显祖在西方的声望日高，和莎士比亚一起被称为中西对峙的一对戏剧巨星。`
+      },
+      {
+        id: 17,
+        question: '正剧',
+        type: '名词解释',
+        chapter: '第六章 艺术类型',
+        chapterIdx: 6,
+        answer: `正剧是戏剧的主要体裁之一，是在悲剧和喜剧之后形成的第三种戏剧体裁。黑格尔把这种戏剧体裁界定为"悲剧的掌握方式和喜剧掌握方式的调节为一个新的整体的较深刻的方式"。正剧的一种类型是传奇剧，它也是正剧的起源，莎士比亚的《暴风雨》《一报还一报》等可以归入此类。18世纪法国启蒙思想家和剧作家博马舍称这种戏剧为严肃剧，进行大力倡导，博马舍指出这种戏剧取材于日常生活，表现了人与人之间的真实关系。19世纪正剧得到了广泛传播，正剧取代了悲剧和喜剧的地位成为主流，以表现英雄人物的崇高品质和坚强意志为主旨的正剧作品为主。正剧的出现丰富了戏剧类型，为后世剧作家带来了创作上的启发和深刻的影响。`
+      },
+      {
+        id: 18,
+        question: '达芬奇',
+        type: '名词解释',
+        chapter: '艺术家（创作主体）',
+        chapterIdx: -1,
+        answer: `达芬奇是意大利文艺复兴时期的杰出代表，他不仅是画家，还是自然科学家，被誉为"文艺复兴三杰"之一。他的成就跨越了艺术、科学等多个领域。早期达芬奇在画家工作室学习，后受资助前往米兰、罗马等地进行创作和研究。达芬奇的代表作有《蒙娜丽莎》《最后的晚餐》等，都展现了其精湛的绘画技术和深刻的艺术洞察力，其中《蒙娜丽莎》以其神秘微笑著称，广泛流传至今，具有极高的艺术价值和欣赏价值。达芬奇注重科学和艺术的结合，他认为艺术是表现真理和美的方式，而科学是探索真理和规律的手段，他致力于通过艺术表达自然的和谐与完美。达芬奇的作品和思想对后世产生了深远的影响，他不仅是文艺复兴时期的巨匠，更是历史上的全才。`
+      },
+      {
+        id: 19,
+        question: '如何理解艺术欣赏中的共鸣现象和共通美感？',
+        type: '简答题',
+        chapter: '第五章 艺术接受',
+        chapterIdx: 5,
+        answer: `在艺术欣赏活动中，共鸣现象与共通美感都是艺术接受过程中重要的心理现象，两者相互关联又有所区别。共鸣指在艺术欣赏中深入作品内部而展开的心理活动，共通美感则建立在人类相通的情感基础上。优秀的艺术作品往往能够引起观众的共鸣，进而形成一定范围的共通美感。
+
+    首先，共鸣指在艺术欣赏过程中艺术接受者受到艺术作品的感染，与艺术作品中的线索、结构共呼吸，与作品中的人物命运共悲欢，在情感上达到高度的契合，从而形成与作品之间的共鸣现象。艺术欣赏的共鸣形成会借助接受者的理解与期待视野，接受者借助自身的审美经验、审美观念，走进艺术作品之中，与其形式、内容乃至作者营造出的情感产生共鸣。共鸣也具有差异性，不同的接受者在共鸣的位置、感受的强弱都不尽相同，面对同一件作品，如面对《红楼梦》，有人为林黛玉的身世和爱情所动容，有人则感叹其封建社会家族的兴衰，不同的人都能从作品中找到与自身贴合的情感点，从而形成共鸣体验。
+
+    其次，共通美感指不同接受者之间会产生共同的审美感受。尽管欣赏者有着不一样的人生经历、期待视野，但人与人之间拥有相通的对于生命情感的感受，面对同一件优秀的艺术作品，会形成大体一致或相似、相近的感受，从而形成共通美感。共通美感并不排斥、否认接受者之间的个体差异，它是在多种审美体验中所沉淀出的审美共性。例如《二泉映月》，无论欣赏者是否对民间音乐了解、是否了解作者的境遇，都能体悟到乐曲中的苦难与坎坷，这便形成了共通美感。
+
+    共鸣与共通美感二者既有联系又有区别。共鸣以个体内心与作品之间的情感共振为基础，大多发生在个体上，具有个性；共通美感则是群体化的审美共识，共鸣是形成共通美感的基础，大量个体共鸣的汇聚，才有可能形成广泛的共通美感。二者共同推动艺术的繁荣，让艺术可以跨越时空，实现心灵的沟通。`
+      },
+      {
+        id: 20,
+        question: '审美期待是什么？',
+        type: '简答题',
+        chapter: '第五章 艺术接受',
+        chapterIdx: 5,
+        answer: `审美期待是艺术鉴赏的准备阶段，指接受主体在欣赏之前和欣赏过程中，基于个人和社会的原因，心理上往往会有一套既成的结构图式，它使接受者具有期待视野，并希望在欣赏艺术作品的过程中得到满足。
+
+    在艺术鉴赏活动中，审美期待的深度、广度和水平的高低，来自于艺术接受者的前理解。所谓前理解，是指接受者对艺术作品的理解总是建立在他过去对艺术作品的理解，甚至包括对人类文化理解的基础上。因此，艺术接受者的审美经验、艺术修养、艺术观念越丰富，他对艺术作品的审美期待水平也就越高。例如欣赏贝多芬《第五交响曲"命运"》时，非专业的听众大多期待获得乐曲所带来的情绪价值；而专业的听众则会期待捕捉到乐曲动机、曲式结构上的变化，体味其更深层次的意蕴。这些稳定的审美期待积累起来，便会形成期待视野。所谓期待视野，指接受者进入接受过程之前业已具备一套既成的心理结构图式，是对艺术作品的预先估盼。而期待视野的不同便会使读者对于作品的需求和好恶不同，由于读者是千差万别的，每个人的文化修养、审美趣味都各不相同，因而会形成不同的期待视野，读者对同一件作品的理解也会出现差异，读者赋予作品的意义也会各不相同。例如同样品读《红楼梦》，带着不同期待视野的接受者会赋予不一样的意义，有的将其看成封建大家族由盛转衰的社会悲剧，有的将其看作宝黛二位主人公之间的爱情悲剧。这种意义阐释的差异，根源便来自于接受者彼此不同的审美期待。
+
+    综上所述，审美期待是艺术鉴赏展开的内在心理前提，依托于接受者的前理解，凝聚成期待视野，赋予作品不同的含义，使艺术接受不是被动的接受灌输，而是积极能动的，成就了艺术作品的生命力。`
+      },
+      {
+        id: 21,
+        question: '艺术与生活的关系',
+        type: '论述题',
+        chapter: '第一章 艺术观念',
+        chapterIdx: 1,
+        answer: `艺术与生活的关系是相互依存、相互作用的辩证关系。生活作为艺术创作的根基，是艺术创作取之不尽的源泉与对象，决定了艺术作品的内容和风貌。同时，艺术并非对生活的机械模仿和被动复制，而是运用审美的方式，对社会生活进行能动的反映、提炼、加工、升华。艺术与生活共同推动着人类审美能力的进步。
+
+    生活是艺术的源泉，为艺术创作提供了现实土壤。从艺术创作层面来看，艺术家作为艺术创作的主体，其创作活动都是在现实生活的土壤里进行的。艺术家的思想情感、审美观念与创作个性，都是在长期的生活实践与艺术实践中养成的。艺术家对生活的感受越真实、体验越丰富，可用于艺术创作的素材也就越丰富。而在艺术创作的过程中，艺术感知是基础，艺术家用敏锐的审美感受力从日常生活中积累素材，从而展开艺术构思，艺术家将生活中的表象为材料，借助联想、想象、情感等心理机制，在头脑中将其构思为审美意象；通过艺术物化，将构思出来的审美意象借助一定的物质媒介物化为具体可感的艺术形象，最终艺术作品中艺术形象的丰富、饱满程度便取决于艺术家生活的积累，三个阶段层层递进，环环相扣。民间艺人华彦钧长期在街头卖艺，历经风霜，正是这些切身的感受与体验，使他在构思时将其经历融入音符之间，才有了《二泉映月》中如泣如诉、仿佛历经沧桑者悲怆慨叹的旋律。艺术家只有扎根于所处的社会生活之中，不断汲取其中的养分，才能创作出富有温度的作品。
+
+    艺术来源于生活，却又高于生活，艺术是对生活的能动反映与升华。艺术作品高于生活，集中体现在形象的典型性上。所谓典型，就是既有鲜明独特的个性，又有着能够反映普遍社会意义的艺术形象。个性是艺术作品的血肉，而共性则是它的骨髓，二者是有机统一的。生活中具体的人或事往往个性突出但不能概括出本质，典型形象则能将分散的、相近或相似的生活现象集中于某个人、某件事上，使个别中见到一般，偶然中见到必然，因而比生活中的原型人物更加具有代表性、更加有感染力。典型艺术形象的动人之处便在于它既让人感到真实可感，又能在生活中找到原型或例子，让读者能从一个人想到一类人的处境。《孔乙己》中的主人公便是这样一位典型人物，他身上那件始终不愿脱下的长衫，集中了旧时代受科举制度毒害却始终放不下读书人架子的那一类人的缩影。艺术高于生活，便是运用典型的形象反映生活的本质。
+
+    艺术反哺生活，以审美力量提升、丰富生活的精神风貌。艺术具有审美认识、审美教育、审美娱乐、审美体验的社会功能，它以情感人，通过具体可感的艺术形象潜移默化地影响人的观念、价值观念，进而得到人生观、价值观的提升和飞跃，从而作用于社会风气和时代精神的进步。抗战时期《义勇军进行曲》以急促有力的节奏和昂扬的旋律，将民族危亡的处境化为民族的共同愤慨，激励了无数民众投身于抗日救亡运动之中，后来这首歌成为中华人民共和国国歌，其中的审美力量一直延续至今。可以看出，艺术对生活的作用不是外在的道德说教，而是通过审美的感染力实现精神上的引领。
+
+    综上所述，生活为艺术提供了丰厚的现实土壤，孕育了艺术家的创作灵感与情感体验，是艺术的"活水之源"；艺术以典型化的形象将生活物化为典型的艺术形象，并反过来滋养、引领生活。艺术与生活相互依存又彼此区别，只有紧密联系、深入生活，艺术才能既有生活的温度又有精神的高度。`
+      }
+    ]
+  }
+];
+
 
 let quizTypeFilter = 'all';
 let quizChapterFilter = 'all';
 let quizSearch = '';
 let quizExpanded = {};
+let quizSubTab = 'real';
+let yatiExpanded = {};
 
 let evidenceCategory = 'all';
 let evidenceSearch = '';
@@ -4382,33 +4630,39 @@ function searchEvidence(value) {
 
 // ===== 题库渲染 =====
 function renderQuiz() {
-  // 过滤题目
-  const filtered = quizBank.filter(q => {
-    if(quizTypeFilter !== 'all' && q.type !== quizTypeFilter) return false;
-    if(quizChapterFilter !== 'all' && q.chapter !== quizChapterFilter) return false;
-    if(quizSearch) {
-      const s = quizSearch.toLowerCase();
-      return q.question.toLowerCase().includes(s) || q.answer.toLowerCase().includes(s);
-    }
-    return true;
-  });
-
-  // 章节列表
-  const chapters = [...new Set(quizBank.map(q => q.chapter))];
-  const types = [...new Set(quizBank.map(q => q.type))];
+  const yatiTotal = yatiBank.reduce((sum, p) => sum + p.questions.length, 0);
 
   let html = `<div class="quiz-page">
     <div class="quiz-header">
       <div>
-        <div class="quiz-title">📝 真题库</div>
-        <div class="quiz-subtitle">历年练习题与参考答案，按题型和章节筛选</div>
+        <div class="quiz-title">📝 题库</div>
+        <div class="quiz-subtitle">历年真题与押题卷参考答案，按题型和章节筛选</div>
       </div>
       <div class="quiz-stats">
-        <div class="quiz-stat"><div class="quiz-stat-num">${quizBank.length}</div><div class="quiz-stat-label">总题数</div></div>
-        <div class="quiz-stat"><div class="quiz-stat-num">${filtered.length}</div><div class="quiz-stat-label">当前显示</div></div>
+        <div class="quiz-stat"><div class="quiz-stat-num">${quizBank.length + yatiTotal}</div><div class="quiz-stat-label">总题数</div></div>
+        <div class="quiz-stat"><div class="quiz-stat-num">${quizSubTab === 'real' ? quizBank.length : yatiTotal}</div><div class="quiz-stat-label">当前板块</div></div>
       </div>
     </div>
-    <div class="quiz-filters">
+    <div class="quiz-subtabs">
+      <div class="quiz-subtab ${quizSubTab === 'real' ? 'active' : ''}" onclick="setQuizSubTab('real')">📚 真题库<span class="quiz-subtab-count">${quizBank.length}</span></div>
+      <div class="quiz-subtab ${quizSubTab === 'yati' ? 'active' : ''}" onclick="setQuizSubTab('yati')">🎯 押题卷<span class="quiz-subtab-count">${yatiTotal}</span></div>
+    </div>`;
+
+  if(quizSubTab === 'real') {
+    // ===== 真题库 =====
+    const filtered = quizBank.filter(q => {
+      if(quizTypeFilter !== 'all' && q.type !== quizTypeFilter) return false;
+      if(quizChapterFilter !== 'all' && q.chapter !== quizChapterFilter) return false;
+      if(quizSearch) {
+        const s = quizSearch.toLowerCase();
+        return q.question.toLowerCase().includes(s) || q.answer.toLowerCase().includes(s);
+      }
+      return true;
+    });
+    const chapters = [...new Set(quizBank.map(q => q.chapter))];
+    const types = [...new Set(quizBank.map(q => q.type))];
+
+    html += `<div class="quiz-filters">
       <div class="quiz-filter-group">
         <span class="quiz-filter-label">题型：</span>
         <div class="quiz-filter-chips">
@@ -4426,30 +4680,81 @@ function renderQuiz() {
     </div>
     <div class="quiz-list">`;
 
-  if(filtered.length === 0) {
-    html += `<div class="quiz-empty">没有找到匹配的题目</div>`;
-  } else {
-    filtered.forEach((q, idx) => {
-      const isExpanded = quizExpanded[q.id];
-      html += `<div class="quiz-card ${isExpanded?'expanded':''}" id="quiz-${q.id}">
-        <div class="quiz-card-header" onclick="toggleQuiz(${q.id})">
-          <div class="quiz-card-num">${idx+1}</div>
-          <div class="quiz-card-question">${q.question}</div>
-          <div class="quiz-card-tags">
-            <span class="quiz-tag type">${q.type}</span>
-            <span class="quiz-tag chapter">${q.chapter.replace(/^第[一二三四五六七八九十]+章\s*/, '')}</span>
+    if(filtered.length === 0) {
+      html += `<div class="quiz-empty">没有找到匹配的题目</div>`;
+    } else {
+      filtered.forEach((q, idx) => {
+        const isExpanded = quizExpanded[q.id];
+        html += `<div class="quiz-card ${isExpanded?'expanded':''}" id="quiz-${q.id}">
+          <div class="quiz-card-header" onclick="toggleQuiz(${q.id})">
+            <div class="quiz-card-num">${idx+1}</div>
+            <div class="quiz-card-question">${q.question}</div>
+            <div class="quiz-card-tags">
+              <span class="quiz-tag type">${q.type}</span>
+              <span class="quiz-tag chapter">${q.chapter.replace(/^第[一二三四五六七八九十]+章\s*/, '')}</span>
+            </div>
+            <div class="quiz-card-toggle">▼</div>
           </div>
-          <div class="quiz-card-toggle">▼</div>
-        </div>
-        <div class="quiz-card-answer">
-          <div class="quiz-answer-text">${q.answer}</div>
-        </div>
-      </div>`;
+          <div class="quiz-card-answer">
+            <div class="quiz-answer-text">${q.answer}</div>
+          </div>
+        </div>`;
+      });
+    }
+    html += `</div>`;
+  } else {
+    // ===== 押题卷 =====
+    html += `<div class="quiz-list">`;
+    yatiBank.forEach(paper => {
+      html += `<div class="yati-paper">
+        <div class="yati-paper-head">
+          <span class="yati-paper-badge">${paper.name}</span>
+          <span class="yati-paper-meta">共 ${paper.questions.length} 题 · 名词解释 / 简答 / 论述</span>
+        </div>`;
+
+      const typeOrder = ['名词解释', '简答题', '论述题'];
+      typeOrder.forEach(t => {
+        const qs = paper.questions.filter(q => q.type === t);
+        if(qs.length === 0) return;
+        html += `<div class="yati-section">
+          <div class="yati-section-title">${t}（${qs.length} 题）</div>
+          <div class="quiz-list">`;
+        qs.forEach((q, i) => {
+          const isExpanded = yatiExpanded[q.id];
+          html += `<div class="quiz-card ${isExpanded?'expanded':''}" id="yati-${q.id}">
+            <div class="quiz-card-header" onclick="toggleYati(${q.id})">
+              <div class="quiz-card-num">${i+1}</div>
+              <div class="quiz-card-question">${q.question}</div>
+              <div class="quiz-card-tags">
+                <span class="quiz-tag type">${q.type}</span>
+                <span class="quiz-tag chapter">${q.chapter.replace(/^第[一二三四五六七八九十]+章\s*/, '')}</span>
+              </div>
+              <div class="quiz-card-toggle">▼</div>
+            </div>
+            <div class="quiz-card-answer">
+              <div class="quiz-answer-text">${q.answer}</div>
+            </div>
+          </div>`;
+        });
+        html += `</div></div>`;
+      });
+      html += `</div>`;
     });
+    html += `</div>`;
   }
 
-  html += `</div></div>`;
+  html += `</div>`;
   return html;
+}
+
+function setQuizSubTab(tab) {
+  quizSubTab = tab;
+  render();
+}
+
+function toggleYati(id) {
+  yatiExpanded[id] = !yatiExpanded[id];
+  render();
 }
 
 function setQuizType(type) {

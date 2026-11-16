@@ -254,6 +254,9 @@ body::before {
   scrollbar-width:none;
 }
 .chapter-selector::-webkit-scrollbar { display:none; }
+.chapter-selector { cursor:grab; user-select:none; -webkit-user-select:none; }
+.chapter-selector.dragging { cursor:grabbing; }
+.chapter-selector.dragging .chapter-selector-item { pointer-events:none; }
 .chapter-selector-item {
   padding:9px 18px;
   font-size:13px;
@@ -5380,7 +5383,43 @@ function clearDoodle() {
   if(doodleCtx && canvas) {
     doodleCtx.clearRect(0, 0, canvas.width, canvas.height);
   }
-}</script>
+}
+// ===== 章节选择器鼠标拖拽滚动（事件委托，兼容动态渲染）=====
+let csDrag = {active:false, moved:false, startX:0, startScroll:0, el:null};
+(function(){
+  document.addEventListener('mousedown', function(e){
+    const el = e.target.closest('.chapter-selector');
+    if(!el) return;
+    csDrag.active = true;
+    csDrag.moved = false;
+    csDrag.el = el;
+    csDrag.startX = e.pageX;
+    csDrag.startScroll = el.scrollLeft;
+    el.classList.add('dragging');
+  });
+  document.addEventListener('mousemove', function(e){
+    if(!csDrag.active) return;
+    const dx = e.pageX - csDrag.startX;
+    if(Math.abs(dx) > 5) csDrag.moved = true;
+    csDrag.el.scrollLeft = csDrag.startScroll - dx;
+    if(csDrag.moved) e.preventDefault();
+  });
+  function endDrag(){
+    if(csDrag.active && csDrag.el) csDrag.el.classList.remove('dragging');
+    csDrag.active = false;
+  }
+  document.addEventListener('mouseup', endDrag);
+  document.addEventListener('mouseleave', endDrag);
+  // 捕获阶段拦截拖拽松手后误触发的章节点击
+  document.addEventListener('click', function(e){
+    if(csDrag.moved && e.target.closest('.chapter-selector')){
+      e.preventDefault();
+      e.stopPropagation();
+      csDrag.moved = false;
+    }
+  }, true);
+})();
+</script>
 </body>
 </html>
 

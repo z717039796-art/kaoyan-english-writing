@@ -256,7 +256,6 @@ body::before {
 .chapter-selector::-webkit-scrollbar { display:none; }
 .chapter-selector { cursor:grab; user-select:none; -webkit-user-select:none; }
 .chapter-selector.dragging { cursor:grabbing; }
-.chapter-selector.dragging .chapter-selector-item { pointer-events:none; }
 .chapter-selector-item {
   padding:9px 18px;
   font-size:13px;
@@ -5395,14 +5394,18 @@ let csDrag = {active:false, moved:false, startX:0, startScroll:0, el:null};
     csDrag.el = el;
     csDrag.startX = e.pageX;
     csDrag.startScroll = el.scrollLeft;
-    el.classList.add('dragging');
   });
   document.addEventListener('mousemove', function(e){
     if(!csDrag.active) return;
     const dx = e.pageX - csDrag.startX;
-    if(Math.abs(dx) > 5) csDrag.moved = true;
-    csDrag.el.scrollLeft = csDrag.startScroll - dx;
-    if(csDrag.moved) e.preventDefault();
+    if(!csDrag.moved && Math.abs(dx) > 5) {
+      csDrag.moved = true;
+      csDrag.el.classList.add('dragging');
+    }
+    if(csDrag.moved) {
+      csDrag.el.scrollLeft = csDrag.startScroll - dx;
+      e.preventDefault();
+    }
   });
   function endDrag(){
     if(csDrag.active && csDrag.el) csDrag.el.classList.remove('dragging');

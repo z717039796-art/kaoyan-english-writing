@@ -3157,20 +3157,34 @@ body::before { display:none; }
 .paper-pill:hover, .study-button:hover { border-color:var(--paper-blue); }
 .paper-pill { display:inline-flex; align-items:center; gap:8px; min-height:40px; padding:8px 20px; font:700 clamp(15px,1.25vw,19px)/1.25 var(--study-serif); cursor:pointer; }
 .chapter-practice { margin:0 0 7px auto; white-space:nowrap; }
-.paper-chapter .handout-wrap { max-width:none; display:grid; grid-template-columns:minmax(150px,18%) minmax(0,1fr); gap:clamp(18px,2vw,32px); align-items:start; }
+.paper-chapter .handout-wrap {
+  --handout-sticky-gap:18px;
+  max-width:none; display:grid; grid-template-columns:minmax(0,1fr) clamp(190px,22%,268px);
+  gap:clamp(18px,2vw,32px); align-items:start;
+}
 .handout-toc {
-  position:sticky; top:calc(var(--measured-topnav-height,var(--topnav-height)) + 16px);
-  border-right:1px solid var(--paper-line); padding:8px 18px 14px 8px;
+  grid-area:1 / 2; position:sticky; top:calc(var(--measured-topnav-height,var(--topnav-height)) + 16px);
+  min-width:0; border-left:1px solid var(--paper-line); padding:4px 0 7px 14px;
 }
-.handout-toc-title { font:700 clamp(20px,1.64vw,26px)/1.25 var(--study-serif); margin:0 0 13px; padding-bottom:12px; border-bottom:1px solid var(--paper-line); }
-.handout-toc-list { display:grid; gap:7px; }
+.handout-toc-title { font:700 clamp(20px,1.64vw,26px)/1.25 var(--study-serif); margin:0 0 8px; padding-bottom:10px; border-bottom:1px solid var(--paper-line); }
+.handout-toc-toggle { display:none; }
+.handout-toc-list {
+  max-height:calc(100dvh - var(--measured-topnav-height,var(--topnav-height)) - 80px);
+  overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; padding:3px 5px;
+}
+.handout-toc-list ul { list-style:none; padding:0; margin:0; }
+.handout-toc-list ul ul { margin-inline-start:7px; border-inline-start:1px solid var(--paper-line); padding-inline-start:3px; }
 .handout-toc-link {
-  text-align:left; border:0; border-left:3px solid transparent; background:transparent; cursor:pointer;
-  color:var(--paper-ink); font:600 15px/1.45 system-ui,sans-serif; padding:7px 7px 7px 12px;
+  display:block; width:100%; text-align:start; border:0; border-radius:8px; background:transparent; cursor:pointer;
+  color:var(--paper-muted); font:500 13px/1.45 system-ui,sans-serif; padding:6px 7px; overflow-wrap:anywhere;
 }
-.handout-toc-link:hover, .handout-toc-link[aria-current="location"] { border-color:var(--paper-blue); color:var(--paper-blue); }
-.handout-flow { gap:16px; min-width:0; }
-.handout-section, .hc-card, .evidence-library .quiz-card { scroll-margin-top:calc(var(--measured-topnav-height,var(--topnav-height)) + 18px); }
+.handout-toc-root > li + li { margin-top:7px; }
+.handout-toc-root > li > .handout-toc-link { color:var(--paper-ink); font-weight:750; font-size:15px; }
+.handout-toc-link:hover, .handout-toc-link[aria-current="location"] { background:var(--paper-wash); color:var(--paper-blue); }
+.handout-toc-link[aria-current="location"] { font-weight:750; box-shadow:inset 2px 0 var(--paper-blue); }
+.handout-toc-toggle:focus-visible, [data-handout-anchor]:focus-visible { outline:2px solid var(--paper-blue); outline-offset:2px; }
+.handout-flow { grid-area:1 / 1; gap:16px; min-width:0; }
+[data-handout-anchor], .hc-card, .evidence-library .quiz-card { scroll-margin-top:calc(var(--measured-topnav-height,var(--topnav-height)) + var(--handout-sticky-gap,18px)); }
 .handout-section:first-child > .hc-group { margin-top:0; }
 .handout-section { display:grid; gap:13px; min-width:0; }
 .paper-chapter .hc-group { gap:11px; margin:5px 4px 0; }
@@ -3187,6 +3201,57 @@ body::before { display:none; }
 .paper-chapter .hc-card-title { color:var(--paper-ink); font:700 clamp(19px,1.9vw,30px)/1.35 var(--study-serif); overflow-wrap:anywhere; }
 .paper-chapter .hc-card-body { margin-inline-start:clamp(34px,4vw,68px); }
 .paper-chapter .hc-para { font-size:clamp(16px,1.17vw,18px); line-height:1.8; color:var(--text-2); overflow-wrap:anywhere; }
+/* Handout recall is opt-in per card; the reading view remains flat and open. */
+.paper-chapter .hc-card-head > .hc-card-title { flex:1 1 auto; min-width:0; }
+.hc-recall-button {
+  display:inline-flex; flex:none; align-items:center; justify-content:center; gap:6px;
+  min-height:44px; padding:5px 13px; border:1px solid var(--paper-line); border-radius:999px;
+  background:var(--paper-solid); color:var(--paper-blue); font-family:inherit;
+  font-size:14px; font-weight:700; line-height:1.3; cursor:pointer;
+}
+.hc-recall-button:hover { border-color:var(--paper-blue); background:var(--paper-wash); }
+.hc-recall-button--primary { border-color:transparent; background:var(--paper-wash); }
+.hc-recall-button .ui-icon { flex:none; }
+.hc-recall-launch { align-self:center; white-space:nowrap; }
+.hc-recall-panel {
+  margin-inline-start:clamp(34px,4vw,68px); padding:clamp(12px,1.65vw,23px); border:1px solid var(--paper-line);
+  border-radius:17px; background:var(--paper); scroll-margin-top:calc(var(--measured-topnav-height,var(--topnav-height)) + 15px);
+}
+.paper-chapter .hc-card [hidden] { display:none !important; }
+.hc-recall-label { display:block; margin:0 0 4px; color:var(--paper-ink); font-weight:750; font-size:16px; }
+.hc-recall-help { margin:0 0 10px; color:var(--paper-muted); font-size:13px; line-height:1.6; }
+.hc-recall-input {
+  display:block; width:100%; min-height:145px; padding:11px 12px; resize:vertical;
+  color:var(--paper-ink); background:var(--paper-solid); border:1px solid var(--paper-line); border-radius:10px;
+  font:inherit; font-size:16px; line-height:1.7;
+}
+.hc-recall-input::placeholder { color:var(--paper-muted); }
+.hc-recall-button:focus-visible,.hc-recall-input:focus-visible,.hc-recall-heading:focus-visible { outline:2px solid var(--paper-blue); outline-offset:3px; }
+.hc-recall-message { margin:8px 0 0; color:var(--paper-rust); font-size:13px; }
+.hc-recall-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:12px; }
+.hc-recall-review > .hc-recall-actions { margin:0 0 12px; }
+.hc-recall-heading { width:fit-content; margin:0 0 4px; font:700 clamp(18px,1.45vw,23px)/1.35 var(--study-serif); color:var(--paper-ink); }
+.hc-recall-grade { margin:12px 0; padding:clamp(12px,1.3vw,18px); background:var(--paper-solid); border:1px solid var(--paper-line); border-radius:12px; }
+.hc-recall-grade-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:3px 14px; }
+.hc-recall-score { color:var(--paper-blue); font:750 27px/1.2 system-ui,sans-serif; font-variant-numeric:tabular-nums; }
+.hc-recall-score-total, .hc-recall-grade-count { color:var(--paper-muted); font-size:13px; }
+.hc-recall-grade-note { margin:6px 0 0; color:var(--paper-muted); font-size:13px; line-height:1.6; }
+.hc-recall-grade-list { list-style:none; margin:10px 0 0; padding:0; }
+.hc-recall-grade-item {
+  display:grid; grid-template-columns:5.5em minmax(0,1fr); align-items:start; gap:7px;
+  padding:7px 0; border-top:1px solid var(--paper-line); color:var(--paper-ink); font-size:14px; overflow-wrap:anywhere;
+}
+.hc-recall-grade-status { color:var(--paper-rust); font-weight:750; }
+.hc-recall-grade-item.is-matched .hc-recall-grade-status { color:var(--paper-blue); }
+.hc-recall-comparison { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.hc-recall-answer { min-width:0; padding:12px; border:1px solid var(--paper-line); border-radius:12px; background:var(--paper-solid); }
+.hc-recall-answer + .hc-recall-answer { background:var(--paper-wash); }
+.hc-recall-answer h5 { color:var(--paper-ink); font-size:14px; margin:0 0 7px; }
+.hc-recall-answer p.hc-recall-user { margin:0; color:var(--text-2); white-space:pre-wrap; overflow-wrap:anywhere; font-size:16px; line-height:1.8; }
+@media(max-width:760px) {
+  .hc-recall-panel { margin-inline-start:0; }
+  .hc-recall-comparison { grid-template-columns:1fr; }
+}
 .handout-evidence {
   margin-top:14px; padding:5px 0 1px 15px; border-left:2px solid var(--paper-blue); color:var(--text-2);
   font-size:clamp(15px,1.14vw,17px); line-height:1.65;
@@ -3271,11 +3336,24 @@ body::before { display:none; }
   .chapter-hero-index { font-size:clamp(22px,5vw,33px); padding-right:8px; }
   .paper-chapter .chapter-switch { margin-bottom:16px; }
   .paper-chapter .chapter-subtab { min-height:46px; }
-  .paper-chapter .handout-wrap { grid-template-columns:1fr; gap:12px; }
-  .handout-toc { position:static; border:0; padding:0 0 5px; }
+  .paper-chapter .handout-wrap { --handout-sticky-gap:64px; grid-template-columns:minmax(0,1fr); gap:10px; }
+  .handout-flow { grid-area:2 / 1; }
+  .handout-toc {
+    grid-area:1 / 1; z-index:5; top:calc(var(--measured-topnav-height,var(--topnav-height)) + 4px);
+    border:1px solid var(--paper-line); border-radius:12px; padding:0; background:var(--paper-solid);
+  }
   .handout-toc-title { display:none; }
-  .handout-toc-list { display:flex; overflow:auto; scrollbar-width:none; gap:5px; }
-  .handout-toc-link { flex:none; border-left:0; border-bottom:2px solid transparent; padding:6px 7px; white-space:nowrap; font-size:13px; }
+  .handout-toc-toggle {
+    display:flex; align-items:center; gap:8px; width:100%; min-height:42px; border:0; border-radius:12px;
+    padding:6px 12px; background:var(--paper-solid); color:var(--paper-blue); font:700 14px/1.4 system-ui,sans-serif; cursor:pointer;
+  }
+  .handout-toc-toggle .ui-icon { flex:none; margin-left:auto; }
+  .handout-toc[data-open] .handout-toc-toggle .ui-icon { transform:rotate(90deg); }
+  .handout-toc-current { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--paper-muted); font-weight:500; }
+  .handout-toc-list { max-height:min(44dvh,380px); padding:5px 10px; border-top:1px solid var(--paper-line); }
+  .handout-toc:not([data-open]) .handout-toc-list { display:none; }
+  .handout-toc-link { min-height:34px; font-size:14px; }
+  .hc-recall-panel { scroll-margin-top:calc(var(--measured-topnav-height,var(--topnav-height)) + var(--handout-sticky-gap)); }
   .paper-chapter .hc-card-body { margin-left:0; }
 }
 @media(max-width:390px) {
@@ -3997,19 +4075,30 @@ function countHandoutNodes(nodes) {
   return n;
 }
 
+function handoutTocLabel(node) {
+  return node.title.replace(/^第[一二三四五六七八九十]+节[：:]?\s*/, '').replace(/[（(]名词解释[）)]\s*$/, '').trim() || node.title;
+}
+
+function renderHandoutToc(nodes, parentPath = '') {
+  const root = parentPath === '';
+  return `<ul${root ? ' class="handout-toc-root"' : ''}>${nodes.map((node, index) => {
+    const key = root ? String(index) : `${parentPath}-${index}`;
+    return `<li><button type="button" class="handout-toc-link" data-toc="${key}" ${key === '0' ? 'aria-current="location"' : ''} onclick="goToHandoutSection('${key}')">${escapeStudyText(handoutTocLabel(node))}</button>${
+      node.children.length ? renderHandoutToc(node.children, key) : ''}</li>`;
+  }).join('')}</ul>`;
+}
+
 function renderChapterHandout(handout) {
   const counter = {n:0};
   const chapters = handout.nodes;
-  const toc = chapters.map((node, index) => {
-    const label = node.title.replace(/^第[一二三四五六七八九十]+节[：:]?\s*/, '');
-    return `<button type="button" class="handout-toc-link" data-toc="${index}" ${index === 0 ? 'aria-current="location"' : ''} onclick="goToHandoutSection(${index})">${escapeStudyText(label)}</button>`;
-  }).join('');
   const sections = chapters.map((node, index) =>
-    `<section class="handout-section" id="handout-section-${index}" data-section="${index}" tabindex="-1">${renderHandoutFlow([node], counter)}</section>`
+    `<section class="handout-section" id="handout-section-${index}" data-handout-anchor="${index}" tabindex="-1">${renderHandoutFlow([node], counter, '', index)}</section>`
   ).join('');
   return `<div class="handout-wrap">
     <aside class="handout-toc" aria-label="本章目录">
-      <h2 class="handout-toc-title">本章目录</h2><div class="handout-toc-list">${toc}</div>
+      <h2 class="handout-toc-title">本章目录</h2>
+      <button type="button" class="handout-toc-toggle" aria-expanded="false" aria-controls="handout-toc-list" onclick="toggleHandoutToc(this)">本章目录 <span class="handout-toc-current" aria-hidden="true">${escapeStudyText(handoutTocLabel(chapters[0]))}</span>${uiIcon('right')}</button>
+      <nav id="handout-toc-list" class="handout-toc-list" aria-label="讲义小节">${renderHandoutToc(chapters)}</nav>
     </aside>
     <div class="handout-flow">${sections}
       <div class="study-actions study-read-end"><button type="button" class="paper-pill" onclick="setChapterSubTab('questions', true)">做本章题目${uiIcon('right')}</button></div>
@@ -4017,47 +4106,291 @@ function renderChapterHandout(handout) {
   </div>`;
 }
 
-function setHandoutTocCurrent(index) {
-  document.querySelectorAll('.handout-toc-link').forEach(link => {
-    if(Number(link.dataset.toc) === index) link.setAttribute('aria-current','location');
-    else link.removeAttribute('aria-current');
-  });
+function revealHandoutTocLink(link) {
+  if(!link || !link.getClientRects().length) return;
+  const list = link.closest('.handout-toc-list');
+  const bounds = list.getBoundingClientRect();
+  const item = link.getBoundingClientRect();
+  if(item.top < bounds.top) list.scrollTop += item.top - bounds.top - 4;
+  else if(item.bottom > bounds.bottom) list.scrollTop += item.bottom - bounds.bottom + 4;
 }
 
-function goToHandoutSection(index) {
-  const target = document.getElementById('handout-section-' + index);
+function toggleHandoutToc(toggle, open = toggle.getAttribute('aria-expanded') !== 'true') {
+  const toc = toggle.closest('.handout-toc');
+  toggle.setAttribute('aria-expanded', String(open));
+  toc.toggleAttribute('data-open', open);
+  if(open) revealHandoutTocLink(toc.querySelector('[aria-current="location"]'));
+}
+
+function setHandoutTocCurrent(key) {
+  const toc = document.querySelector('.handout-toc');
+  if(!toc) return;
+  const active = toc.querySelector(`[data-toc="${key}"]`);
+  if(!active || active.hasAttribute('aria-current')) return;
+  toc.querySelector('[aria-current="location"]')?.removeAttribute('aria-current');
+  active.setAttribute('aria-current', 'location');
+  toc.querySelector('.handout-toc-current').textContent = active.textContent;
+  revealHandoutTocLink(active);
+}
+
+let lastHandoutJump = null;
+function goToHandoutSection(key) {
+  const target = document.querySelector(`[data-handout-anchor="${key}"]`);
   if(!target) return;
+  toggleHandoutToc(document.querySelector('.handout-toc-toggle'), false);
   target.focus({preventScroll:true});
   target.scrollIntoView({block:'start', behavior:'instant'});
-  setHandoutTocCurrent(index);
+  lastHandoutJump = {target, y:window.scrollY};
+  setHandoutTocCurrent(key);
 }
 
-function renderHandoutFlow(nodes, counter) {
+function renderHandoutFlow(nodes, counter, parentPath, startIndex = 0) {
   let h = '';
-  nodes.forEach(node => {
+  nodes.forEach((node, index) => {
+    const key = parentPath === '' ? String(startIndex + index) : `${parentPath}-${index}`;
+    // At the root the section wrapper is the jump target; nested headings and cards have their own anchors.
+    const anchor = parentPath === '' ? '' : ` data-handout-anchor="${key}" tabindex="-1"`;
     const hasParas = node.paras.length > 0;
     const hasChildren = node.children.length > 0;
     if(hasParas) {
       counter.n += 1;
-      h += `<article class="hc-card" id="handout-card-${counter.n}">
+      h += `<article class="hc-card" id="handout-card-${counter.n}"${anchor}>
         <div class="hc-card-head">
           <span class="hc-card-badge" aria-hidden="true">${String(counter.n).padStart(2,'0')}</span>
-          <h3 class="hc-card-title">${node.title}</h3>
+          <h3 class="hc-card-title" id="handout-title-${counter.n}">${node.title}</h3>
+          <button type="button" class="hc-recall-button hc-recall-launch" data-handout-recall="start" aria-expanded="false" aria-controls="handout-recall-${counter.n}">${uiIcon('pen')}默写</button>
         </div>
         <div class="hc-card-body">`;
       node.paras.forEach(p => { h += `<div class="hc-para">${p}</div>`; });
-      h += renderHandoutEvidence(node.title, counter.n) + `</div></article>`;
+      h += renderHandoutEvidence(node.title, counter.n) + `</div>
+        <div class="hc-recall-panel" id="handout-recall-${counter.n}" data-draft-key="${state.currentChapter}:${counter.n}" hidden></div>
+      </article>`;
     } else if(hasChildren) {
-      h += `<div class="hc-group" data-level="${node.level}">
+      h += `<div class="hc-group" data-level="${node.level}"${anchor}>
         <span class="hc-group-bar" aria-hidden="true"></span>
         <h2 class="hc-group-title">${node.title}</h2>
       </div>`;
     } else {
-      h += `<div class="hc-group" data-level="${node.level}"><span class="hc-empty">${node.title}</span></div>`;
+      h += `<div class="hc-group" data-level="${node.level}"${anchor}><span class="hc-empty">${node.title}</span></div>`;
     }
-    if(hasChildren) h += renderHandoutFlow(node.children, counter);
+    if(hasChildren) h += renderHandoutFlow(node.children, counter, key);
   });
   return h;
+}
+
+// Keep draft answers in this tab when returning from the chapter or its evidence links.
+const handoutRecallDrafts = new Map();
+
+// A point has a label and required keyword groups. Within each group any alternative is accepted.
+// Keyed by card title so inserting or moving a card does not move its rubric to another card.
+const handoutRecallRubrics = new Map([
+  ['审美认识功能的含义（名词解释）', [
+    ['通过艺术活动或作品欣赏认识社会、历史、人生等', '艺术活动|艺术作品|艺术欣赏|文艺作品', '认识|认知|了解|体悟|领略', '社会|历史|人生|自然'],
+    ['获得审美愉悦，同时加深对自然、社会或历史人文的理解', '审美愉悦|身心愉悦|美的享受|审美享受|审美快感', '深刻|加深|深化|更深'],
+    ['审美认识可以超越时空限制', '不受时空|超越时空|跨越时空|时空局限|时空限制|跨越时间和空间|不受时间和空间'],
+    ['借助与现实相关的想象，拓宽认知视野', '认知视野|认识视野|拓宽视野|开阔眼界|扩大眼界|拓展认知|想象世界']
+  ]],
+  ['审美认识功能的三方面', [
+    ['通过艺术加深对社会、历史、人生的认识', '社会|社会生活', '历史|人生|生活', '认识|认知|揭示|理解|反映|了解'],
+    ['认识自然现象，同时反映艺术家对世界的主观体验', '自然现象|认识自然|理解自然|自然界|天体|细胞'],
+    ['不局限于已有现实，借想象拓展认知视野', '认知视野|认识视野|拓宽视野|开阔视野|开拓视野|想象世界|想象空间|超越现实']
+  ]],
+  ['审美教育功能的含义（名词解释）', [
+    ['通过欣赏艺术作品，感受并认同真善美', '艺术作品|艺术欣赏|欣赏作品|欣赏艺术|艺术品', '真善美|价值和力量|价值观'],
+    ['以审美感染和熏陶，而不是强制说教', '潜移默化|感染|熏陶|感化|陶冶|以情感人|不知不觉'],
+    ['提升人生观、世界观或人文精神', '人生观|世界观|人文精神|精神境界|思想境界', '提升|提高|迁跃|升华|塑造|涵养|养成']
+  ]],
+  ['审美教育的特点', [
+    ['以情感人：以作品的情感感染读者、观众或听众', '以情感人|以情动人|情感感染|情感打动|感情打动|情感感化|情感感染力|用感情感染|打动欣赏者|打动观众|打动听众'],
+    ['潜移默化：不强制，在不知不觉中受熏陶', '潜移默化|不知不觉|润物无声|耳濡目染|无形中受到|无形中改变|无形中产生|不强制'],
+    ['寓教于乐：在审美愉悦中接受教育', '寓教于乐|寓教育于娱乐|在愉悦中受教|在快乐中受教|乐中受教|乐中学']
+  ]],
+  ['审美娱乐功能的含义（名词解释）', [
+    ['艺术欣赏满足审美需要，带来精神享受或审美愉悦', '艺术欣赏|欣赏艺术|阅读作品|观赏演出|艺术作品', '审美需要|精神享受|审美愉悦|美感|心理快感'],
+    ['艺术活动使身心得到休息和放松', '休息|放松|消遣|缓解压力|调节身心|放松心情'],
+    ['艺术是精神产品，满足人的心灵需要', '精神产品|精神需要|心灵需要|精神需求|心灵需求']
+  ]],
+  ['艺术创作（名词解释）', [
+    ['艺术家借助媒介、语言或技法，将内容转化为可感的形象或作品', '艺术媒介|艺术语言|媒介|艺术技法', '艺术形象|艺术作品|艺术文本|可感的形象', '转化|物化|外化|创造|呈现'],
+    ['创作以社会生活为源泉，不是简单复制，而是审美创造', '社会生活|生活为源泉|生活为来源|源于生活', '审美创造|原创|不简单复制|不是简单的复制|不照搬'],
+    ['创作过程包括感知、构思和物化三个阶段', '感知|艺术体验', '构思', '物化|外化'],
+    ['创作是一种满足审美需要的自由精神生产活动', '精神生产|自由创造|审美需要|审美需求']
+  ]],
+  ['艺术媒介（名词解释）', [
+    ['把艺术构思外化为作品，并作为展示、传播的载体', '艺术构思|构思|意象|想法', '外化|转化|物化|呈现|实现', '展示|传播|传达'],
+    ['艺术媒介包括物质材料媒介和艺术语言媒介', '物质材料|物质媒介', '艺术语言|语言媒介'],
+    ['媒介用于区分作品类型、建构形式和生成内容', '作品的类型|作品类型|艺术类型|艺术类别', '建构|构建|塑造|影响|决定|形成', '形式|内容']
+  ]],
+  ['艺术风格（名词解释）', [
+    ['艺术家的创作个性在作品中呈现为相对稳定的艺术风貌', '创作个性|艺术个性|个人特色|创作特色', '稳定|一贯|持续|相对固定', '艺术风貌|特色|格调|面貌|风格'],
+    ['风格统一于艺术作品的内容与形式，反映创作个性的成熟', '内容', '形式', '成熟|标志|体现'],
+    ['风格可以分为个人、流派、时代、民族风格等', '个人|艺术家', '流派', '时代', '民族'],
+    ['在创作实践中逐渐形成，以独特形式表现艺术见解', '创作实践|艺术实践|长期创作|创作过程中', '艺术形式|见解|个性|逐渐形成']
+  ]],
+  ['艺术批评的含义（名词解释）', [
+    ['从一定立场或观点出发的理性探究', '理性|科学', '立场|观点'],
+    ['通过作品分析和比较，发掘深层意蕴', '分析|比较|解读', '意蕴|内涵|深层含义'],
+    ['联系作品内部因素与社会文化、意识形态或艺术史', '联系|关系|关联|结合', '社会文化|意识形态|艺术史|历史语境|社会背景'],
+    ['据此阐释评价作品的意义、价值、得失或艺术特征', '阐释|解释|评价|评判|评析|分析', '意义|价值|得失|艺术特征|艺术规律']
+  ]]
+]);
+
+function normalizeRecallText(text) {
+  return text.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+}
+
+function getRecallTrigrams(text) {
+  const terms = new Set();
+  for(let i = 0; i + 3 <= text.length; i++) terms.add(text.slice(i,i+3));
+  return terms;
+}
+
+function getHandoutRecallPassages(paragraphs) {
+  const text = paragraphs.map(p => p.textContent.trim()).filter(Boolean);
+  // Preserve the original multi-paragraph structure; break single long paragraphs into checkable parts.
+  const pieces = text.length === 1 ? text[0].match(/[^。！？；;\n]+[。！？；;]?/g) ?? text : text;
+  const points = [];
+  for(const piece of pieces.map(p => p.trim()).filter(Boolean)) {
+    if(points.length && normalizeRecallText(piece).length < 5) points[points.length - 1] += piece;
+    else points.push(piece);
+  }
+  return points;
+}
+
+function scoreHandoutRecall(title, paragraphs, answer) {
+  const normalized = normalizeRecallText(answer);
+  const titleOnly = normalized === normalizeRecallText(title.replace(/[（(]名词解释[）)]\s*$/, '')) || normalized === normalizeRecallText(title);
+  const rubric = handoutRecallRubrics.get(title.trim());
+  if(rubric) return {
+    rubric: true,
+    points: rubric.map(([label, ...groups]) => ({label, matched: !titleOnly && groups.every(group =>
+      group.split('|').some(term => normalized.includes(normalizeRecallText(term))))}))
+  };
+  const answerTerms = getRecallTrigrams(normalized);
+  return {
+    rubric: false,
+    points: getHandoutRecallPassages(paragraphs).map(passage => {
+      const sample = normalizeRecallText(passage.replace(/^(?:[（(][一二三四五六七八九十0-9]+[）)]|[①②③④⑤⑥⑦⑧⑨⑩]|[一二三四五六七八九十0-9]+[、.．])/u,''));
+      const terms = getRecallTrigrams(sample);
+      let hits = 0;
+      terms.forEach(term => { if(answerTerms.has(term)) hits++; });
+      const matched = Boolean(sample) && !titleOnly && (normalized.includes(sample) ||
+        (hits >= Math.max(4, Math.ceil(terms.size * .4))));
+      return {label: passage.length > 105 ? passage.slice(0,104) + '…' : passage, matched};
+    })
+  };
+}
+
+function renderHandoutRecallGrade(panel, {rubric, points}) {
+  const hits = points.filter(point => point.matched).length;
+  panel.querySelector('.hc-recall-score').textContent = points.length ? Math.round(100 * hits / points.length) : '—';
+  panel.querySelector('.hc-recall-grade-count').textContent = `${hits} / ${points.length} ${rubric ? '个要点' : '处讲义片段'}已检测到`;
+  panel.querySelector('.hc-recall-grade-note').textContent = rubric
+    ? '按要点关键词计算，各要点同分。同义改写可能漏判，分数仅供复习参考。'
+    : '按讲义片段的措辞匹配，各片段同分；不理解语义，改写可能漏判，请结合下面的原文核对。';
+  const list = panel.querySelector('.hc-recall-grade-list');
+  const rows = [...points.filter(point => !point.matched), ...points.filter(point => point.matched)].map(point => {
+    const item = document.createElement('li');
+    item.className = 'hc-recall-grade-item' + (point.matched ? ' is-matched' : '');
+    const status = document.createElement('span');
+    status.className = 'hc-recall-grade-status';
+    status.textContent = point.matched ? '已检测到' : '未检测到';
+    const label = document.createElement('span');
+    label.textContent = point.label;
+    item.append(status, label);
+    return item;
+  });
+  list.replaceChildren(...rows);
+}
+
+function setHandoutRecallView(card, view) {
+  const panel = card.querySelector('.hc-recall-panel');
+  const launch = card.querySelector('.hc-recall-launch');
+  const input = panel.querySelector('.hc-recall-input');
+  launch.setAttribute('aria-expanded', String(view !== 'read'));
+  launch.hidden = view !== 'read';
+  card.querySelector('.hc-card-body').hidden = view !== 'read';
+  panel.hidden = view === 'read';
+  panel.querySelector('.hc-recall-write').hidden = view !== 'write';
+  panel.querySelector('.hc-recall-review').hidden = view !== 'review';
+  if(view === 'read') launch.focus();
+  else if(view === 'write') {
+    panel.scrollIntoView({block:'nearest', behavior:'instant'});
+    input.focus();
+  } else {
+    panel.scrollIntoView({block:'start', behavior:'instant'});
+    panel.querySelector('.hc-recall-heading').focus({preventScroll:true});
+  }
+}
+
+function prepareHandoutRecall(card) {
+  const panel = card.querySelector('.hc-recall-panel');
+  if(panel.firstElementChild) return;
+  const titleId = card.querySelector('.hc-card-title').id;
+  const inputId = panel.id + '-input';
+  panel.innerHTML = `
+    <div class="hc-recall-write">
+      <label class="hc-recall-label" for="${inputId}" id="${inputId}-label">默写本卡</label>
+      <p class="hc-recall-help" id="${inputId}-help">试着写出核心观点，再补上解释或例子。不用逐字背诵。</p>
+      <textarea class="hc-recall-input" id="${inputId}" rows="5" aria-labelledby="${inputId}-label ${titleId}" aria-describedby="${inputId}-help ${inputId}-message" placeholder="在这里写下你记得的内容…"></textarea>
+      <p class="hc-recall-message" id="${inputId}-message" role="status"></p>
+      <div class="hc-recall-actions">
+        <button class="hc-recall-button hc-recall-button--primary" type="button" data-handout-recall="review">${uiIcon('eye')}评分并对照</button>
+        <button class="hc-recall-button" type="button" data-handout-recall="read">返回阅读</button>
+      </div>
+    </div>
+    <div class="hc-recall-review" hidden>
+      <h4 class="hc-recall-heading" tabindex="-1">默写对照</h4>
+      <section class="hc-recall-grade" aria-label="默写覆盖分">
+        <div class="hc-recall-grade-head"><div><strong class="hc-recall-score"></strong><span class="hc-recall-score-total"> / 100 覆盖分</span></div><span class="hc-recall-grade-count"></span></div>
+        <p class="hc-recall-grade-note"></p>
+        <ul class="hc-recall-grade-list"></ul>
+      </section>
+      <div class="hc-recall-actions">
+        <button class="hc-recall-button hc-recall-button--primary" type="button" data-handout-recall="edit">${uiIcon('pen')}继续默写</button>
+        <button class="hc-recall-button" type="button" data-handout-recall="read">返回阅读</button>
+      </div>
+      <div class="hc-recall-comparison">
+        <div class="hc-recall-answer"><h5>我的默写</h5><p class="hc-recall-user"></p></div>
+        <div class="hc-recall-answer"><h5>讲义原文</h5><div class="hc-recall-original"></div></div>
+      </div>
+    </div>`;
+  const input = panel.querySelector('.hc-recall-input');
+  input.value = handoutRecallDrafts.get(panel.dataset.draftKey) ?? '';
+  input.addEventListener('input', () => {
+    if(input.value) handoutRecallDrafts.set(panel.dataset.draftKey, input.value);
+    else handoutRecallDrafts.delete(panel.dataset.draftKey);
+    panel.querySelector('.hc-recall-message').textContent = '';
+  });
+}
+
+function handleHandoutRecall(event) {
+  const button = event.target.closest('[data-handout-recall]');
+  if(!button) return;
+  const card = button.closest('.hc-card');
+  const panel = card.querySelector('.hc-recall-panel');
+  switch(button.dataset.handoutRecall) {
+    case 'start':
+      prepareHandoutRecall(card);
+      setHandoutRecallView(card, 'write');
+      break;
+    case 'review': {
+      const input = panel.querySelector('.hc-recall-input');
+      if(!input.value.trim()) {
+        panel.querySelector('.hc-recall-message').textContent = '先写下一点你记得的内容，再对照原文。';
+        input.focus();
+        return;
+      }
+      panel.querySelector('.hc-recall-user').textContent = input.value;
+      const original = [...card.querySelectorAll('.hc-card-body > .hc-para')];
+      renderHandoutRecallGrade(panel, scoreHandoutRecall(card.querySelector('.hc-card-title').textContent, original, input.value));
+      panel.querySelector('.hc-recall-original').replaceChildren(...original.map(para => para.cloneNode(true)));
+      setHandoutRecallView(card, 'review');
+      break;
+    }
+    case 'edit': setHandoutRecallView(card, 'write'); break;
+    case 'read': setHandoutRecallView(card, 'read'); break;
+  }
 }
 
 function formatAnswer(text) {
@@ -6025,6 +6358,7 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Init
+document.getElementById('content').addEventListener('click', handleHandoutRecall);
 const topnav = document.querySelector('.topnav');
 new ResizeObserver(() => {
   document.documentElement.style.setProperty('--measured-topnav-height', topnav.offsetHeight + 'px');
@@ -6051,11 +6385,15 @@ window.addEventListener('scroll', () => {
   handoutScrollFrame = requestAnimationFrame(() => {
     handoutScrollFrame = 0;
     if(state.page !== 'chapter' || chapterSubTab !== 'handout') return;
-    let active = 0;
-    const offset = topnav.offsetHeight + 55;
-    for(const section of document.querySelectorAll('.handout-section')) {
-      if(section.getBoundingClientRect().top > offset) break;
-      active = Number(section.dataset.section);
+    if(lastHandoutJump?.target.isConnected && Math.abs(lastHandoutJump.y - window.scrollY) < 1) return;
+    lastHandoutJump = null;
+    const anchors = document.querySelectorAll('[data-handout-anchor]');
+    if(!anchors.length) return;
+    let active = anchors[0].dataset.handoutAnchor;
+    const offset = parseFloat(getComputedStyle(anchors[0]).scrollMarginTop) + 3;
+    for(const anchor of anchors) {
+      if(anchor.getBoundingClientRect().top > offset) break;
+      active = anchor.dataset.handoutAnchor;
     }
     setHandoutTocCurrent(active);
   });
